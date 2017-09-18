@@ -1,0 +1,28 @@
+<h2>Show Item</h2>
+
+<ul>
+
+  <li>
+    <strong>Kind:</strong>
+    <%= @item.kind %>
+  </li>
+
+  <li>
+    <strong>Title:</strong>
+    <%= @item.title %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @item.description %>
+  </li>
+
+  <li>
+    <strong>Active:</strong>
+    <%= @item.active %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: item_path(@conn, :edit, @item) %></span>
+<span><%= link "Back", to: item_path(@conn, :index) %></span>

@@ -1,0 +1,28 @@
+<h2>Show Card</h2>
+
+<ul>
+
+  <li>
+    <strong>Level:</strong>
+    <%= @card.level %>
+  </li>
+
+  <li>
+    <strong>Language:</strong>
+    <%= @card.language %>
+  </li>
+
+  <li>
+    <strong>Title:</strong>
+    <%= @card.title %>
+  </li>
+
+  <li>
+    <strong>Content:</strong>
+    <%= @card.content %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: card_path(@conn, :edit, @card) %></span>
+<span><%= link "Back", to: card_path(@conn, :index) %></span>
