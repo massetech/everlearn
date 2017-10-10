@@ -14,7 +14,7 @@
       <td><%= classroom.title %></td>
 
       <td class="text-right">
-        <span><%= link "Show", to: classroom_path(@conn, :show, classroom), class: "btn btn-default btn-xs" %></span>
+        <!-- <span><%= link "Show", to: classroom_path(@conn, :show, classroom), class: "btn btn-default btn-xs" %></span> -->
         <span><%= link "Edit", to: classroom_path(@conn, :edit, classroom), class: "btn btn-default btn-xs" %></span>
         <span><%= link "Delete", to: classroom_path(@conn, :delete, classroom), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
       </td>

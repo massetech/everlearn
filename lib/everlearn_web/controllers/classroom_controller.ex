@@ -16,19 +16,19 @@ defmodule EverlearnWeb.ClassroomController do
 
   def create(conn, %{"classroom" => classroom_params}) do
     case Classrooms.create_classroom(classroom_params) do
-      {:ok, classroom} ->
+      {:ok, _classroom} ->
         conn
         |> put_flash(:info, "Classroom created successfully.")
-        |> redirect(to: classroom_path(conn, :show, classroom))
+        |> redirect(to: classroom_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    classroom = Classrooms.get_classroom!(id)
-    render(conn, "show.html", classroom: classroom)
-  end
+  # def show(conn, %{"id" => id}) do
+  #   classroom = Classrooms.get_classroom!(id)
+  #   render(conn, "show.html", classroom: classroom)
+  # end
 
   def edit(conn, %{"id" => id}) do
     classroom = Classrooms.get_classroom!(id)
@@ -40,10 +40,10 @@ defmodule EverlearnWeb.ClassroomController do
     classroom = Classrooms.get_classroom!(id)
 
     case Classrooms.update_classroom(classroom, classroom_params) do
-      {:ok, classroom} ->
+      {:ok, _classroom} ->
         conn
         |> put_flash(:info, "Classroom updated successfully.")
-        |> redirect(to: classroom_path(conn, :show, classroom))
+        |> redirect(to: classroom_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", classroom: classroom, changeset: changeset)
     end

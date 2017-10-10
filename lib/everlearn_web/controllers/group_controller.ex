@@ -1,8 +1,10 @@
 defmodule EverlearnWeb.GroupController do
   use EverlearnWeb, :controller
 
-  alias Everlearn.Groups
+  alias Everlearn.{Groups, Classrooms, CustomSelects}
   alias Everlearn.Groups.Group
+
+  plug :load_selects
 
   def index(conn, _params) do
     groups = Groups.list_groups()
@@ -16,19 +18,19 @@ defmodule EverlearnWeb.GroupController do
 
   def create(conn, %{"group" => group_params}) do
     case Groups.create_group(group_params) do
-      {:ok, group} ->
+      {:ok, _group} ->
         conn
         |> put_flash(:info, "Group created successfully.")
-        |> redirect(to: group_path(conn, :show, group))
+        |> redirect(to: group_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    group = Groups.get_group!(id)
-    render(conn, "show.html", group: group)
-  end
+  # def show(conn, %{"id" => id}) do
+  #   group = Groups.get_group!(id)
+  #   render(conn, "show.html", group: group)
+  # end
 
   def edit(conn, %{"id" => id}) do
     group = Groups.get_group!(id)
@@ -40,10 +42,10 @@ defmodule EverlearnWeb.GroupController do
     group = Groups.get_group!(id)
 
     case Groups.update_group(group, group_params) do
-      {:ok, group} ->
+      {:ok, _group} ->
         conn
         |> put_flash(:info, "Group updated successfully.")
-        |> redirect(to: group_path(conn, :show, group))
+        |> redirect(to: group_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", group: group, changeset: changeset)
     end
@@ -57,4 +59,12 @@ defmodule EverlearnWeb.GroupController do
     |> put_flash(:info, "Group deleted successfully.")
     |> redirect(to: group_path(conn, :index))
   end
+
+  defp load_selects(conn, _) do
+    conn
+      |> assign(:classrooms, Classrooms.select_menu())
+      |> assign(:kinds, CustomSelects.kind_menu())
+      |> assign(:levels, CustomSelects.level_menu())
+  end
+
 end

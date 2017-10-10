@@ -1,8 +1,10 @@
 defmodule EverlearnWeb.ItemController do
   use EverlearnWeb, :controller
 
-  alias Everlearn.Items
+  alias Everlearn.{Items, Topics, CustomSelects}
   alias Everlearn.Items.Item
+
+  plug :load_selects
 
   def index(conn, _params) do
     items = Items.list_items()
@@ -19,7 +21,7 @@ defmodule EverlearnWeb.ItemController do
       {:ok, item} ->
         conn
         |> put_flash(:info, "Item created successfully.")
-        |> redirect(to: item_path(conn, :show, item))
+        |> redirect(to: item_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -43,7 +45,7 @@ defmodule EverlearnWeb.ItemController do
       {:ok, item} ->
         conn
         |> put_flash(:info, "Item updated successfully.")
-        |> redirect(to: item_path(conn, :show, item))
+        |> redirect(to: item_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", item: item, changeset: changeset)
     end
@@ -57,4 +59,11 @@ defmodule EverlearnWeb.ItemController do
     |> put_flash(:info, "Item deleted successfully.")
     |> redirect(to: item_path(conn, :index))
   end
+
+  defp load_selects(conn, _) do
+    conn
+      |> assign(:topics, Topics.select_menu())
+      |> assign(:kinds, CustomSelects.kind_menu())
+  end
+
 end

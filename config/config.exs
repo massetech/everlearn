@@ -9,6 +9,10 @@ use Mix.Config
 config :everlearn,
   ecto_repos: [Everlearn.Repo]
 
+# Added to manage HAML
+config :phoenix, :template_engines,
+  haml: PhoenixHaml.Engine
+
 # Configures the endpoint
 config :everlearn, EverlearnWeb.Endpoint,
   url: [host: "localhost"],

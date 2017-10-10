@@ -18,7 +18,9 @@ defmodule Everlearn.Items do
 
   """
   def list_items do
-    Repo.all(Item)
+    Item
+    |> Repo.all()
+    |> Repo.preload(:topic)
   end
 
   @doc """

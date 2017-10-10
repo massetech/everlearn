@@ -21,6 +21,10 @@ defmodule Everlearn.Classrooms do
     Repo.all(Classroom)
   end
 
+  def select_menu do
+    Repo.all(from(c in Classroom, select: {c.title, c.id}))
+  end
+
   @doc """
   Gets a single classroom.
 

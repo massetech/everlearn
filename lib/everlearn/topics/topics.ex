@@ -18,7 +18,13 @@ defmodule Everlearn.Topics do
 
   """
   def list_topics do
-    Repo.all(Topic)
+    Topic
+    |> Repo.all()
+    |> Repo.preload(:classroom)
+  end
+
+  def select_menu do
+    Repo.all(from(c in Topic, select: {c.title, c.id}))
   end
 
   @doc """

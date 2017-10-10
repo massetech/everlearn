@@ -1,8 +1,10 @@
 defmodule EverlearnWeb.TopicController do
   use EverlearnWeb, :controller
 
-  alias Everlearn.Topics
+  alias Everlearn.{Topics, Classrooms}
   alias Everlearn.Topics.Topic
+
+  plug :load_selects
 
   def index(conn, _params) do
     topics = Topics.list_topics()
@@ -16,19 +18,19 @@ defmodule EverlearnWeb.TopicController do
 
   def create(conn, %{"topic" => topic_params}) do
     case Topics.create_topic(topic_params) do
-      {:ok, topic} ->
+      {:ok, _topic} ->
         conn
         |> put_flash(:info, "Topic created successfully.")
-        |> redirect(to: topic_path(conn, :show, topic))
+        |> redirect(to: topic_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    topic = Topics.get_topic!(id)
-    render(conn, "show.html", topic: topic)
-  end
+  # def show(conn, %{"id" => id}) do
+  #   topic = Topics.get_topic!(id)
+  #   render(conn, "show.html", topic: topic)
+  # end
 
   def edit(conn, %{"id" => id}) do
     topic = Topics.get_topic!(id)
@@ -40,10 +42,10 @@ defmodule EverlearnWeb.TopicController do
     topic = Topics.get_topic!(id)
 
     case Topics.update_topic(topic, topic_params) do
-      {:ok, topic} ->
+      {:ok, _topic} ->
         conn
         |> put_flash(:info, "Topic updated successfully.")
-        |> redirect(to: topic_path(conn, :show, topic))
+        |> redirect(to: topic_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", topic: topic, changeset: changeset)
     end
@@ -57,4 +59,9 @@ defmodule EverlearnWeb.TopicController do
     |> put_flash(:info, "Topic deleted successfully.")
     |> redirect(to: topic_path(conn, :index))
   end
+
+  defp load_selects(conn, _) do
+    assign(conn, :classrooms, Classrooms.select_menu())
+  end
+
 end
