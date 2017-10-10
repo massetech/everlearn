@@ -20,7 +20,10 @@ exports.config = {
       // }
     },
     stylesheets: {
-      joinTo: "css/app.css"
+      joinTo: "css/app.css",
+      order: {
+        after: ["priv/static/css/app.scss"] // concat app.css last
+      }
     },
     templates: {
       joinTo: "js/app.js"
@@ -37,7 +40,12 @@ exports.config = {
   // Phoenix paths configuration
   paths: {
     // Dependencies and current project directories to watch
-    watched: ["static", "css", "js", "vendor"],
+    watched: [
+      "static",
+      "css",
+      "js", 
+      "vendor"
+    ],
     // Where to compile files to
     public: "../priv/static"
   },
@@ -47,6 +55,18 @@ exports.config = {
     babel: {
       // Do not use ES6 compiler in vendor code
       ignore: [/vendor/]
+    },
+    copycat: {
+      "fonts": ["node_modules/font-awesome/fonts"], // copy node_modules/font-awesome/fonts/* to priv/static/fonts/
+      verbose : true //shows each file that is copied to the destination directory
+    },
+    sass: {
+      options: {
+        includePaths: [
+          "node_modules/font-awesome/scss",
+          "node_modules/materialize-css/sass"
+        ], // tell sass-brunch where to look for files to @import
+      }
     }
   },
 
@@ -57,6 +77,10 @@ exports.config = {
   },
 
   npm: {
-    enabled: true
+    enabled: true,
+    globals: {
+      $: 'jquery',
+      jQuery: 'jquery',
+    }
   }
 };
