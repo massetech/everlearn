@@ -45,7 +45,8 @@ exports.config = {
       "css",
       "js",
       "vendor",
-      "node_modules/materialize-css/dist/js/materialize.min.js"
+      "node_modules/materialize-css/dist/js/materialize.min.js",
+      "node_modules/hammerjs/hammer.min.js"
     ],
     // Where to compile files to
     public: "../priv/static"

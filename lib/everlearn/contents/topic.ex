@@ -14,7 +14,7 @@ defmodule Everlearn.Contents.Topic do
   @doc false
   def changeset(%Topic{} = topic, attrs) do
     topic
-    |> cast(attrs, [:title])
-    |> validate_required([:title])
+    |> cast(attrs, [:title, :classroom_id])
+    |> validate_required([:title, :classroom_id])
   end
 end
