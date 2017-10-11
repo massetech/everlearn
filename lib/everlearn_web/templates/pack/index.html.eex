@@ -1,0 +1,30 @@
+<h2>Listing Packs</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Level</th>
+      <th>Active</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for pack <- @packs do %>
+    <tr>
+      <td><%= pack.title %></td>
+      <td><%= pack.level %></td>
+      <td><%= pack.active %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: pack_path(@conn, :show, pack), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: pack_path(@conn, :edit, pack), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: pack_path(@conn, :delete, pack), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Pack", to: pack_path(@conn, :new) %></span>

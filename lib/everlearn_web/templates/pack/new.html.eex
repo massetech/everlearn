@@ -1,0 +1,5 @@
+<h2>New Pack</h2>
+
+<%= render "form.html", Map.put(assigns, :action, pack_path(@conn, :create)) %>
+
+<span><%= link "Back", to: pack_path(@conn, :index) %></span>

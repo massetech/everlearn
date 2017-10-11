@@ -1,0 +1,23 @@
+<h2>Show Pack</h2>
+
+<ul>
+
+  <li>
+    <strong>Title:</strong>
+    <%= @pack.title %>
+  </li>
+
+  <li>
+    <strong>Level:</strong>
+    <%= @pack.level %>
+  </li>
+
+  <li>
+    <strong>Active:</strong>
+    <%= @pack.active %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: pack_path(@conn, :edit, @pack) %></span>
+<span><%= link "Back", to: pack_path(@conn, :index) %></span>

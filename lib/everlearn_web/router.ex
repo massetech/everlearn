@@ -17,11 +17,13 @@ defmodule EverlearnWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
-    resources "/classrooms", ClassroomController
-    resources "/groups", GroupController
-    resources "/topics", TopicController
-    resources "/items", ItemController
-    resources "/cards", CardController
+    # resources "/classrooms", ClassroomController
+    # resources "/groups", GroupController
+    # resources "/topics", TopicController
+    # resources "/items", ItemController
+    # resources "/cards", CardController
+    resources "/packs", PackController
+    resources "/users", UserController
   end
 
   # Other scopes may use custom stacks.
