@@ -1,7 +1,7 @@
-defmodule Everlearn.Contens.Topic do
+defmodule Everlearn.Contents.Topic do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Everlearn.Contens.Topic
+  alias Everlearn.Contents.Topic
 
 
   schema "topics" do

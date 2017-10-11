@@ -43,8 +43,9 @@ exports.config = {
     watched: [
       "static",
       "css",
-      "js", 
-      "vendor"
+      "js",
+      "vendor",
+      "node_modules/materialize-css/dist/js/materialize.min.js"
     ],
     // Where to compile files to
     public: "../priv/static"

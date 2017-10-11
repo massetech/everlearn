@@ -1,7 +1,7 @@
-defmodule Everlearn.Contens.Card do
+defmodule Everlearn.Contents.Card do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Everlearn.Contens.Card
+  alias Everlearn.Contents.Card
 
 
   schema "cards" do
