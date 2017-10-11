@@ -19,7 +19,7 @@ defmodule EverlearnWeb.PackController do
       {:ok, pack} ->
         conn
         |> put_flash(:info, "Pack created successfully.")
-        |> redirect(to: pack_path(conn, :show, pack))
+        |> redirect(to: pack_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -43,7 +43,7 @@ defmodule EverlearnWeb.PackController do
       {:ok, pack} ->
         conn
         |> put_flash(:info, "Pack updated successfully.")
-        |> redirect(to: pack_path(conn, :show, pack))
+        |> redirect(to: pack_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", pack: pack, changeset: changeset)
     end

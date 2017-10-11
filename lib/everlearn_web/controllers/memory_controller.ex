@@ -19,7 +19,7 @@ defmodule EverlearnWeb.MemoryController do
       {:ok, memory} ->
         conn
         |> put_flash(:info, "Memory created successfully.")
-        |> redirect(to: memory_path(conn, :show, memory))
+        |> redirect(to: memory_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -43,7 +43,7 @@ defmodule EverlearnWeb.MemoryController do
       {:ok, memory} ->
         conn
         |> put_flash(:info, "Memory updated successfully.")
-        |> redirect(to: memory_path(conn, :show, memory))
+        |> redirect(to: memory_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", memory: memory, changeset: changeset)
     end

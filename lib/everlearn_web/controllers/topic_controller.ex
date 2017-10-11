@@ -19,7 +19,7 @@ defmodule EverlearnWeb.TopicController do
       {:ok, topic} ->
         conn
         |> put_flash(:info, "Topic created successfully.")
-        |> redirect(to: topic_path(conn, :show, topic))
+        |> redirect(to: topic_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -43,7 +43,7 @@ defmodule EverlearnWeb.TopicController do
       {:ok, topic} ->
         conn
         |> put_flash(:info, "Topic updated successfully.")
-        |> redirect(to: topic_path(conn, :show, topic))
+        |> redirect(to: topic_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", topic: topic, changeset: changeset)
     end

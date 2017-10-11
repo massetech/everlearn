@@ -19,7 +19,7 @@ defmodule EverlearnWeb.ClassroomController do
       {:ok, classroom} ->
         conn
         |> put_flash(:info, "Classroom created successfully.")
-        |> redirect(to: classroom_path(conn, :show, classroom))
+        |> redirect(to: classroom_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -43,7 +43,7 @@ defmodule EverlearnWeb.ClassroomController do
       {:ok, classroom} ->
         conn
         |> put_flash(:info, "Classroom updated successfully.")
-        |> redirect(to: classroom_path(conn, :show, classroom))
+        |> redirect(to: classroom_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", classroom: classroom, changeset: changeset)
     end
