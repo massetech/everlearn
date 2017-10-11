@@ -1,14 +1,14 @@
 defmodule EverlearnWeb.ItemControllerTest do
   use EverlearnWeb.ConnCase
 
-  alias Everlearn.Items
+  alias Everlearn.Contents
 
-  @create_attrs %{active: true, description: "some description", kind: "some kind", title: "some title"}
-  @update_attrs %{active: false, description: "some updated description", kind: "some updated kind", title: "some updated title"}
-  @invalid_attrs %{active: nil, description: nil, kind: nil, title: nil}
+  @create_attrs %{active: true, description: "some description", group: "some group", level: 42, title: "some title"}
+  @update_attrs %{active: false, description: "some updated description", group: "some updated group", level: 43, title: "some updated title"}
+  @invalid_attrs %{active: nil, description: nil, group: nil, level: nil, title: nil}
 
   def fixture(:item) do
-    {:ok, item} = Items.create_item(@create_attrs)
+    {:ok, item} = Contents.create_item(@create_attrs)
     item
   end
 

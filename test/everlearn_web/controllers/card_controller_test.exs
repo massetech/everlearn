@@ -1,14 +1,14 @@
 defmodule EverlearnWeb.CardControllerTest do
   use EverlearnWeb.ConnCase
 
-  alias Everlearn.Cards
+  alias Everlearn.Contens
 
-  @create_attrs %{content: "some content", language: "some language", level: 42, title: "some title"}
-  @update_attrs %{content: "some updated content", language: "some updated language", level: 43, title: "some updated title"}
-  @invalid_attrs %{content: nil, language: nil, level: nil, title: nil}
+  @create_attrs %{active: true, language: "some language", title: "some title"}
+  @update_attrs %{active: false, language: "some updated language", title: "some updated title"}
+  @invalid_attrs %{active: nil, language: nil, title: nil}
 
   def fixture(:card) do
-    {:ok, card} = Cards.create_card(@create_attrs)
+    {:ok, card} = Contens.create_card(@create_attrs)
     card
   end
 
@@ -60,7 +60,7 @@ defmodule EverlearnWeb.CardControllerTest do
       assert redirected_to(conn) == card_path(conn, :show, card)
 
       conn = get conn, card_path(conn, :show, card)
-      assert html_response(conn, 200) =~ "some updated content"
+      assert html_response(conn, 200) =~ "some updated language"
     end
 
     test "renders errors when data is invalid", %{conn: conn, card: card} do

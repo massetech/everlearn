@@ -1,0 +1,26 @@
+<h2>Listing Memorys</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Status</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for memory <- @memorys do %>
+    <tr>
+      <td><%= memory.status %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: memory_path(@conn, :show, memory), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: memory_path(@conn, :edit, memory), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: memory_path(@conn, :delete, memory), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Memory", to: memory_path(@conn, :new) %></span>

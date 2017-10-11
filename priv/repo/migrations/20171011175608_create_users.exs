@@ -6,7 +6,6 @@ defmodule Everlearn.Repo.Migrations.CreateUsers do
       add :email, :string
       add :role, :string
       add :main_language, :string
-      add :email, :string
       add :provider, :string
       add :token, :string
 

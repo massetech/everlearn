@@ -1,14 +1,14 @@
 defmodule EverlearnWeb.ClassroomControllerTest do
   use EverlearnWeb.ConnCase
 
-  alias Everlearn.Classrooms
+  alias Everlearn.Contents
 
   @create_attrs %{title: "some title"}
   @update_attrs %{title: "some updated title"}
   @invalid_attrs %{title: nil}
 
   def fixture(:classroom) do
-    {:ok, classroom} = Classrooms.create_classroom(@create_attrs)
+    {:ok, classroom} = Contents.create_classroom(@create_attrs)
     classroom
   end
 

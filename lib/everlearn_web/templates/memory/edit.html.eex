@@ -1,0 +1,5 @@
+<h2>Edit Memory</h2>
+
+<%= render "form.html", Map.put(assigns, :action, memory_path(@conn, :update, @memory)) %>
+
+<span><%= link "Back", to: memory_path(@conn, :index) %></span>

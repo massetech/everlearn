@@ -1,14 +1,14 @@
 defmodule EverlearnWeb.TopicControllerTest do
   use EverlearnWeb.ConnCase
 
-  alias Everlearn.Topics
+  alias Everlearn.Contens
 
   @create_attrs %{title: "some title"}
   @update_attrs %{title: "some updated title"}
   @invalid_attrs %{title: nil}
 
   def fixture(:topic) do
-    {:ok, topic} = Topics.create_topic(@create_attrs)
+    {:ok, topic} = Contens.create_topic(@create_attrs)
     topic
   end
 

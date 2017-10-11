@@ -1,0 +1,13 @@
+<h2>Show Memory</h2>
+
+<ul>
+
+  <li>
+    <strong>Status:</strong>
+    <%= @memory.status %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: memory_path(@conn, :edit, @memory) %></span>
+<span><%= link "Back", to: memory_path(@conn, :index) %></span>
