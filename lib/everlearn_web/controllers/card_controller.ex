@@ -3,10 +3,46 @@ defmodule EverlearnWeb.CardController do
 
   alias Everlearn.Contents
   alias Everlearn.Contents.Card
+  plug :load_select when action in [:new, :edit]
+
+  defp load_select(conn, _params) do
+    assign(conn, :topics, Everlearn.Contents.topic_select_btn())
+  end
 
   def index(conn, _params) do
     cards = Contents.list_cards()
     render(conn, "index.html", cards: cards)
+  end
+
+  # Module to import Cards and items from CSV
+  def import(conn, %{"card" => card_params}) do
+    callback = card_params["file"].path
+    |> File.stream!()
+    |> CSV.decode(separator: ?;, headers: [
+      :item_id, :item_group, :item_title, :item_level, :item_description, :item_active,
+      :card_language, :card_title, :card_active
+    ])
+    |> Enum.map(fn (card) ->
+      Everlearn.Contents.insert_card(card)
+      |> IO.inspect()
+    end)
+    #|> IO.inspect()
+    conn
+    |> redirect(to: item_path(conn, :index))
+    # |> Enum.filter(fn
+    #   {:error, _} -> true
+    #   _ -> false
+    # end)
+    # |> case do
+    #   [] ->
+    #     conn
+    #     |> put_flash(:info, "Imported without error")
+    #     |> redirect(to: item_path(conn, :index))
+    #   errors ->
+    #     conn
+    #     |> put_flash(:error, errors)
+    #     |> render("import.html")
+    # end
   end
 
   def new(conn, _params) do

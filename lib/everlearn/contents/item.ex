@@ -19,6 +19,7 @@ defmodule Everlearn.Contents.Item do
   def changeset(%Item{} = item, attrs) do
     item
     |> cast(attrs, [:group, :title, :level, :description, :active])
+    #|> foreign_key_constraint
     |> validate_required([:group, :title, :level, :description, :active])
   end
 end

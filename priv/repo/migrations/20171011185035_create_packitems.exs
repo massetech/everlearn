@@ -3,8 +3,8 @@ defmodule Everlearn.Repo.Migrations.CreatePackitems do
 
   def change do
     create table(:packitems) do
-      add :pack_id, references(:packs, on_delete: :nothing)
-      add :item_id, references(:items, on_delete: :nothing)
+      add :pack_id, references(:packs, on_delete: :delete_all)
+      add :item_id, references(:items, on_delete: :delete_all)
 
       timestamps()
     end

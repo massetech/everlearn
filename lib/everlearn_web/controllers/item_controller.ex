@@ -2,11 +2,17 @@ defmodule EverlearnWeb.ItemController do
   use EverlearnWeb, :controller
 
   alias Everlearn.Contents
-  alias Everlearn.Contents.Item
+  alias Everlearn.Contents.{Item, Card}
+  plug :load_select when action in [:new, :edit, :index]
+
+  defp load_select(conn, _params) do
+    assign(conn, :topics, Everlearn.Contents.topic_select_btn())
+  end
 
   def index(conn, _params) do
     items = Contents.list_items()
-    render(conn, "index.html", items: items)
+    changeset = Contents.change_card(%Card{})
+    render(conn, "index.html", items: items, changeset: changeset)
   end
 
   def new(conn, _params) do

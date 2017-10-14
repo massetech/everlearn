@@ -8,7 +8,7 @@ defmodule Everlearn.Repo.Migrations.CreateItems do
       add :level, :integer
       add :description, :string
       add :active, :boolean, default: false, null: false
-      add :topic_id, references(:topics, on_delete: :nothing)
+      add :topic_id, references(:topics, on_delete: :delete_all)
 
       timestamps()
     end

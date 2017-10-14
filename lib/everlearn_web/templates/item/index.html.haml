@@ -1,0 +1,27 @@
+.row
+  %h2= "Listing Items"
+  = link "New Item", to: item_path(@conn, :new)
+.row
+  = render CardView, "import_form.html", changeset: @changeset, topics: @topics, action: import_card_path(@conn, :import)
+
+.row
+  %table.bordered.highlight.centered.responsive-table
+    %thead
+      %tr
+        %th= "Group"
+        %th= "Title"
+        %th= "Level"
+        %th= "Description"
+        %th= "Active"
+        %th= "Actions"
+    - for item <- @items do
+      %tr
+        %th= item.group
+        %th= item.title
+        %th= item.level
+        %th= item.description
+        %th= item.active
+        %th
+          = link "Show", to: item_path(@conn, :show, item), class: "btn btn-default btn-xs"
+          = link "Edit", to: item_path(@conn, :edit, item), class: "btn btn-default btn-xs"
+          = link "Delete", to: item_path(@conn, :delete, item), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs"

@@ -3,7 +3,6 @@ defmodule Everlearn.Contents.Card do
   import Ecto.Changeset
   alias Everlearn.Contents.Card
 
-
   schema "cards" do
     field :active, :boolean, default: false
     field :language, :string
@@ -16,7 +15,8 @@ defmodule Everlearn.Contents.Card do
   @doc false
   def changeset(%Card{} = card, attrs) do
     card
-    |> cast(attrs, [:language, :title, :active])
-    |> validate_required([:language, :title, :active])
+    |> cast(attrs, [:language, :title, :active, :item_id])
+    #|> assoc_constraint(:item_id)
+    |> validate_required([:language, :title, :active, :item_id])
   end
 end

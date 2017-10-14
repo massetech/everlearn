@@ -4,6 +4,7 @@ defmodule Everlearn.Contents do
   """
 
   import Ecto.Query, warn: false
+  import Everlearn.{CustomMethods}
   alias Everlearn.Repo
 
 # ----------------------------------------------------------------------------
@@ -38,7 +39,7 @@ defmodule Everlearn.Contents do
 # ----------------------------------------------------------------------------
   alias Everlearn.Contents.Classroom
 
-  def select_classroom do
+  def classroom_select_btn do
     Repo.all(from(c in Classroom, select: {c.title, c.id}))
   end
 
@@ -70,6 +71,48 @@ defmodule Everlearn.Contents do
 
 # ----------------------------------------------------------------------------
   alias Everlearn.Contents.Item
+
+  def insert_item(fields) do
+    %{:item_id => item_id, :item_title => item_title, :item_level => item_level, :item_group => item_group,
+      :item_active => item_active, :item_description => item_description} = fields
+    cond do
+      item_id == '' && item_title != "" && item_level != '' || item_group != "" ->
+        # It's a new item : try to create it
+        Item.changeset(%Item{}, %{
+          active: convert_boolean(item_active),
+          description: item_description,
+          group: item_group,
+          level: convert_integer(item_level),
+          title: item_title
+        })
+        |> Repo.insert
+        |> IO.inspect
+      item_id != '' && (item_title != "" || item_level != '' || item_active != '' || item_description != '' || item_group != "") ->
+        # It's an existing item : try to update it
+        Item.changeset(%Item{}, %{
+          id: item_id,
+          active: convert_boolean(item_active),
+          description: item_description,
+          group: item_group,
+          level: item_level,
+          title: item_title
+        })
+        |> Repo.update
+      item_id != "" ->
+        # There is only item_id : use it to create a card
+        case get_item!(item_id) do
+          {:ok, _} ->
+            # The item was found, we can use it to create a card
+            {:ok, get_item!(item_id)}
+          {_, _} ->
+            # The item was not found, we cant create a card
+            {:error_item, "error in fetching the item #{item_id}"}
+        end
+      true ->
+        # Some errors were found in the line
+        {:error_item, "error in inserting one item"}
+    end
+  end
 
   def list_items do
     Repo.all(Item)
@@ -129,6 +172,10 @@ defmodule Everlearn.Contents do
 # ----------------------------------------------------------------------------
   alias Everlearn.Contents.Topic
 
+  def topic_select_btn do
+    Repo.all(from(c in Topic, select: {c.title, c.id}))
+  end
+
   def list_topics do
     Repo.all(Topic)
   end
@@ -157,6 +204,32 @@ defmodule Everlearn.Contents do
 
   # ----------------------------------------------------------------------------
   alias Everlearn.Contents.Card
+
+  def insert_card(line) do
+    {status, fields} = line
+    case status do
+      :ok ->
+        case insert_item(fields) do
+          {:ok, item_struct} ->
+            # Item was created, updated or found : create the card with item_id
+            %{:card_active => card_active, :card_language => card_language, :card_title => card_title} = fields
+            Card.changeset(%Card{}, %{
+              item_id: item_struct.id,
+              active: convert_boolean(card_active),
+              language: card_language,
+              title: card_title
+            })
+            |> Repo.insert
+          {status, msg} ->
+            # Some problem occured in item process
+            {status, msg}
+        end
+      :error ->
+        %{:item_id => item_id} = fields
+        IO.inspect(line)
+        {:error_line, "some errors where found on line #{item_id}"}
+    end
+  end
 
   def list_cards do
     Repo.all(Card)

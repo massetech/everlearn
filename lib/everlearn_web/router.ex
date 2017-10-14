@@ -23,6 +23,7 @@ defmodule EverlearnWeb.Router do
     resources "/packs", PackController
     resources "/items", ItemController
     resources "/cards", CardController
+    post "/import", CardController, :import, as: :import_card
     resources "/memorys", MemoryController
   end
 

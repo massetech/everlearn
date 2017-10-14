@@ -42,7 +42,8 @@ defmodule Everlearn.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
       {:phoenix_haml, "~> 0.2"},
-      {:font_awesome_phoenix, "~> 0.1"}
+      {:font_awesome_phoenix, "~> 0.1"},
+      {:csv, "~> 2.0.0"},          # Converts csvs
     ]
   end
 
