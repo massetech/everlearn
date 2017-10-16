@@ -5,6 +5,7 @@ defmodule EverlearnWeb.ClassroomController do
   alias Everlearn.Contents.Classroom
 
   def index(conn, _params) do
+    conn
     classrooms = Contents.list_classrooms()
     render(conn, "index.html", classrooms: classrooms)
   end

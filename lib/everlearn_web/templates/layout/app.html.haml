@@ -11,43 +11,11 @@
     %link(rel="stylesheet" href='#{static_path(@conn, "/css/app.css")}')
 
   %body
-    .container
-      =# render @view_module, @view_template, assigns
-      %header
-        %nav
-          .nav-wrapper
-            = link "Everlearn", to: page_path(@conn, :index)
-            %ul.right.right.hide-on-med-and-down{id: "nav-mobile"}
-              %li= link "Classrooms", to: classroom_path(@conn, :index)
-              %li= link "Topics", to: topic_path(@conn, :index)
-              %li= link "Items", to: item_path(@conn, :index)
-              %li= link "Cards", to: card_path(@conn, :index)
-              %li= link "Packs", to: pack_path(@conn, :index)
-              %li= link "Memories", to: memory_path(@conn, :index)
-              - if @conn.assigns[:user] do
-                %li= link "Log out", to: auth_path(@conn, :delete), method: :delete
-              - else
-                %li= link "Log in with google", to: auth_path(@conn, :request, "google")
-      %flash
-        -# .flash
-        -#   =# render Learnit.LayoutView, "flash.html", conn: @conn
-        %p.alert.alert-info
-          = get_flash(@conn, :info)
-        %p.alert.alert-danger
-          = get_flash(@conn, :error)
-      .main
-        = render @view_module, @view_template, assigns
-      %footer.page-footer
-        .container
-          .row
-            .col.4.s12
-              = "© Everlearn"
-            .col.4.s12
-              =# render Everlearn.LayoutView, "footer.html", conn: @conn
-        .footer-copyright
-          .container
-
-
+    = render EverlearnWeb.SharedView, "_header.html", conn: @conn
+    = render EverlearnWeb.SharedView, "_flash.html", conn: @conn
+    %main.container
+      = render @view_module, @view_template, assigns
+    = render EverlearnWeb.SharedView, "_footer.html", conn: @conn
     %script(src='#{static_path(@conn, "/js/app.js")}')
     =# render_gon_script(@conn)
     =# Drab.Client.js(@conn)
