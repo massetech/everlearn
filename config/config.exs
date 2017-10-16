@@ -21,6 +21,22 @@ config :everlearn, EverlearnWeb.Endpoint,
   pubsub: [name: Everlearn.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
+# Config uberauth services
+config :ueberauth, Ueberauth,
+  providers: [
+    google: {Ueberauth.Strategy.Google, []}
+    # facebook: { Ueberauth.Strategy.Facebook, [ opt1: "value", opts2: "value" ] }
+  ]
+
+config :ueberauth, Ueberauth.Strategy.Google.OAuth,
+  client_id: System.get_env("GOOGLE_CLIENT_ID"),
+  client_secret: System.get_env("GOOGLE_CLIENT_SECRET")
+
+# config :ueberauth, Ueberauth.Strategy.Facebook.OAuth,
+#   client_id: System.get_env("FACEBOOK_APP_ID"),
+#   client_secret: System.get_env("FACEBOOK_APP_SECRET"),
+#   redirect_uri: System.get_env("FACEBOOK_REDIRECT_URI")
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

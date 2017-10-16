@@ -4,292 +4,192 @@ defmodule Everlearn.Members do
   """
 
   import Ecto.Query, warn: false
+  import Everlearn.{CustomMethods}
+  require Logger
+  require Poison
   alias Everlearn.Repo
+  alias Ueberauth.Auth
 
+  # -------------------------------- UEBERAUTH ----------------------------------------
+  #alias Everlearn.Members.Auth
+
+  # def find_or_create(%Auth{provider: :identity} = auth) do
+  #   case validate_pass(auth.credentials) do
+  #     :ok ->
+  #       {:ok, basic_info(auth)}
+  #     {:error, reason} -> {:error, reason}
+  #   end
+  # end
+
+  def signin(%Auth{} = auth) do
+    insert_or_update_user(basic_info(auth))
+  end
+
+  defp basic_info(auth) do
+    %{uid: auth.uid, token: token_from_auth(auth), token_expiration: exp_token_from_auth(auth), provider: Atom.to_string(auth.provider),
+      name: name_from_auth(auth), avatar: avatar_from_auth(auth), email: email_from_auth(auth), nickname: nickname_from_auth(auth), language: "FR"}
+  end
+
+  defp token_from_auth(%{credentials: %{token: token}}), do: token
+  defp exp_token_from_auth(%{credentials: %{expires_at: exp}}) do
+    # Google announces seconds
+    Timex.shift(Timex.now, seconds: exp)
+  end
+
+  defp email_from_auth(%{info: %{email: email}}), do: email
+
+  # github does it this way
+  defp avatar_from_auth( %{info: %{urls: %{avatar_url: image}} }), do: image
+  #facebook & google does it this way
+  defp avatar_from_auth( %{info: %{image: image} }), do: image
+  # default case if nothing matches
+  defp avatar_from_auth( auth ) do
+    Logger.warn auth.provider <> " needs to find an avatar URL!"
+    Logger.debug(Poison.encode!(auth))
+    nil
+  end
+
+  defp nickname_from_auth(auth) do
+    if %{info: %{nickname: nickname}} = auth do
+      case nickname do
+        nil -> build_nickname(auth)
+        _ -> nickname
+      end
+    else
+      build_nickname(auth)
+    end
+  end
+  defp build_nickname(auth) do
+    if %{info: %{first_name: first_name}} = auth do
+      first_name
+    else
+      name_from_auth(auth)
+    end
+  end
+
+  defp name_from_auth(auth) do
+    if auth.info.name do
+      auth.info.name
+    else
+      name = [auth.info.first_name, auth.info.last_name]
+      |> Enum.filter(&(&1 != nil and &1 != ""))
+
+      cond do
+        length(name) == 0 -> auth.info.nickname
+        true -> Enum.join(name, " ")
+      end
+    end
+  end
+
+  # defp validate_pass(%{other: %{password: ""}}) do
+  #   {:error, "Password required"}
+  # end
+  # defp validate_pass(%{other: %{password: pw, password_confirmation: pw}}) do
+  #   :ok
+  # end
+  # defp validate_pass(%{other: %{password: _}}) do
+  #   {:error, "Passwords do not match"}
+  # end
+  # defp validate_pass(_), do: {:error, "Password Required"}
+
+  # -------------------------------- USER ----------------------------------------
   alias Everlearn.Members.User
 
-  @doc """
-  Returns the list of users.
-
-  ## Examples
-
-      iex> list_users()
-      [%User{}, ...]
-
-  """
   def list_users do
     Repo.all(User)
   end
 
-  @doc """
-  Gets a single user.
-
-  Raises `Ecto.NoResultsError` if the User does not exist.
-
-  ## Examples
-
-      iex> get_user!(123)
-      %User{}
-
-      iex> get_user!(456)
-      ** (Ecto.NoResultsError)
-
-  """
   def get_user!(id), do: Repo.get!(User, id)
 
-  @doc """
-  Creates a user.
+  defp insert_or_update_user(params) do
+    case Repo.get_by(User, email: params.email) do
+      nil ->
+        IO.inspect(params)
+        create_user(params)
+      user ->
+        #update_user(user, params)
+        case update_user(user, params) do
+          {:ok, user} -> {:updated, user}
+          answer -> answer
+        end
+    end
+  end
 
-  ## Examples
-
-      iex> create_user(%{field: value})
-      {:ok, %User{}}
-
-      iex> create_user(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
+    |> IO.inspect()
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a user.
-
-  ## Examples
-
-      iex> update_user(user, %{field: new_value})
-      {:ok, %User{}}
-
-      iex> update_user(user, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_user(%User{} = user, attrs) do
     user
     |> User.changeset(attrs)
     |> Repo.update()
   end
 
-  @doc """
-  Deletes a User.
-
-  ## Examples
-
-      iex> delete_user(user)
-      {:ok, %User{}}
-
-      iex> delete_user(user)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_user(%User{} = user) do
     Repo.delete(user)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking user changes.
-
-  ## Examples
-
-      iex> change_user(user)
-      %Ecto.Changeset{source: %User{}}
-
-  """
   def change_user(%User{} = user) do
     User.changeset(user, %{})
   end
 
+  # -------------------------------- MEMBERSHIP ----------------------------------------
   alias Everlearn.Members.Membership
 
-  @doc """
-  Returns the list of memberships.
-
-  ## Examples
-
-      iex> list_memberships()
-      [%Membership{}, ...]
-
-  """
   def list_memberships do
     Repo.all(Membership)
   end
 
-  @doc """
-  Gets a single membership.
-
-  Raises `Ecto.NoResultsError` if the Membership does not exist.
-
-  ## Examples
-
-      iex> get_membership!(123)
-      %Membership{}
-
-      iex> get_membership!(456)
-      ** (Ecto.NoResultsError)
-
-  """
   def get_membership!(id), do: Repo.get!(Membership, id)
 
-  @doc """
-  Creates a membership.
-
-  ## Examples
-
-      iex> create_membership(%{field: value})
-      {:ok, %Membership{}}
-
-      iex> create_membership(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_membership(attrs \\ %{}) do
     %Membership{}
     |> Membership.changeset(attrs)
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a membership.
-
-  ## Examples
-
-      iex> update_membership(membership, %{field: new_value})
-      {:ok, %Membership{}}
-
-      iex> update_membership(membership, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_membership(%Membership{} = membership, attrs) do
     membership
     |> Membership.changeset(attrs)
     |> Repo.update()
   end
 
-  @doc """
-  Deletes a Membership.
-
-  ## Examples
-
-      iex> delete_membership(membership)
-      {:ok, %Membership{}}
-
-      iex> delete_membership(membership)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_membership(%Membership{} = membership) do
     Repo.delete(membership)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking membership changes.
-
-  ## Examples
-
-      iex> change_membership(membership)
-      %Ecto.Changeset{source: %Membership{}}
-
-  """
   def change_membership(%Membership{} = membership) do
     Membership.changeset(membership, %{})
   end
 
+  # -------------------------------- MEMORY ----------------------------------------
   alias Everlearn.Members.Memory
 
-  @doc """
-  Returns the list of memorys.
-
-  ## Examples
-
-      iex> list_memorys()
-      [%Memory{}, ...]
-
-  """
   def list_memorys do
     Repo.all(Memory)
   end
 
-  @doc """
-  Gets a single memory.
-
-  Raises `Ecto.NoResultsError` if the Memory does not exist.
-
-  ## Examples
-
-      iex> get_memory!(123)
-      %Memory{}
-
-      iex> get_memory!(456)
-      ** (Ecto.NoResultsError)
-
-  """
   def get_memory!(id), do: Repo.get!(Memory, id)
 
-  @doc """
-  Creates a memory.
-
-  ## Examples
-
-      iex> create_memory(%{field: value})
-      {:ok, %Memory{}}
-
-      iex> create_memory(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_memory(attrs \\ %{}) do
     %Memory{}
     |> Memory.changeset(attrs)
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a memory.
-
-  ## Examples
-
-      iex> update_memory(memory, %{field: new_value})
-      {:ok, %Memory{}}
-
-      iex> update_memory(memory, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_memory(%Memory{} = memory, attrs) do
     memory
     |> Memory.changeset(attrs)
     |> Repo.update()
   end
 
-  @doc """
-  Deletes a Memory.
-
-  ## Examples
-
-      iex> delete_memory(memory)
-      {:ok, %Memory{}}
-
-      iex> delete_memory(memory)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_memory(%Memory{} = memory) do
     Repo.delete(memory)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking memory changes.
-
-  ## Examples
-
-      iex> change_memory(memory)
-      %Ecto.Changeset{source: %Memory{}}
-
-  """
   def change_memory(%Memory{} = memory) do
     Memory.changeset(memory, %{})
   end

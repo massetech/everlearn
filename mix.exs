@@ -20,7 +20,7 @@ defmodule Everlearn.Mixfile do
   def application do
     [
       mod: {Everlearn.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :ueberauth, :ueberauth_google, :timex]
     ]
   end
 
@@ -44,6 +44,9 @@ defmodule Everlearn.Mixfile do
       {:phoenix_haml, "~> 0.2"},
       {:font_awesome_phoenix, "~> 0.1"},
       {:csv, "~> 2.0.0"},          # Converts csvs
+      {:ueberauth, "~> 0.4"},
+      {:ueberauth_google, "~> 0.5"},
+      {:timex, "~> 3.1"}
     ]
   end
 
