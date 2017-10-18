@@ -4,7 +4,8 @@ defmodule EverlearnWeb.PageController do
   def index(conn, _params) do
     conn
     |> put_flash(:info, "Welcome : info")
+    |> put_flash(:success, "Welcome : success")
     |> put_flash(:error, "Welcome : error")
-    render conn, "index.html"
+    |> render("index.html")
   end
 end
