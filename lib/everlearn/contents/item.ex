@@ -1,7 +1,7 @@
 defmodule Everlearn.Contents.Item do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Everlearn.Contents.Item
+  alias Everlearn.Contents.{Item, Topic, Card}
 
 
   schema "items" do
@@ -10,16 +10,16 @@ defmodule Everlearn.Contents.Item do
     field :group, :string
     field :level, :integer
     field :title, :string
-    field :topic_id, :id
-
+    belongs_to :topic, Topic
+    has_many :cards, Card
     timestamps()
   end
 
   @doc false
   def changeset(%Item{} = item, attrs) do
     item
-    |> cast(attrs, [:group, :title, :level, :description, :active])
-    #|> foreign_key_constraint
-    |> validate_required([:group, :title, :level, :description, :active])
+    |> cast(attrs, [:group, :title, :level, :description, :active, :topic_id])
+    |> validate_required([:group, :title, :level, :description, :active, :topic_id])
+    |> assoc_constraint(:topic)
   end
 end

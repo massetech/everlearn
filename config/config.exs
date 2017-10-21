@@ -11,7 +11,8 @@ config :everlearn,
 
 # Added to manage HAML
 config :phoenix, :template_engines,
-  haml: PhoenixHaml.Engine
+  haml: PhoenixHaml.Engine,
+  drab: Drab.Live.Engine
 
 # Configures the endpoint
 config :everlearn, EverlearnWeb.Endpoint,

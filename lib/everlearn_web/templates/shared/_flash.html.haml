@@ -1,20 +1,26 @@
 %flash.flash
   .container
     - if get_flash(@conn, :info) do
-      .row
-        .col
-          .card.blue.darken-2.flash_msg.z-depth-4
+      .card.light-blue.darken-2.flash_msg.z-depth-4.hoverable
+        .row.valign-wrapper
+          .col.s3.m1.center-align
+            %i.medium.material-icons.icon-white="info"
+          .col.s9.m11.left-align
             .card-content.white-text
-              %h6= get_flash(@conn, :info)
+              %h5= get_flash(@conn, :info)
     - if get_flash(@conn, :error) do
-      .card.red.darken-2.flash_msg.z-depth-4
-        .row
-          .col.s12.m10
+      .card.red.darken-4.flash_msg.z-depth-4.hoverable
+        .row.valign-wrapper
+          .col.s3.m1.center-align
+            %i.medium.material-icons.icon-white="cancel"
+          .col.s9.m11.left-align
             .card-content.white-text
-              %h6= get_flash(@conn, :error)
+              %h5= get_flash(@conn, :error)
     - if get_flash(@conn, :success) do
-      .card.green.darken-2.flash_msg.z-depth-4
-        .row
-          .col.s12.m10
+      .card.green.darken-1.flash_msg.z-depth-4.hoverable
+        .row.valign-wrapper
+          .col.s3.m1.center-align
+            %i.medium.material-icons.icon-white="check_circle"
+          .col.s9.m11.left-align
             .card-content.white-text
-              %h6= get_flash(@conn, :success)
+              %h5= get_flash(@conn, :success)

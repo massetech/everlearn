@@ -31,6 +31,6 @@ let init_flash = () => {
   setTimeout(function(){
     $('.flash_msg').fadeOut(800);
     //console.log("Flash fired Out");
-  }, 8000);
+  }, 5000);
   console.log("Flash fired");
 }

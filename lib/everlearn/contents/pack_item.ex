@@ -14,7 +14,7 @@ defmodule Everlearn.Contents.PackItem do
   @doc false
   def changeset(%PackItem{} = pack_item, attrs) do
     pack_item
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:item_id, :pack_id])
+    |> validate_required([:item_id, :pack_id])
   end
 end

@@ -1,0 +1,34 @@
+<div class="row">
+  <%= @pack.title %>
+  <span><%= link "Edit", to: pack_path(@conn, :edit, @pack) %></span>
+</div>
+
+<div class="row">
+  <%= @pack.classroom.title %>
+  <%= @pack.level %>
+  <%= @pack.active %>
+</div>
+
+<div class="row">
+  <%= "filter place" %>
+</div>
+
+<div class="row">
+  <%= @pack.classroom.title %>
+</div>
+
+
+
+
+<%= for item <- @items do %>
+  <a class="waves-effect waves-light btn grey" onclick="Drab.run_handler('click', 'clicked', {click: 'clickety-click'});">
+    <%= item.title %>
+  </a>
+<% end %>
+
+<button drab-event='click' drab-handler='button_clicked'>clickme</button>
+<button drab-click='button_clicked'><%= @button %></button>
+
+<button onclick="Drab.run_handler('click', 'clicked', {click: 'clickety-click'});">
+  Clickme
+</button>

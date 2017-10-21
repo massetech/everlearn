@@ -11,6 +11,7 @@ defmodule EverlearnWeb.ItemController do
 
   def index(conn, _params) do
     items = Contents.list_items()
+    |> IO.inspect()
     changeset = Contents.change_card(%Card{})
     render(conn, "index.html", items: items, changeset: changeset)
   end

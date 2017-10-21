@@ -16,17 +16,17 @@ defmodule EverlearnWeb.CardController do
 
   # Module to import Cards and items from CSV
   def import(conn, %{"card" => card_params}) do
+    topic_id = card_params["topic_id"]
     callback = card_params["file"].path
     |> File.stream!()
     |> CSV.decode(separator: ?;, headers: [
       :item_id, :item_group, :item_title, :item_level, :item_description, :item_active,
       :card_language, :card_title, :card_active
     ])
-    |> Enum.map(fn (card) ->
-      Everlearn.Contents.insert_card(card)
+    |> Enum.map(fn (line) ->
+      Everlearn.Contents.insert_card(line, topic_id)
       |> IO.inspect()
     end)
-    #|> IO.inspect()
     conn
     |> redirect(to: item_path(conn, :index))
     # |> Enum.filter(fn

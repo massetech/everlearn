@@ -1,12 +1,13 @@
 defmodule EverlearnWeb.PackController do
   use EverlearnWeb, :controller
+  use Drab.Controller
 
   alias Everlearn.Contents
   alias Everlearn.Contents.Pack
 
   def index(conn, _params) do
     packs = Contents.list_packs()
-    render(conn, "index.html", packs: packs)
+    render conn, "index.html", packs: packs, welcome_text: "Welcome to Drab!"
   end
 
   def new(conn, _params) do
@@ -27,7 +28,8 @@ defmodule EverlearnWeb.PackController do
 
   def show(conn, %{"id" => id}) do
     pack = Contents.get_pack!(id)
-    render(conn, "show.html", pack: pack)
+    items = Contents.list_items
+    render conn, "show.html", pack: pack, welcome_text: "Welcome to Drab!", items: items, button: 'ici'
   end
 
   def edit(conn, %{"id" => id}) do

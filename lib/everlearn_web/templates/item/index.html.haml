@@ -1,27 +1,37 @@
-.row
-  %h2= "Listing Items"
-  = link "New Item", to: item_path(@conn, :new)
+.row.valign-wrapper
+  .col.s12.m10
+    %h3= "Items"
+  .col.s12.m2.center-align
+    - link to: item_path(@conn, :new), class: "btn-floating btn-large waves-effect waves-light blue valign-wrapper center-align" do
+      %i.material-icons= "add"
 .row
   = render CardView, "import_form.html", changeset: @changeset, topics: @topics, action: import_card_path(@conn, :import)
-
 .row
-  %table.bordered.highlight.centered.responsive-table
-    %thead
-      %tr
-        %th= "Group"
-        %th= "Title"
-        %th= "Level"
-        %th= "Description"
-        %th= "Active"
-        %th= "Actions"
+  %table.bordered.responsive-table
+    %tr
+      %th.center-align= "Title"
+      %th.center-align= "Topic"
+      %th.center-align= "Group"
+      %th.center-align= "Level"
+      %th.center-align= "Description"
+      %th.center-align= "Active"
+      %th.center-align= "Actions"
     - for item <- @items do
       %tr
-        %th= item.group
-        %th= item.title
-        %th= item.level
-        %th= item.description
-        %th= item.active
-        %th
-          = link "Show", to: item_path(@conn, :show, item), class: "btn btn-default btn-xs"
-          = link "Edit", to: item_path(@conn, :edit, item), class: "btn btn-default btn-xs"
-          = link "Delete", to: item_path(@conn, :delete, item), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs"
+        %td.center-align= item.title
+        %td.center-align= item.topic.title
+        %td.center-align= item.group
+        %td.center-align= item.level
+        %td.center-align= item.description
+        %td.center-align
+          - if item.active == true do
+            %i.material-icons.green-text.darken-4= "check_circle"
+          - else
+            %i.material-icons.red-text.darken-4= "cancel"
+        %td.center-align
+          -# - link to: item_path(@conn, :edit, item), class: "waves-effect waves-light marged" do
+          -#   %i.material-icons.indigo-text.darken-4= "remove_red_eye"
+          - link to: item_path(@conn, :edit, item), class: "waves-effect waves-light marged" do
+            %i.material-icons.blue-grey-text.darken-4= "edit"
+          - link to: item_path(@conn, :delete, item), method: :delete, data: [confirm: "Are you sure?"], class: "waves-effect waves-light marged" do
+            %i.material-icons.red-text.accent-4= "delete_forever"

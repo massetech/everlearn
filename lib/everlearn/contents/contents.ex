@@ -11,7 +11,9 @@ defmodule Everlearn.Contents do
   alias Everlearn.Contents.Pack
 
   def list_packs do
-    Repo.all(Pack)
+    Pack
+    |> Repo.all()
+    |> Repo.preload(:classroom)
   end
 
   def get_pack!(id), do: Repo.get!(Pack, id)
@@ -72,13 +74,14 @@ defmodule Everlearn.Contents do
 # ----------------------------------------------------------------------------
   alias Everlearn.Contents.Item
 
-  def insert_item(fields) do
+  def insert_item(fields, topic_id) do
     %{:item_id => item_id, :item_title => item_title, :item_level => item_level, :item_group => item_group,
       :item_active => item_active, :item_description => item_description} = fields
     cond do
       item_id == '' && item_title != "" && item_level != '' || item_group != "" ->
         # It's a new item : try to create it
         Item.changeset(%Item{}, %{
+          topic_id: topic_id,
           active: convert_boolean(item_active),
           description: item_description,
           group: item_group,
@@ -91,6 +94,7 @@ defmodule Everlearn.Contents do
         # It's an existing item : try to update it
         Item.changeset(%Item{}, %{
           id: item_id,
+          topic_id: topic_id,
           active: convert_boolean(item_active),
           description: item_description,
           group: item_group,
@@ -115,7 +119,9 @@ defmodule Everlearn.Contents do
   end
 
   def list_items do
-    Repo.all(Item)
+    Item
+    |> Repo.all()
+    |> Repo.preload(:topic)
   end
 
   def get_item!(id), do: Repo.get!(Item, id)
@@ -141,35 +147,6 @@ defmodule Everlearn.Contents do
   end
 
 # ----------------------------------------------------------------------------
-  alias Everlearn.Contents.PackItem
-
-  def list_packitems do
-    Repo.all(PackItem)
-  end
-
-  def get_pack_item!(id), do: Repo.get!(PackItem, id)
-
-  def create_pack_item(attrs \\ %{}) do
-    %PackItem{}
-    |> PackItem.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  def update_pack_item(%PackItem{} = pack_item, attrs) do
-    pack_item
-    |> PackItem.changeset(attrs)
-    |> Repo.update()
-  end
-
-  def delete_pack_item(%PackItem{} = pack_item) do
-    Repo.delete(pack_item)
-  end
-
-  def change_pack_item(%PackItem{} = pack_item) do
-    PackItem.changeset(pack_item, %{})
-  end
-
-# ----------------------------------------------------------------------------
   alias Everlearn.Contents.Topic
 
   def topic_select_btn do
@@ -177,7 +154,9 @@ defmodule Everlearn.Contents do
   end
 
   def list_topics do
-    Repo.all(Topic)
+    Topic
+    |> Repo.all()
+    |> Repo.preload(:classroom)
   end
 
   def get_topic!(id), do: Repo.get!(Topic, id)
@@ -205,11 +184,12 @@ defmodule Everlearn.Contents do
   # ----------------------------------------------------------------------------
   alias Everlearn.Contents.Card
 
-  def insert_card(line) do
+  def insert_card(line, topic_id) do
     {status, fields} = line
     case status do
       :ok ->
-        case insert_item(fields) do
+        case insert_item(fields, topic_id) do
+          # Call function to create or update item
           {:ok, item_struct} ->
             # Item was created, updated or found : create the card with item_id
             %{:card_active => card_active, :card_language => card_language, :card_title => card_title} = fields
@@ -227,7 +207,7 @@ defmodule Everlearn.Contents do
       :error ->
         %{:item_id => item_id} = fields
         IO.inspect(line)
-        {:error_line, "some errors where found on line #{item_id}"}
+        {:error_line, "some errors where found on item with ID = #{item_id}"}
     end
   end
 
@@ -257,4 +237,20 @@ defmodule Everlearn.Contents do
     Card.changeset(card, %{})
   end
 
+  # ----------------------------------------------------------------------------
+  alias Everlearn.Contents.PackItem
+
+  def create_pack_item(attrs \\ %{}) do
+    %PackItem{}
+    |> PackItem.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def delete_pack_item(%PackItem{} = pack_item) do
+    Repo.delete(pack_item)
+  end
+
+  def change_pack_item(%PackItem{} = pack_item) do
+    PackItem.changeset(pack_item, %{})
+  end
 end

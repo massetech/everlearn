@@ -9,10 +9,19 @@ main {
 }
 .flash_msg {
   display: none;
+  border-radius: 15px !important;
 }
 .flash {
   position: absolute;
   width: 100%;
   margin-top: 5em;
   //opacity: 0.8;
+}
+
+.icon-white {
+  color: white;
+}
+
+a.marged {
+  margin: 0 1em;
 }

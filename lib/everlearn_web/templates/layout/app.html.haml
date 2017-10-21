@@ -9,6 +9,7 @@
 
     %title= 'Welcome to Everlean !'
     %link(rel="stylesheet" href='#{static_path(@conn, "/css/app.css")}')
+    %link(rel="stylesheet" href='https://fonts.googleapis.com/icon?family=Material+Icons')
 
   %body
     = render EverlearnWeb.SharedView, "_header.html", conn: @conn
@@ -18,4 +19,4 @@
     = render EverlearnWeb.SharedView, "_footer.html", conn: @conn
     %script(src='#{static_path(@conn, "/js/app.js")}')
     =# render_gon_script(@conn)
-    =# Drab.Client.js(@conn)
+    = Drab.Client.js(@conn)
