@@ -18,7 +18,7 @@ defmodule EverlearnWeb.Router do
   scope "/", EverlearnWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    get "/", MainController, :welcome, as: :root
     resources "/users", UserController
     resources "/classrooms", ClassroomController
     resources "/topics", TopicController
