@@ -7,13 +7,24 @@ defmodule Everlearn.Contents do
   import Everlearn.{CustomMethods}
   alias Everlearn.Repo
 
+# ------------------------- Shared functions ----------------------------------------
+
+
 # ----------------------------------------------------------------------------
   alias Everlearn.Contents.Pack
+
+  def pack_level_select_btn do
+    [beginner: 1, advanced: 2, expert: 3]
+  end
 
   def list_packs do
     Pack
     |> Repo.all()
     |> Repo.preload(:classroom)
+  end
+  def list_packs(query) do
+    Repo.all(query)
+    |> Repo.preload([:classroom]) #, packitem: [:item]
   end
 
   def get_pack!(id), do: Repo.get!(Pack, id)
@@ -118,10 +129,14 @@ defmodule Everlearn.Contents do
     end
   end
 
-  def list_items do
+  def list_items() do
     Item
     |> Repo.all()
     |> Repo.preload(:topic)
+  end
+  def list_items(query) do
+    Repo.all(query)
+    |> Repo.preload([topic: [:classroom]])
   end
 
   def get_item!(id), do: Repo.get!(Item, id)

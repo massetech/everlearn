@@ -10,6 +10,7 @@
   %table.bordered.responsive-table
     %tr
       %th.center-align= "Title"
+      %th.center-align= "Classroom"
       %th.center-align= "Topic"
       %th.center-align= "Group"
       %th.center-align= "Level"
@@ -19,6 +20,7 @@
     - for item <- @items do
       %tr
         %td.center-align= item.title
+        %td.center-align= item.topic.classroom.title
         %td.center-align= item.topic.title
         %td.center-align= item.group
         %td.center-align= item.level
@@ -35,3 +37,6 @@
             %i.material-icons.blue-grey-text.darken-4= "edit"
           - link to: item_path(@conn, :delete, item), method: :delete, data: [confirm: "Are you sure?"], class: "waves-effect waves-light marged" do
             %i.material-icons.red-text.accent-4= "delete_forever"
+
+.row
+  = pagination_link(@conn, @rummage)

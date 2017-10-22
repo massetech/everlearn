@@ -1,0 +1,25 @@
+- form_for @changeset, @action, fn f ->
+  - if @changeset.action do
+    .row
+      .alert.alert-danger
+        %p= "Oops, something went wrong! Please check the errors below."
+  .row
+    .input-field.col.s12
+      = select f, :classroom_id, @classrooms
+      = label f, :classroom_id
+  .row
+    .input-field.col.s12
+      = text_input f, :title, class: "validate", type: "text"
+      = label f, :title
+      = error_tag f, :title
+  .row
+    .input-field.col.s12
+      = select f, :level, @levels
+      = label f, :level
+  .row
+    .input-field.col.s12
+      = text_input f, :description, class: "validate", type: "text"
+      = label f, :description
+      = error_tag f, :description
+  .form-group
+    = submit "Submit", class: "btn btn-primary"

@@ -2,7 +2,7 @@ defmodule Everlearn.Contents.Item do
   use Ecto.Schema
   import Ecto.Changeset
   alias Everlearn.Contents.{Item, Topic, Card}
-
+  use Rummage.Ecto
 
   schema "items" do
     field :active, :boolean, default: false

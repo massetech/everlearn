@@ -33,7 +33,7 @@ defmodule Everlearn.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.3.0"},
+      {:phoenix, "~> 1.3.0", override: true},
       {:phoenix_pubsub, "~> 1.0"},
       {:phoenix_ecto, "~> 3.2"},
       {:postgrex, ">= 0.0.0"},
@@ -47,7 +47,8 @@ defmodule Everlearn.Mixfile do
       {:ueberauth, "~> 0.4"},
       {:ueberauth_google, "~> 0.5"},
       {:timex, "~> 3.1"},
-      {:drab, "~> 0.5"}
+      {:drab, "~> 0.5"},
+      {:rummage_phoenix, "~> 1.0.0"}
     ]
   end
 

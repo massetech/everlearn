@@ -1,5 +1,6 @@
 defmodule EverlearnWeb.ItemController do
   use EverlearnWeb, :controller
+  use Rummage.Phoenix.Controller
 
   alias Everlearn.Contents
   alias Everlearn.Contents.{Item, Card}
@@ -9,11 +10,12 @@ defmodule EverlearnWeb.ItemController do
     assign(conn, :topics, Everlearn.Contents.topic_select_btn())
   end
 
-  def index(conn, _params) do
-    items = Contents.list_items()
-    |> IO.inspect()
+  def index(conn, params) do
+    {query, rummage} = Item
+    |> Item.rummage(params["rummage"])
+    items = Contents.list_items(query)
     changeset = Contents.change_card(%Card{})
-    render(conn, "index.html", items: items, changeset: changeset)
+    render(conn, "index.html", items: items, changeset: changeset, rummage: rummage)
   end
 
   def new(conn, _params) do

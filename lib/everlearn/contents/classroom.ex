@@ -7,6 +7,7 @@ defmodule Everlearn.Contents.Classroom do
   schema "classrooms" do
     field :title, :string
     has_many :topics, Topic
+    has_many :items, through: [:topics, :items]
     timestamps()
   end
 

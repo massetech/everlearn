@@ -16,5 +16,6 @@ defmodule Everlearn.Contents.Topic do
     topic
     |> cast(attrs, [:title, :classroom_id])
     |> validate_required([:title, :classroom_id])
+    |> assoc_constraint(:classroom)
   end
 end

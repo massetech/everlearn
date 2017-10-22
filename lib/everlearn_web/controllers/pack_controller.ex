@@ -1,13 +1,23 @@
 defmodule EverlearnWeb.PackController do
   use EverlearnWeb, :controller
   use Drab.Controller
+  use Rummage.Phoenix.Controller
 
   alias Everlearn.Contents
   alias Everlearn.Contents.Pack
+  plug :load_select when action in [:new, :edit]
 
-  def index(conn, _params) do
-    packs = Contents.list_packs()
-    render conn, "index.html", packs: packs, welcome_text: "Welcome to Drab!"
+  defp load_select(conn, _params) do
+    conn
+    |> assign(:classrooms, Contents.classroom_select_btn())
+    |> assign(:levels, Contents.pack_level_select_btn())
+  end
+
+  def index(conn, params) do
+    {query, rummage} = Pack
+    |> Pack.rummage(params["rummage"])
+    packs = Contents.list_packs(query)
+    render conn, "index.html", packs: packs, rummage: rummage
   end
 
   def new(conn, _params) do
