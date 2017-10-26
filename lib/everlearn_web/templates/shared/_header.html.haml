@@ -1,8 +1,27 @@
 %header
-  %nav
+  %nav.navbar-fixed.transparent.z-depth-1
     .nav-wrapper
-      = link "Everlearn", to: root_path(@conn, :welcome)
+      - link to: root_path(@conn, :welcome), class: "brand-logo" do
+        .row.valign-wrapper
+          .left
+            %i.material-icons.light-blue-text.accent-1= "verified_user"
+          .right
+            %h5.light-blue-text.text-darken-3= "Everlearn"
+        =# img_tag static_path(@conn, "/images/logo-text.png")
+      %a.button-collapse{href: "#", data-activates: "mobile-demo"}
+        %i.material-icons= "menu"
       %ul.right.right.hide-on-med-and-down{id: "nav-mobile"}
+        %li= link "Classrooms", to: classroom_path(@conn, :index), class: "teal-text text-darken-4.active"
+        %li= link "Topics", to: topic_path(@conn, :index), class: "teal-text text-darken-4"
+        %li= link "Items", to: item_path(@conn, :index), class: "teal-text text-darken-4"
+        %li= link "Cards", to: card_path(@conn, :index), class: "teal-text text-darken-4"
+        %li= link "Packs", to: pack_path(@conn, :index), class: "teal-text text-darken-4"
+        %li= link "Memories", to: memory_path(@conn, :index), class: "teal-text text-darken-4"
+        - if @conn.assigns[:user] do
+          %li= link "Log out", to: auth_path(@conn, :delete), method: :delete, class: "teal-text text-darken-4"
+        - else
+          %li= link "Log in with google", to: auth_path(@conn, :request, "google"), class: "teal-text text-darken-4"
+      %ul.side-nav{id: "mobile-demo"}
         %li= link "Classrooms", to: classroom_path(@conn, :index)
         %li= link "Topics", to: topic_path(@conn, :index)
         %li= link "Items", to: item_path(@conn, :index)

@@ -7,6 +7,15 @@ body {
 main {
   flex: 1 0 auto;
 }
+a.brand-logo{
+  margin-left: 1em;
+}
+nav.top-nav{
+  height: 6em;
+  .title {margin-left: 1em;}
+  .nav-wrapper {width: 100%;}
+}
+
 .flash_msg {
   display: none;
   border-radius: 15px !important;
