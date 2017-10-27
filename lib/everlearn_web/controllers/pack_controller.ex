@@ -32,7 +32,10 @@ defmodule EverlearnWeb.PackController do
         |> put_flash(:info, "Pack created successfully.")
         |> redirect(to: pack_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+        conn
+        |> load_select("")
+        |> put_flash(:error, "Please check the errors below.")
+        |> render "new.html", changeset: changeset
     end
   end
 

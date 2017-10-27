@@ -1,26 +1,31 @@
 %flash.flash
   .container
-    - if get_flash(@conn, :info) do
-      .card.light-blue.darken-2.flash_msg.z-depth-4.hoverable
-        .row.valign-wrapper
-          .col.s3.m1.center-align
-            %i.medium.material-icons.icon-white="info"
-          .col.s9.m11.left-align
-            .card-content.white-text
-              %h5= get_flash(@conn, :info)
-    - if get_flash(@conn, :error) do
-      .card.red.darken-4.flash_msg.z-depth-4.hoverable
-        .row.valign-wrapper
-          .col.s3.m1.center-align
-            %i.medium.material-icons.icon-white="cancel"
-          .col.s9.m11.left-align
-            .card-content.white-text
-              %h5= get_flash(@conn, :error)
-    - if get_flash(@conn, :success) do
-      .card.green.darken-1.flash_msg.z-depth-4.hoverable
-        .row.valign-wrapper
-          .col.s3.m1.center-align
-            %i.medium.material-icons.icon-white="check_circle"
-          .col.s9.m11.left-align
-            .card-content.white-text
-              %h5= get_flash(@conn, :success)
+    .row
+      .col.s12.m8.offset-m2
+        - if get_flash(@conn, :info) do
+          .card.light-blue.lighten-5.flash_msg.z-depth-4.hoverable
+            .row.card-content.valign-wrapper
+              .col.s1.left-align
+                %i.left.small.material-icons="info"
+              .col.s10.center-align
+                %h5= get_flash(@conn, :info)
+              .col.s1.right-align
+                %i.small.material-icons="cancel"
+        - if get_flash(@conn, :error) do
+          .card.red.accent-4.flash_msg.z-depth-4.hoverable
+            .row.card-content.valign-wrapper.white-text
+              .col.s1.left-align
+                %i.left.small.material-icons.icon-white="warning"
+              .col.s10.center-align
+                %h5= get_flash(@conn, :error)
+              .col.s1.right-align
+                %i.small.material-icons.icon-white="cancel"
+        - if get_flash(@conn, :success) do
+          .card.teal.accent-4.flash_msg.z-depth-4.hoverable
+            .row.card-content.valign-wrapper.white-text
+              .col.s1.left-align
+                %i.left.small.material-icons.icon-white="check-circle"
+              .col.s10.center-align
+                %h5= get_flash(@conn, :success)
+              .col.s1.right-align
+                %i.small.material-icons.icon-white="cancel"

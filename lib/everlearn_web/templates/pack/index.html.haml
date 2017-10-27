@@ -1,39 +1,41 @@
-%nav.top-nav.light-blue.lighten-5.z-depth-0.valign-wrapper.nav-extended
-  .nav-wrapper
-    -# -# .col.10
-    %h3.title.cyan-text.text-darken-3= "Packs"
-    -# -# .col.2
-    -# -#  valign-wrapper center-align
-    -# - link to: pack_path(@conn, :new), class: "btn-floating btn-large halfway-fab waves-effect waves-light cyan darken-3" do
-    -#   %i.material-icons= "add"
+%nav.top-nav.light-blue.lighten-5.z-depth-0.nav-extended
+  .nav-wrapper.valign-wrapper
+    %h4.title.teal-text.text-darken-2= "Packs"
+    - link to: pack_path(@conn, :new), class: "btn-floating btn-large halfway-fab waves-effect waves-light teal darken-2" do
+      %i.material-icons= "add"
 .container
   .row
-    %table.bordered.responsive-table
-      %tr
-        %th.center-align.teal-text.text-darken-4= "Title"
-        %th.center-align.teal-text.text-darken-4= "Classroom"
-        %th.center-align.teal-text.text-darken-4= "Level"
-        %th.center-align.teal-text.text-darken-4= "Description"
-        %th.center-align.teal-text.text-darken-4= "Active"
-        %th.center-align.teal-text.text-darken-4= "Actions"
-      - for pack <- @packs do
+    .section
+  -# .divider
+  .row
+    .section
+      %table.bordered.responsive-table
         %tr
-          %td.center-align= pack.title
-          %td.center-align= pack.classroom.title
-          %td.center-align= pack.level
-          %td.center-align= pack.description
-          %td.center-align
-            - if pack.active == true do
-              %i.material-icons.green-text.darken-4= "check_circle"
-            - else
-              %i.material-icons.red-text.darken-4= "cancel"
-          %td.center-align
-            - link to: pack_path(@conn, :show, pack), class: "waves-effect waves-light marged" do
-              %i.material-icons.indigo-text.darken-4= "remove_red_eye"
-            - link to: pack_path(@conn, :edit, pack), class: "waves-effect waves-light marged" do
-              %i.material-icons.blue-grey-text.darken-4= "edit"
-            - link to: pack_path(@conn, :delete, pack), method: :delete, data: [confirm: "Are you sure?"], class: "waves-effect waves-light marged" do
-              %i.material-icons.red-text.accent-4= "delete_forever"
+          %th.center-align.teal-text.text-darken-4= "Title"
+          %th.center-align.teal-text.text-darken-4= "Classroom"
+          %th.center-align.teal-text.text-darken-4= "Level"
+          %th.center-align.teal-text.text-darken-4= "Description"
+          %th.center-align.teal-text.text-darken-4= "Active"
+          %th.center-align.teal-text.text-darken-4= "Actions"
+        - for pack <- @packs do
+          %tr
+            %td.center-align.teal-text.text-darken-4= pack.title
+            %td.center-align.teal-text.text-darken-4= pack.classroom.title
+            %td.center-align.teal-text.text-darken-4= pack.level
+            %td.center-align.teal-text.text-darken-4= pack.description
+            %td.center-align
+              - if pack.active == true do
+                %i.material-icons.green-text.darken-4= "check_circle"
+              - else
+                %i.material-icons.pink-text.darken-4= "cancel"
+            %td.center-align
+              - link to: pack_path(@conn, :show, pack), class: "waves-effect waves-light marged" do
+                %i.material-icons.indigo-text.darken-4= "remove_red_eye"
+              - link to: pack_path(@conn, :edit, pack), class: "waves-effect waves-light marged" do
+                %i.material-icons.blue-grey-text.darken-4= "edit"
+              - link to: pack_path(@conn, :delete, pack), method: :delete, data: [confirm: "Are you sure?"], class: "waves-effect waves-light marged" do
+                %i.material-icons.pink-text.darken-4= "delete_forever"
 
   .row
-    = pagination_link(@conn, @rummage)
+    .section
+      = pagination_link(@conn, @rummage)
