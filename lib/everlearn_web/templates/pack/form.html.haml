@@ -19,5 +19,13 @@
           = label f, :description
           = error_tag f, :description
   .section
+    .row
+      .switch.col.s12.center-align
+        %label
+          = "Off"
+          = checkbox f, :active
+          %span.lever
+          = "On"
+  .section
     .form-group.center-align
       = submit "Submit", class: "btn-large waves-effect waves-light teal accent-4"

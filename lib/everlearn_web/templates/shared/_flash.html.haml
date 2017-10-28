@@ -3,7 +3,7 @@
     .row
       .col.s12.m8.offset-m2
         - if get_flash(@conn, :info) do
-          .card.light-blue.lighten-5.flash_msg.z-depth-4.hoverable
+          .card.color-info.flash_msg.z-depth-4.hoverable
             .row.card-content.valign-wrapper
               .col.s1.left-align
                 %i.left.small.material-icons="info"
@@ -12,20 +12,20 @@
               .col.s1.right-align
                 %i.small.material-icons="cancel"
         - if get_flash(@conn, :error) do
-          .card.red.accent-4.flash_msg.z-depth-4.hoverable
-            .row.card-content.valign-wrapper.white-text
+          .card.color-error.flash_msg.z-depth-4.hoverable
+            .row.card-content.valign-wrapper
               .col.s1.left-align
-                %i.left.small.material-icons.icon-white="warning"
+                %i.left.small.material-icons="warning"
               .col.s10.center-align
                 %h5= get_flash(@conn, :error)
               .col.s1.right-align
-                %i.small.material-icons.icon-white="cancel"
+                %i.small.material-icons="cancel"
         - if get_flash(@conn, :success) do
-          .card.teal.accent-4.flash_msg.z-depth-4.hoverable
-            .row.card-content.valign-wrapper.white-text
+          .card.color-success.flash_msg.z-depth-4.hoverable
+            .row.card-content.valign-wrapper
               .col.s1.left-align
-                %i.left.small.material-icons.icon-white="check-circle"
+                %i.left.small.material-icons="check-circle"
               .col.s10.center-align
                 %h5= get_flash(@conn, :success)
               .col.s1.right-align
-                %i.small.material-icons.icon-white="cancel"
+                %i.small.material-icons="cancel"
