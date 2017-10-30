@@ -1,0 +1,32 @@
+%nav.top-nav.z-depth-0.nav-extended.color-banner
+  .nav-wrapper.valign-wrapper
+    %h4.title.color-title= "Pack : #{@pack.title}"
+    - link to: pack_path(@conn, :index), class: "btn-floating btn-large halfway-fab waves-effect waves-light color-btn-action" do
+      %i.material-icons= "keyboard_arrow_left"
+.container
+  .row
+    .col.s3
+      = @pack.classroom.title
+    .col.s3
+      = @pack.level
+    .col.s3
+      = @pack.active
+.container
+  .row
+    .section
+    -# Filter place
+  .row
+    .section
+      = for item <- @items do
+        -# =# render EverlearnWeb.SharedView, "_header.html", conn: @conn
+        -# =# render "item_btn.html.drab", Map.put(assigns, :action, pack_path(@conn, :update, @pack))
+        -# -# %button.waves-effect.waves-light.color-banner{onclick: "Drab.run_handler('click', 'clicked', {click: 'clickety-click'});"}
+        -# -#   = item.title
+        =# render "item_btn.html", conn: @conn, drab: "red", item: item, pack: @pack
+        %button.green{id: "#{item.id}", drab-click: "toogle_pack", data-item-id: "#{item.id}", data-pack-id: "#{@pack.id}"}
+          = item.title
+        %span.task.label.label-danger{task-id="#{item.id}"}
+          = item.title
+  -# .row
+  -#   .section
+  -#     = pagination_link(@conn, @rummage)

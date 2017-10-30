@@ -22,12 +22,17 @@ defmodule Everlearn.Contents do
     |> Repo.all()
     |> Repo.preload(:classroom)
   end
+
   def list_packs(query) do
     Repo.all(query)
     |> Repo.preload([:classroom]) #, packitem: [:item]
   end
 
-  def get_pack!(id), do: Repo.get!(Pack, id)
+  def get_pack!(id) do
+    Pack
+    |> Repo.get!(id)
+    |> Repo.preload([:classroom])
+  end
 
   def create_pack(attrs \\ %{}) do
     %Pack{}
@@ -254,6 +259,23 @@ defmodule Everlearn.Contents do
 
   # ----------------------------------------------------------------------------
   alias Everlearn.Contents.PackItem
+  def toogle_pack_item(item_id, pack_id) do
+    case get_pack_item(item_id, pack_id) do
+      %PackItem{} = pack_item ->
+        # There is allready a PackItem : delete it
+        delete_pack_item(pack_item)
+      nil ->
+        # There wasnt any PackItem : create it
+        create_pack_item(%{item_id: item_id, pack_id: pack_id})
+    end
+  end
+
+  def get_pack_item(item_id, pack_id) do
+    query = from p in PackItem,
+      where: p.item_id == ^item_id and p.pack_id == ^pack_id,
+      select: p
+    Repo.one(query)
+  end
 
   def create_pack_item(attrs \\ %{}) do
     %PackItem{}

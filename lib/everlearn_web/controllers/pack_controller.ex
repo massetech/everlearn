@@ -35,14 +35,14 @@ defmodule EverlearnWeb.PackController do
         conn
         |> load_select("")
         |> put_flash(:error, "Please check the errors below.")
-        |> render "new.html", changeset: changeset
+        |> render("new.html", changeset: changeset)
     end
   end
 
   def show(conn, %{"id" => id}) do
     pack = Contents.get_pack!(id)
     items = Contents.list_items
-    render conn, "show.html", pack: pack, welcome_text: "Welcome to Drab!", items: items, button: 'ici'
+    render conn, "show.html", pack: pack, items: items, button: 'test'
   end
 
   def edit(conn, %{"id" => id}) do

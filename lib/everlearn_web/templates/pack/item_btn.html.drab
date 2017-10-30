@@ -1,0 +1,3 @@
+<button class="waves-effect waves-light <%= @drab %>" drab-click="toogle_pack" data-item-id=<%= @item.id %> data-pack-id=<%= @pack.id %>>
+  <%= @item.title %>
+</button>
