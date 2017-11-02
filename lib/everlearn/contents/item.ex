@@ -1,7 +1,7 @@
 defmodule Everlearn.Contents.Item do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Everlearn.Contents.{Item, Topic, Card}
+  alias Everlearn.Contents.{Item, Topic, Card, PackItem}
   use Rummage.Ecto
 
   schema "items" do
@@ -12,6 +12,7 @@ defmodule Everlearn.Contents.Item do
     field :title, :string
     belongs_to :topic, Topic
     has_many :cards, Card
+    has_many :packitems, PackItem
     timestamps()
   end
 

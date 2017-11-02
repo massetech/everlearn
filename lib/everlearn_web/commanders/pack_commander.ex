@@ -10,13 +10,14 @@ defmodule EverlearnWeb.PackCommander do
   def toogle_pack(socket, payload) do
     %{"itemId" => item_id, "packId" => pack_id} = payload["dataset"]
     case Everlearn.Contents.toogle_pack_item(item_id, pack_id) do
-      {:ok, answer} ->
-        # Add the difference between created and deleted
-        IO.inspect(answer)
+      {:created, pack_item} ->
         socket
-        |> Drab.Browser.console("PackItem toogled for item #{item_id} and pack #{pack_id}")
-        # |> poke("item_btn.html", drab: "green")
-        |> set_prop(".task[task-id='#{item_id}']", className: "red")
+        |> Drab.Browser.console("PackItem created for item #{item_id} and pack #{pack_id}")
+        |> set_prop(".item[id='#{item_id}']", %{"attributes" => %{"class" => "item waves-effect waves-light btn validate"}})
+      {:deleted, pack_item} ->
+        socket
+        |> Drab.Browser.console("PackItem removed for item #{item_id} and pack #{pack_id}")
+        |> set_prop(".item[id='#{item_id}']", %{"attributes" => %{"class" => "item waves-effect waves-light btn light"}})
       {:error, _} ->
         socket
         |> Drab.Browser.console("Couldn't create PackItem between item #{item_id} and pack #{pack_id}")

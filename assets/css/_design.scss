@@ -9,6 +9,17 @@
   @extend .teal-text, .text-darken-4;
 }
 
+/* -------------  Buttons ---------------------------------*/
+
+.btn.light {
+  @extend .light-blue, .lighten-5;
+  @extend .teal-text, .text-darken-4;
+}
+
+.btn.validate {
+  @extend .teal, .accent-4;
+}
+
  /* -------------  Backgrounds ---------------------------------*/
  .color-btn-action {
    @extend .teal, .darken-4;

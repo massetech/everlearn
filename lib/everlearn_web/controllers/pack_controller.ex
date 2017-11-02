@@ -41,7 +41,7 @@ defmodule EverlearnWeb.PackController do
 
   def show(conn, %{"id" => id}) do
     pack = Contents.get_pack!(id)
-    items = Contents.list_items
+    items = Contents.list_items(id)
     render conn, "show.html", pack: pack, items: items, button: 'test'
   end
 

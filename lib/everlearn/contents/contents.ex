@@ -139,6 +139,15 @@ defmodule Everlearn.Contents do
     |> Repo.all()
     |> Repo.preload(:topic)
   end
+
+  def list_items(pack_id) do
+    # Filter on the Pack ID
+    query = from p in Everlearn.Contents.PackItem, where: p.pack_id == ^pack_id
+    Item
+    |> Repo.all()
+    |> Repo.preload(packitems: query)
+  end
+
   def list_items(query) do
     Repo.all(query)
     |> Repo.preload([topic: [:classroom]])
@@ -263,10 +272,16 @@ defmodule Everlearn.Contents do
     case get_pack_item(item_id, pack_id) do
       %PackItem{} = pack_item ->
         # There is allready a PackItem : delete it
-        delete_pack_item(pack_item)
+        case delete_pack_item(pack_item) do
+          {:ok, pack_item} -> {:deleted, pack_item}
+          {:error, reason} -> {:error, reason}
+        end
       nil ->
         # There wasnt any PackItem : create it
-        create_pack_item(%{item_id: item_id, pack_id: pack_id})
+        case create_pack_item(%{item_id: item_id, pack_id: pack_id}) do
+          {:ok, pack_item} -> {:created, pack_item}
+          {:error, reason} -> {:error, reason}
+        end
     end
   end
 
