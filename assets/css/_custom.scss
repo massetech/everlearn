@@ -25,8 +25,18 @@ nav.top-nav .title {margin-left: 1em;}
   z-index: 99;
 }
 
-
+.flag {
+  border-radius: 8px;
+  width: 25px;
+  height: 25px;
+}
 
 a.marged {
   margin: 0 1em;
+}
+
+.full_center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

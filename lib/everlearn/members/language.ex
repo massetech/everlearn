@@ -5,7 +5,7 @@ defmodule Everlearn.Members.Language do
   alias Everlearn.Contents.{Topic}
 
   schema "languages" do
-    field :code, :string
+    field :iso2code, :string
     field :flag, :string
     field :name, :string
     has_many :users, User
@@ -17,7 +17,7 @@ defmodule Everlearn.Members.Language do
   @doc false
   def changeset(%Language{} = language, attrs) do
     language
-    |> cast(attrs, [:name, :flag, :code])
-    |> validate_required([:name, :flag, :code])
+    |> cast(attrs, [:name, :flag, :iso2code])
+    |> validate_required([:name, :flag, :ISO2code])
   end
 end

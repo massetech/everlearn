@@ -16,10 +16,10 @@ alias Everlearn.Contents.{Classroom, Topic}
 alias Everlearn.Members
 alias Everlearn.Members.{Language, User}
 
-Repo.insert! %Language{name: "English", code: "EN"}
-Repo.insert! %Language{name: "French", code: "FR"}
-Repo.insert! %Language{name: "Spanish", code: "SP"}
-Repo.insert! %Language{name: "Burmese", code: "BI"}
+Repo.insert! %Language{name: "English", iso2code: "gb"}
+Repo.insert! %Language{name: "French", iso2code: "fr"}
+Repo.insert! %Language{name: "Spanish", iso2code: "es"}
+Repo.insert! %Language{name: "Burmese", iso2code: "mm"}
 
 Repo.insert! %Classroom{title: "History"}
 Repo.insert! %Classroom{title: "Language"}

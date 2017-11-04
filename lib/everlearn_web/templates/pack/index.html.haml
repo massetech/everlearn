@@ -32,13 +32,14 @@
         - for pack <- @packs do
           %tr
             %td.center-align= pack.id
-            %td.center-align= pack.language.code
+            %td.full_center
+              = img_tag static_path(@conn, "/images/flags/4x3/#{pack.language.iso2code}.svg"), class: "flag"
             %td.center-align.color-text= pack.title
             %td.center-align.color-text= pack.classroom.title
             %td.center-align.color-text= pack.level
             %td.center-align.color-text= Enum.count(pack.packitems)
             %td.center-align.color-text= pack.description
-            %td.center-align
+            %td.full_center
               - if pack.active == true do
                 %i.material-icons.color-icon-true= "check_circle"
               - else

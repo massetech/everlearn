@@ -5,7 +5,7 @@ defmodule Everlearn.Repo.Migrations.CreateLanguages do
     create table(:languages) do
       add :name, :string
       add :flag, :string
-      add :code, :string
+      add :iso2code, :string
 
       timestamps()
     end
