@@ -13,6 +13,7 @@ defmodule Everlearn.Contents.Item do
     belongs_to :topic, Topic
     has_many :cards, Card
     has_many :packitems, PackItem
+    has_many :packs, through: [:packitems, :pack]
     timestamps()
   end
 

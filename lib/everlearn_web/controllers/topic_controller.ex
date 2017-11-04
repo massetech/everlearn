@@ -30,10 +30,10 @@ defmodule EverlearnWeb.TopicController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    topic = Contents.get_topic!(id)
-    render(conn, "show.html", topic: topic)
-  end
+  # def show(conn, %{"id" => id}) do
+  #   topic = Contents.get_topic!(id)
+  #   render(conn, "show.html", topic: topic)
+  # end
 
   def edit(conn, %{"id" => id}) do
     topic = Contents.get_topic!(id)

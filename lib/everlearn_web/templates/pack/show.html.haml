@@ -14,7 +14,7 @@
 .container.pack-show
   .row
     .section
-    -# Filter place
+      -# Filter place
   .row
     .section
       = for item <- @items do
@@ -24,6 +24,6 @@
         - else
           .item.waves-effect.waves-light.btn.validate{id: "#{item.id}", drab-click: "toogle_pack", data-item-id: "#{item.id}", data-pack-id: "#{@pack.id}"}
             = item.title
-  .row
-    .section
-      = pagination_link(@conn, @rummage)
+  -# .row
+  -#   .section
+  -#     = pagination_link(@conn, @rummage)

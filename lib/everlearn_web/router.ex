@@ -9,6 +9,7 @@ defmodule EverlearnWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug Everlearn.Plugs.SetUser
+    # plug Everlearn.Plugs.SearchRummage
   end
 
   pipeline :api do

@@ -7,25 +7,31 @@ defmodule Everlearn.Contents do
   import Everlearn.{CustomMethods}
   alias Everlearn.Repo
 
+  alias Everlearn.Contents.Pack
+  alias Everlearn.Contents.PackItem
+  alias Everlearn.Contents.Classroom
+  alias Everlearn.Contents.Item
+  alias Everlearn.Contents.Topic
+  alias Everlearn.Contents.Card
+
 # ------------------------- Shared functions ----------------------------------------
 
 
-# ----------------------------------------------------------------------------
-  alias Everlearn.Contents.Pack
+# ---------------------------- PACKS -------------------------------------------
 
   def pack_level_select_btn do
     [beginner: 1, advanced: 2, expert: 3]
   end
 
-  def list_packs do
-    Pack
-    |> Repo.all()
-    |> Repo.preload(:classroom)
-  end
+  # def list_packs do
+  #   Pack
+  #   |> Repo.all()
+  #   |> Repo.preload([:items])
+  # end
 
-  def list_packs(query) do
-    Repo.all(query)
-    |> Repo.preload([:classroom]) #, packitem: [:item]
+  def list_packs(search) do
+    Repo.all(search)
+    |> Repo.preload([:classroom, :packitems])
   end
 
   def get_pack!(id) do
@@ -54,8 +60,7 @@ defmodule Everlearn.Contents do
     Pack.changeset(pack, %{})
   end
 
-# ----------------------------------------------------------------------------
-  alias Everlearn.Contents.Classroom
+# ------------------------ CLASSROOMS ------------------------------------------------
 
   def classroom_select_btn do
     Repo.all(from(c in Classroom, select: {c.title, c.id}))
@@ -63,6 +68,7 @@ defmodule Everlearn.Contents do
 
   def list_classrooms do
     Repo.all(Classroom)
+    |> Repo.preload([:topics, :items, :packs])
   end
 
   def get_classroom!(id), do: Repo.get!(Classroom, id)
@@ -87,8 +93,7 @@ defmodule Everlearn.Contents do
     Classroom.changeset(classroom, %{})
   end
 
-# ----------------------------------------------------------------------------
-  alias Everlearn.Contents.Item
+# --------------------- ITEMS ----------------------------------------------------
 
   def insert_item(fields, topic_id) do
     %{:item_id => item_id, :item_title => item_title, :item_level => item_level, :item_group => item_group,
@@ -137,20 +142,35 @@ defmodule Everlearn.Contents do
   def list_items() do
     Item
     |> Repo.all()
-    |> Repo.preload(:topic)
+    # |> Repo.preload([topic: [:classroom], :cards])
   end
 
-  def list_items(pack_id) do
-    # Filter on the Pack ID
-    query = from p in Everlearn.Contents.PackItem, where: p.pack_id == ^pack_id
+  def list_items(_) do
     Item
     |> Repo.all()
-    |> Repo.preload(packitems: query)
+    |> Repo.preload(:packitems)
+    |> Repo.preload([topic: [:classroom]])
   end
 
-  def list_items(query) do
-    Repo.all(query)
-    |> Repo.preload([topic: [:classroom]])
+  def list_possible_items(pack) do
+    p = pack
+    |> Repo.preload(:classroom)
+    # Select items belonging to pack.classroom
+    query1 = from i in Item,
+      join: topic in assoc(i, :topic),
+      join: class in assoc(topic, :classroom),
+      where: class.id == ^p.classroom.id
+    # Select packitems associated to pack
+    query2 = from pi in PackItem,
+      where: pi.pack_id == ^pack.id
+    query1
+    |> Repo.all()
+    |> Repo.preload([:topic, :cards, packitems: query2])
+  end
+
+  def choose_random_item(pack) do
+    list_possible_items(pack)
+    |> Enum.random()
   end
 
   def get_item!(id), do: Repo.get!(Item, id)
@@ -175,8 +195,7 @@ defmodule Everlearn.Contents do
     Item.changeset(item, %{})
   end
 
-# ----------------------------------------------------------------------------
-  alias Everlearn.Contents.Topic
+# -------------------------------- TOPICS ------------------------------------------
 
   def topic_select_btn do
     Repo.all(from(c in Topic, select: {c.title, c.id}))
@@ -185,7 +204,7 @@ defmodule Everlearn.Contents do
   def list_topics do
     Topic
     |> Repo.all()
-    |> Repo.preload(:classroom)
+    |> Repo.preload([:classroom, :items])
   end
 
   def get_topic!(id), do: Repo.get!(Topic, id)
@@ -210,10 +229,22 @@ defmodule Everlearn.Contents do
     Topic.changeset(topic, %{})
   end
 
-  # ----------------------------------------------------------------------------
-  alias Everlearn.Contents.Card
+  # --------------------------- CARDS ----------------------------------------------
 
-  def insert_card(line, topic_id) do
+  def upload_cards(topic_id, file) do
+    file
+    |> File.stream!()
+    |> CSV.decode(separator: ?;, headers: [
+      :item_id, :item_group, :item_title, :item_level, :item_description, :item_active,
+      :card_language, :card_title, :card_active
+    ])
+    |> Enum.map(fn (line) ->
+      insert_card(line, topic_id)
+      |> IO.inspect()
+      end)
+  end
+
+  defp insert_card(line, topic_id) do
     {status, fields} = line
     case status do
       :ok ->
@@ -266,8 +297,15 @@ defmodule Everlearn.Contents do
     Card.changeset(card, %{})
   end
 
-  # ----------------------------------------------------------------------------
-  alias Everlearn.Contents.PackItem
+  # ------------------------- PACKITEMS ----------------------------------------------
+
+  def generate_pack_items(pack) do
+    pack
+    |> choose_random_item()
+    |> Ecto.build_assoc(:packitems, %{pack_id: pack.id})
+    |> Repo.insert!()
+  end
+
   def toogle_pack_item(item_id, pack_id) do
     case get_pack_item(item_id, pack_id) do
       %PackItem{} = pack_item ->

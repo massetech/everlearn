@@ -1,0 +1,20 @@
+- form_for @conn, pack_path(@conn, :index), [as: :search], fn f ->
+  .section
+    .container
+      .row
+        .input-field.col.s12.m6
+          = text_input f, :title
+          = label f, "Search by title"
+        .input-field.col.s12.m4
+          = select f, :level, @classrooms, prompt: ""
+          = label f, :classroom
+        .input-field.col.s12.m1
+          = select f, :level, @levels, prompt: ""
+          = label f, :level
+        .input-field.col.s12.m1
+          = select f, :status, @status, prompt: ""
+          = label f, :status
+
+  .section
+    .form-group.center-align
+      = submit "Submit", class: "btn-large waves-effect waves-light teal accent-4"

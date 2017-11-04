@@ -11,7 +11,7 @@ defmodule Everlearn.Contents.Pack do
     field :description, :string
     belongs_to :classroom, Classroom
     has_many :packitems, PackItem
-    has_many :items, through: [:packitems, :items]
+    has_many :items, through: [:packitems, :item]
     timestamps()
   end
 
