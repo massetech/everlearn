@@ -7,8 +7,10 @@ defmodule Everlearn.Members do
   import Everlearn.{CustomMethods}
   require Logger
   require Poison
+
   alias Everlearn.Repo
   alias Ueberauth.Auth
+  alias Everlearn.Members.{Language, User, Membership, Memory}
 
   # -------------------------------- UEBERAUTH ----------------------------------------
   #alias Everlearn.Members.Auth
@@ -93,7 +95,6 @@ defmodule Everlearn.Members do
   # defp validate_pass(_), do: {:error, "Password Required"}
 
   # -------------------------------- USER ----------------------------------------
-  alias Everlearn.Members.User
 
   def list_users do
     Repo.all(User)
@@ -137,7 +138,6 @@ defmodule Everlearn.Members do
   end
 
   # -------------------------------- MEMBERSHIP ----------------------------------------
-  alias Everlearn.Members.Membership
 
   def list_memberships do
     Repo.all(Membership)
@@ -192,5 +192,121 @@ defmodule Everlearn.Members do
 
   def change_memory(%Memory{} = memory) do
     Memory.changeset(memory, %{})
+  end
+
+  # -------------------------------- LANGUAGE ----------------------------------------
+
+  @doc """
+  Returns a random language.
+
+  ## Examples
+
+      iex> list_languages()
+      [%Language{}, ...]
+
+  """
+
+  def choose_random_language do
+    Language
+    |> Repo.all()
+    |> Enum.random()
+  end
+
+  def language_select_btn do
+    Repo.all(from(c in Language, select: {c.name, c.id}))
+  end
+
+  @doc """
+  Returns the list of languages.
+
+  ## Examples
+
+      iex> list_languages()
+      [%Language{}, ...]
+
+  """
+  def list_languages do
+    Repo.all(Language)
+  end
+
+  @doc """
+  Gets a single language.
+
+  Raises `Ecto.NoResultsError` if the Language does not exist.
+
+  ## Examples
+
+      iex> get_language!(123)
+      %Language{}
+
+      iex> get_language!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_language!(id), do: Repo.get!(Language, id)
+
+  @doc """
+  Creates a language.
+
+  ## Examples
+
+      iex> create_language(%{field: value})
+      {:ok, %Language{}}
+
+      iex> create_language(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_language(attrs \\ %{}) do
+    %Language{}
+    |> Language.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a language.
+
+  ## Examples
+
+      iex> update_language(language, %{field: new_value})
+      {:ok, %Language{}}
+
+      iex> update_language(language, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_language(%Language{} = language, attrs) do
+    language
+    |> Language.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a Language.
+
+  ## Examples
+
+      iex> delete_language(language)
+      {:ok, %Language{}}
+
+      iex> delete_language(language)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_language(%Language{} = language) do
+    Repo.delete(language)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking language changes.
+
+  ## Examples
+
+      iex> change_language(language)
+      %Ecto.Changeset{source: %Language{}}
+
+  """
+  def change_language(%Language{} = language) do
+    Language.changeset(language, %{})
   end
 end

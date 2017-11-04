@@ -1,0 +1,30 @@
+<h2>Listing Languages</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Flag</th>
+      <th>Code</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for language <- @languages do %>
+    <tr>
+      <td><%= language.name %></td>
+      <td><%= language.flag %></td>
+      <td><%= language.code %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: language_path(@conn, :show, language), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: language_path(@conn, :edit, language), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: language_path(@conn, :delete, language), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Language", to: language_path(@conn, :new) %></span>

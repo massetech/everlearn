@@ -1,7 +1,7 @@
 defmodule Everlearn.Members.User do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Everlearn.Members.User
+  alias Everlearn.Members.{User, Language}
 
   schema "users" do
     field :uid, :string
@@ -13,6 +13,7 @@ defmodule Everlearn.Members.User do
     field :role, :string, default: "GUEST"
     field :token, :string
     field :token_expiration, :utc_datetime
+    belongs_to :language, Language
 
     timestamps()
   end
@@ -20,12 +21,13 @@ defmodule Everlearn.Members.User do
   @doc false
   def changeset(%User{} = user, attrs) do
     user
-    |> cast(attrs, [:uid, :email, :name, :nickname, :role, :main_language, :provider, :token, :token_expiration])
-    |> validate_required([:email, :provider, :token])
+    |> cast(attrs, [:uid, :email, :name, :nickname, :role, :main_language, :provider, :token, :token_expiration, :language_id])
+    |> validate_required([:email, :provider, :token, :language_id])
     |> unique_constraint(:email)
     |> validate_format(:email, ~r/@/)
     |> validate_inclusion(:provider, ["google", "facebook"])
-    |> validate_inclusion(:main_language, ["EN", "FR"])
     |> validate_inclusion(:role, ["GUEST", "MEMBER", "ADMIN", "SUPER"])
+    # |> validate_inclusion(:main_language, ["EN", "FR"])
+    |> assoc_constraint(:language_id)
   end
 end

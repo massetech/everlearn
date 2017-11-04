@@ -2,17 +2,11 @@ defmodule Everlearn.Contents do
   @moduledoc """
   The Contents context.
   """
-
   import Ecto.Query, warn: false
   import Everlearn.{CustomMethods}
-  alias Everlearn.Repo
 
-  alias Everlearn.Contents.Pack
-  alias Everlearn.Contents.PackItem
-  alias Everlearn.Contents.Classroom
-  alias Everlearn.Contents.Item
-  alias Everlearn.Contents.Topic
-  alias Everlearn.Contents.Card
+  alias Everlearn.Repo
+  alias Everlearn.Contents.{Pack, PackItem, Classroom, Item, Topic, Card}
 
 # ------------------------- Shared functions ----------------------------------------
 
@@ -31,7 +25,7 @@ defmodule Everlearn.Contents do
 
   def list_packs(search) do
     Repo.all(search)
-    |> Repo.preload([:classroom, :packitems])
+    |> Repo.preload([:classroom, :packitems, :language])
   end
 
   def get_pack!(id) do

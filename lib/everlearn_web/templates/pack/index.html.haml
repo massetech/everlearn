@@ -20,6 +20,8 @@
     .section
       %table.bordered.responsive-table
         %tr
+          %th.center-align.color-text= "ID"
+          %th.center-align.color-text= "Language"
           %th.center-align.color-text= "Title"
           %th.center-align.color-text= "Classroom"
           %th.center-align.color-text= "Level"
@@ -29,6 +31,8 @@
           %th.center-align.color-text= "Actions"
         - for pack <- @packs do
           %tr
+            %td.center-align= pack.id
+            %td.center-align= pack.language.code
             %td.center-align.color-text= pack.title
             %td.center-align.color-text= pack.classroom.title
             %td.center-align.color-text= pack.level

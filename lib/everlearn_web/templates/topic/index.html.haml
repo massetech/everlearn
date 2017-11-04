@@ -9,6 +9,7 @@
     .section
       %table.bordered.responsive-table
         %tr
+          %th.center-align.color-text= "ID"
           %th.center-align.color-text= "Title"
           %th.center-align.color-text= "Classroom"
           %th.center-align.color-text= "Nb items"
@@ -16,6 +17,7 @@
           %th.center-align.color-text= "Actions"
         - for topic <- @topics do
           %tr
+            %td.center-align= topic.id
             %td.center-align= topic.title
             %td.center-align= topic.classroom.title
             %td.center-align= Enum.count(topic.items)

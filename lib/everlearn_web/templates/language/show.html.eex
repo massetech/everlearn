@@ -1,0 +1,23 @@
+<h2>Show Language</h2>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @language.name %>
+  </li>
+
+  <li>
+    <strong>Flag:</strong>
+    <%= @language.flag %>
+  </li>
+
+  <li>
+    <strong>Code:</strong>
+    <%= @language.code %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: language_path(@conn, :edit, @language) %></span>
+<span><%= link "Back", to: language_path(@conn, :index) %></span>

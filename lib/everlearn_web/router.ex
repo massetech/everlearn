@@ -21,6 +21,7 @@ defmodule EverlearnWeb.Router do
 
     get "/", MainController, :welcome, as: :root
     resources "/users", UserController
+    resources "/languages", LanguageController
     resources "/classrooms", ClassroomController
     resources "/topics", TopicController
     resources "/packs", PackController

@@ -1,10 +1,11 @@
 defmodule EverlearnWeb.PackController do
   use EverlearnWeb, :controller
   use Drab.Controller
-  # use Rummage.Phoenix.Controller
 
   alias Everlearn.Contents
   alias Everlearn.Contents.{Pack, Item}
+  alias Everlearn.Members
+
   plug :load_select when action in [:new, :create, :edit, :update, :index]
 
   defp load_select(conn, _params) do
@@ -12,6 +13,7 @@ defmodule EverlearnWeb.PackController do
     |> assign(:classrooms, Contents.classroom_select_btn())
     |> assign(:levels, Contents.pack_level_select_btn())
     |> assign(:status, ["active", "inactive"])
+    |> assign(:languages, Members.language_select_btn())
   end
 
   def index(conn, params) do

@@ -13,6 +13,13 @@
 alias Everlearn.Repo
 alias Everlearn.Contents
 alias Everlearn.Contents.{Classroom, Topic}
+alias Everlearn.Members
+alias Everlearn.Members.{Language, User}
+
+Repo.insert! %Language{name: "English", code: "EN"}
+Repo.insert! %Language{name: "French", code: "FR"}
+Repo.insert! %Language{name: "Spanish", code: "SP"}
+Repo.insert! %Language{name: "Burmese", code: "BI"}
 
 Repo.insert! %Classroom{title: "History"}
 Repo.insert! %Classroom{title: "Language"}
@@ -33,7 +40,7 @@ end
 
 for classroom <- Repo.all(Classroom) do
   for i <- 1..5 do
-    pack = Ecto.build_assoc(classroom, :packs, %{title: "Pack_title_#{i}", level: Enum.random([1, 2, 3])})
+    pack = Ecto.build_assoc(classroom, :packs, %{title: "Pack_title_#{i}", level: Enum.random([1, 2, 3]), language_id: Members.choose_random_language().id})
     |> Repo.insert!()
     |> Contents.generate_pack_items()
   end
