@@ -5,4 +5,4 @@
       %i.material-icons= "keyboard_arrow_left"
 .container
   .section
-  = render "form.html", Map.put(assigns, :action, classroom_path(@conn, :create))
+    = render "form.html", Map.put(assigns, :action, classroom_path(@conn, :create))

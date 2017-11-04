@@ -95,6 +95,10 @@ defmodule Everlearn.Contents do
 
 # --------------------- ITEMS ----------------------------------------------------
 
+  def item_group_select_btn do
+    [verb: 1, noun: 2, date: 3]
+  end
+
   def insert_item(fields, topic_id) do
     %{:item_id => item_id, :item_title => item_title, :item_level => item_level, :item_group => item_group,
       :item_active => item_active, :item_description => item_description} = fields

@@ -4,10 +4,14 @@ defmodule EverlearnWeb.ItemController do
 
   alias Everlearn.Contents
   alias Everlearn.Contents.{Item, Card}
-  plug :load_select when action in [:new, :edit, :index]
+  plug :load_select when action in [:new, :create, :edit, :update, :index]
 
   defp load_select(conn, _params) do
-    assign(conn, :topics, Everlearn.Contents.topic_select_btn())
+    conn
+    |> assign(:topics, Contents.topic_select_btn())
+    |> assign(:levels, Contents.pack_level_select_btn())
+    |> assign(:groups, Contents.item_group_select_btn())
+    # |> assign(:status, ["active", "inactive"])
   end
 
   def index(conn, params) do

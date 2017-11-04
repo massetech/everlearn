@@ -13,9 +13,9 @@
       %ul.right.right.hide-on-med-and-down{id: "nav-mobile"}
         %li= link "Classrooms", to: classroom_path(@conn, :index), class: "color-text"
         %li= link "Topics", to: topic_path(@conn, :index), class: "color-text"
+        %li= link "Packs", to: pack_path(@conn, :index), class: "color-text"
         %li= link "Items", to: item_path(@conn, :index), class: "color-text"
         %li= link "Cards", to: card_path(@conn, :index), class: "color-text"
-        %li= link "Packs", to: pack_path(@conn, :index), class: "color-text"
         %li= link "Memories", to: memory_path(@conn, :index), class: "color-text"
         - if @conn.assigns[:user] do
           %li= link "Log out", to: auth_path(@conn, :delete), method: :delete, class: "color-text"
