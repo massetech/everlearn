@@ -18,8 +18,7 @@ defmodule EverlearnWeb.ItemController do
     {query, rummage} = Item
     |> Item.rummage(params["rummage"])
     items = Contents.list_items(query)
-    changeset = Contents.change_card(%Card{})
-    render(conn, "index.html", items: items, changeset: changeset, rummage: rummage)
+    render(conn, "index.html", items: items, rummage: rummage)
   end
 
   def new(conn, _params) do

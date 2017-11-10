@@ -2,9 +2,8 @@ defmodule EverlearnWeb.PackController do
   use EverlearnWeb, :controller
   use Drab.Controller
 
-  alias Everlearn.Contents
+  alias Everlearn.{Contents, Members, CustomSelects}
   alias Everlearn.Contents.{Pack, Item}
-  alias Everlearn.Members
 
   plug :load_select when action in [:new, :create, :edit, :update, :index]
 
@@ -12,18 +11,13 @@ defmodule EverlearnWeb.PackController do
     conn
     |> assign(:classrooms, Contents.classroom_select_btn())
     |> assign(:levels, Contents.pack_level_select_btn())
-    |> assign(:status, ["active", "inactive"])
+    |> assign(:active, CustomSelects.status_select_btn())
     |> assign(:languages, Members.language_select_btn())
   end
 
   def index(conn, params) do
-    # IO.puts("+++++")
-    # IO.inspect(params)
-    # use params on query
-    {query, rummage} = Pack
-    |> Pack.rummage(params["rummage"])
-    packs = Contents.list_packs(query)
-    render conn, "index.html", packs: packs, rummage: rummage
+    {packs, rummage} = Contents.list_packs(params)
+    render conn, "index.html", packs: packs, rummage: @rummage
   end
 
   def new(conn, _params) do
@@ -49,7 +43,7 @@ defmodule EverlearnWeb.PackController do
     # {query, rummage} = Item
     # |> Item.rummage()
     pack = Contents.get_pack!(id)
-    items = Contents.list_possible_items(pack)
+    items = Contents.list_eligible_items(pack)
     render conn, "show.html", pack: pack, items: items
   end
 

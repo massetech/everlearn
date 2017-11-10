@@ -7,6 +7,7 @@ defmodule Everlearn.Contents do
 
   alias Everlearn.Repo
   alias Everlearn.Contents.{Pack, PackItem, Classroom, Item, Topic, Card}
+  alias Everlearn.Members
 
 # ------------------------- Shared functions ----------------------------------------
 
@@ -17,15 +18,39 @@ defmodule Everlearn.Contents do
     [beginner: 1, advanced: 2, expert: 3]
   end
 
-  # def list_packs do
-  #   Pack
-  #   |> Repo.all()
-  #   |> Repo.preload([:items])
-  # end
+  def list_packs(params) do
+    case Map.has_key?(params, "search") do
+      true ->
+        search_params = %{
+          "search" => %{
+            "title" => %{"assoc" => [], "search_type" => "ilike", "search_term" => params["search"]["title"]},
+            "classroom_id" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["classroom"]},
+            "level" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["level"]},
+            "active" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["active"]},
+            "language_id" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["language"]}
+          }
+        }
+      false ->
+        search_params = %{"title" => "", "classroom_id" => "", "level" => "", "active" => "", "language_id" => ""}
+    end
 
-  def list_packs(search) do
-    Repo.all(search)
-    |> Repo.preload([:classroom, :packitems, :language])
+    {search, rummage} = Pack
+    |> Pack.rummage(search_params)
+    IO.inspect(search_params)
+    query = from pack in Pack,
+      join: pi in assoc(pack, :packitems),
+      join: item in assoc(pi, :item),
+      where: item.active == true
+    packs = search
+    |> Repo.all()
+    |> Repo.preload([:classroom, :language, items: query])
+    # |> Enum.map(fn (pack) ->
+    #   pack
+    #   |> list_eligible_items()
+    #   |> Enum.count()
+    #   |> IO.inspect()
+    # end)
+    {packs, "rummage"}
   end
 
   def get_pack!(id) do
@@ -93,71 +118,93 @@ defmodule Everlearn.Contents do
     [verb: 1, noun: 2, date: 3]
   end
 
-  def insert_item(fields, topic_id) do
+  @moduledoc """
+  insert item with populated fields on a specific topic_id
+  If item_id == "" -> create the item_id
+  If item_id != "" && item_title != "" -> update the item
+  Else fetch the item
+  """
+  def control_item_fields(item_level) do
+    convert_integer(item_level)
+  end
+
+  def process_item_line(fields, topic_id) do
     %{:item_id => item_id, :item_title => item_title, :item_level => item_level, :item_group => item_group,
       :item_active => item_active, :item_description => item_description} = fields
-    cond do
-      item_id == '' && item_title != "" && item_level != '' || item_group != "" ->
-        # It's a new item : try to create it
-        Item.changeset(%Item{}, %{
-          topic_id: topic_id,
-          active: convert_boolean(item_active),
-          description: item_description,
-          group: item_group,
-          level: convert_integer(item_level),
-          title: item_title
-        })
-        |> Repo.insert
-        |> IO.inspect
-      item_id != '' && (item_title != "" || item_level != '' || item_active != '' || item_description != '' || item_group != "") ->
-        # It's an existing item : try to update it
-        Item.changeset(%Item{}, %{
-          id: item_id,
-          topic_id: topic_id,
-          active: convert_boolean(item_active),
-          description: item_description,
-          group: item_group,
-          level: item_level,
-          title: item_title
-        })
-        |> Repo.update
-      item_id != "" ->
-        # There is only item_id : use it to create a card
-        case get_item!(item_id) do
-          {:ok, _} ->
-            # The item was found, we can use it to create a card
-            {:ok, get_item!(item_id)}
-          {_, _} ->
-            # The item was not found, we cant create a card
-            {:error_item, "error in fetching the item #{item_id}"}
+    case control_item_fields(item_level) do
+      {:error, _} ->
+        {:error, "Insert item error : field problem on item with id = #{item_id}"}
+      {:ok, _} ->
+        cond do
+          item_id == "" ->
+            # It's a new item : try to create it
+            Item.changeset(%Item{}, %{
+              topic_id: topic_id,
+              active: convert_boolean(item_active),
+              description: item_description,
+              group: item_group,
+              level: String.to_integer(item_level),
+              title: item_title
+            })
+            |> Repo.insert
+          item_id != "" && (item_title != "") ->
+            # It's an update item : try to update it
+            Item.changeset(%Item{}, %{
+              id: item_id,
+              topic_id: topic_id,
+              active: convert_boolean(item_active),
+              description: item_description,
+              group: item_group,
+              level: String.to_integer(item_level),
+              title: item_title
+            })
+            |> Repo.update
+          item_id != "" ->
+            # No change on the item : find it
+            case get_item!(item_id) do
+              {:ok, item} -> {:ok, item}
+              {:error, _} -> {:error, "Couldnt find the item with id = #{item_id}"}
+            end
         end
-      true ->
-        # Some errors were found in the line
-        {:error_item, "error in inserting one item"}
     end
   end
 
-  def list_items() do
-    Item
-    |> Repo.all()
-    # |> Repo.preload([topic: [:classroom], :cards])
-  end
+  # def list_items() do
+  #   query = from c in Card, where: c.active == true
+  #   Item
+  #   |> Repo.all()
+  #   |> Repo.preload([:packitems, :cards])
+  #   # |> Repo.preload([topic: [:classroom], :cards])
+  # end
 
   def list_items(_) do
+    # query1 = from pi in PackItem,
+    #   join: pack in assoc(pi, :pack)
+    #   where: pack.active == true
+    # query2 = from c in Card,
+    #   where: c.active == true
     Item
     |> Repo.all()
-    |> Repo.preload(:packitems)
     |> Repo.preload([topic: [:classroom]])
+    |> Repo.preload([:cards, :packs])
+    # |> Repo.preload([packs: query3])
+    # |> Repo.preload([packitems: query1, cards: query2])
   end
 
-  def list_possible_items(pack) do
+  def list_eligible_items(pack) do
     p = pack
     |> Repo.preload(:classroom)
-    # Select items belonging to pack.classroom
-    query1 = from i in Item,
-      join: topic in assoc(i, :topic),
+    # Select active items belonging to pack.classroom and having at least one card with language == pack.language
+    query1 = from item in Item,
+      join: topic in assoc(item, :topic),
       join: class in assoc(topic, :classroom),
-      where: class.id == ^p.classroom.id
+      join: card in assoc(item, :cards),
+      where: class.id == ^p.classroom.id,
+      where: card.language_id == ^p.language_id,
+      where: item.active == true,
+      where: card.active == true,
+      group_by: item.id,
+      having: count(card.id) > 0
     # Select packitems associated to pack
     query2 = from pi in PackItem,
       where: pi.pack_id == ^pack.id
@@ -167,7 +214,7 @@ defmodule Everlearn.Contents do
   end
 
   def choose_random_item(pack) do
-    list_possible_items(pack)
+    list_eligible_items(pack)
     |> Enum.random()
   end
 
@@ -229,7 +276,10 @@ defmodule Everlearn.Contents do
 
   # --------------------------- CARDS ----------------------------------------------
 
-  def upload_cards(topic_id, file) do
+  @moduledoc """
+  Treat a csv file line by line trying to insert cards
+  """
+  def import_cards(topic_id, file) do
     file
     |> File.stream!()
     |> CSV.decode(separator: ?;, headers: [
@@ -237,41 +287,64 @@ defmodule Everlearn.Contents do
       :card_language, :card_title, :card_active
     ])
     |> Enum.map(fn (line) ->
-      insert_card(line, topic_id)
-      |> IO.inspect()
-      end)
+      case insert_card_line(line, topic_id) do
+          {:ok_card, card} -> IO.puts("Line #{"line_nb"} was processed")
+          {:error_card, msg} -> IO.puts(msg)
+          {:error_item, msg} -> IO.puts(msg)
+          {:error_line, msg} -> IO.puts(msg)
+      end
+    end)
   end
 
-  defp insert_card(line, topic_id) do
+  @moduledoc """
+  Treat a csv file line by line trying to insert cards
+  """
+  defp insert_card_line(line, topic_id) do
     {status, fields} = line
     case status do
       :ok ->
-        case insert_item(fields, topic_id) do
-          # Call function to create or update item
-          {:ok, item_struct} ->
-            # Item was created, updated or found : create the card with item_id
-            %{:card_active => card_active, :card_language => card_language, :card_title => card_title} = fields
-            Card.changeset(%Card{}, %{
-              item_id: item_struct.id,
+        # This line is ok for decoding
+        case process_item_line(fields, topic_id) do
+          {:ok, item} ->
+            # Item was processed (created, updated or fetched) : create the card with item_id
+            %{:card_active => card_active, :card_language => iso2code, :card_title => card_title} = fields
+            card = Card.changeset(%Card{}, %{
+              item_id: item.id,
               active: convert_boolean(card_active),
-              language: card_language,
+              language_id: Members.get_language_by_code(iso2code).id,
               title: card_title
             })
-            |> Repo.insert
-          {status, msg} ->
-            # Some problem occured in item process
-            {status, msg}
+            case Repo.insert(card) do
+              {:ok, card} -> {:ok_card, card}
+              {:error, msg} -> {:error_card, msg}
+            end
+          {:error, msg} -> {:error_item, msg}
         end
       :error ->
-        %{:item_id => item_id} = fields
-        IO.inspect(line)
-        {:error_line, "some errors where found on item with ID = #{item_id}"}
+        # This line has a problem in decode
+        %{:item_id => item_id, :item_title => item_title} = fields
+        {:error_line, "some errors where found on item with ID = #{item_id} and title = #{item_title}"}
     end
   end
 
   def list_cards do
-    Repo.all(Card)
+    query1 = from pi in PackItem,
+      join: pack in assoc(pi, :pack),
+      where: pack.active == true
+    Card
+    |> Repo.all()
+    |> Repo.preload(:language)
+    |> Repo.preload(item: [packitems: query1])
   end
+  #
+  # query1 = from pi in PackItem,
+  #   join: pack in assoc(pi, :pack),
+  #   where: pack.active == true
+  # query2 = from c in Card, where: c.active == true
+  # Item
+  # |> Repo.all()
+  # |> Repo.preload([topic: [:classroom]])
+  # |> Repo.preload([packitems: query1, cards: query2])
 
   def get_card!(id), do: Repo.get!(Card, id)
 

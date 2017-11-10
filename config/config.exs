@@ -17,7 +17,7 @@ config :phoenix, :template_engines,
 # Added for rummage filtering
 config :rummage_ecto, Rummage.Ecto,
   default_repo: Everlearn.Repo,
-  default_per_page: 5
+  default_per_page: 500
 
 # Configures the endpoint
 config :everlearn, EverlearnWeb.Endpoint,

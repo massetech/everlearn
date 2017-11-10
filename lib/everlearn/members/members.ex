@@ -246,6 +246,16 @@ defmodule Everlearn.Members do
   def get_language!(id), do: Repo.get!(Language, id)
 
   @doc """
+  Find a language by iso2code.
+
+  """
+
+  def get_language_by_code(iso2code) do
+    Language
+    |> Repo.get_by(iso2code: iso2code)
+  end
+
+  @doc """
   Creates a language.
 
   ## Examples

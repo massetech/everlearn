@@ -1,0 +1,8 @@
+%nav.top-nav.z-depth-0.nav-extended.color-banner
+  .nav-wrapper.valign-wrapper
+    %h4.title.color-title= "Edit card"
+    - link to: card_path(@conn, :index), class: "btn-floating btn-large halfway-fab waves-effect waves-light color-btn-action" do
+      %i.material-icons= "keyboard_arrow_left"
+.container
+  .section
+  = render "form.html", Map.put(assigns, :action, card_path(@conn, :update, @card))

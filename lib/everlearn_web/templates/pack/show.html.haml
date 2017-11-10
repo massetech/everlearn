@@ -19,11 +19,15 @@
     .section
       = for item <- @items do
         - if item.packitems == [] do
-          .item.waves-effect.waves-light.btn.light{id: "#{item.id}", drab-click: "toogle_pack", data-item-id: "#{item.id}", data-pack-id: "#{@pack.id}"}
+          .item.waves-effect.waves-light.btn.light{title: "#{item.id}", id: "#{item.id}", drab-click: "toogle_pack", data-item-id: "#{item.id}", data-pack-id: "#{@pack.id}"}
             = item.title
+            %h4.title= "#{item.id}"
         - else
-          .item.waves-effect.waves-light.btn.validate{id: "#{item.id}", drab-click: "toogle_pack", data-item-id: "#{item.id}", data-pack-id: "#{@pack.id}"}
+          .item.waves-effect.waves-light.btn.validate{title: "#{item.id}", id: "#{item.id}", drab-click: "toogle_pack", data-item-id: "#{item.id}", data-pack-id: "#{@pack.id}"}
             = item.title
+            %h4.title= "#{item.id}"
+
+
   -# .row
   -#   .section
   -#     = pagination_link(@conn, @rummage)

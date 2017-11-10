@@ -6,16 +6,7 @@
 .container
   .row
     .section
-      = render "search_form.html", conn: @conn, rummage: @rummage, classrooms: @classrooms, levels: @levels, status: @status
-      -# = text_input :search, :title, value: "This is a prepopulated value"
-      -# = link "dede", to: pack_path(@conn, :index, %{"title" => %{"assoc" => [], "search_type" => "like", "search_term" => "field_!"}})
-        -# # class: "waves-effect waves-light marged"
-          -# %i.material-icons.color-icon-edit= "remove_red_eye"
-      -# = search_form(@conn, @rummage, [fields:
-      -#   [
-      -#     title: %{label: "Search by item title", search_type: "ilike"}
-      -#   ], button_class: "btn",
-      -# ])
+      = render "search_form.html", conn: @conn, rummage: @rummage, classrooms: @classrooms, levels: @levels, active: @active, languages: @languages
   .row
     .section
       %table.bordered.responsive-table
@@ -25,7 +16,8 @@
           %th.center-align.color-text= "Title"
           %th.center-align.color-text= "Classroom"
           %th.center-align.color-text= "Level"
-          %th.center-align.color-text= "Nb items"
+          %th.center-align.color-text= "Nb active items"
+          %th.center-align.color-text= "Nb active items eligible"
           %th.center-align.color-text= "Description"
           %th.center-align.color-text= "Active"
           %th.center-align.color-text= "Actions"
@@ -37,7 +29,8 @@
             %td.center-align.color-text= pack.title
             %td.center-align.color-text= pack.classroom.title
             %td.center-align.color-text= pack.level
-            %td.center-align.color-text= Enum.count(pack.packitems)
+            %td.center-align.color-text= Enum.count(pack.items)
+            %td.center-align.color-text=# Enum.count(pack.eligible_items)
             %td.center-align.color-text= pack.description
             %td.full_center
               - if pack.active == true do

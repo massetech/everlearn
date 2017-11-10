@@ -1,3 +1,17 @@
 .pack-show {
-  .item {margin: 1em;}
+  .item {
+    margin: 1em;
+    h4.title {
+      font-size: 10px;
+      right: 0;
+      position: absolute;
+      top: 0px;
+      display: none;
+    }
+  }
+  .item:hover {
+    h4.title {
+      display: block;
+    }
+  }
 }

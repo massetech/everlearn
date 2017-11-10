@@ -5,6 +5,10 @@ defmodule Everlearn.CustomSelects do
     [vocabulary: "vocabulary", culture: "culture"]
   end
 
+  def status_select_btn do
+    [active: true, inactive: false]
+  end
+
   def level_menu do
     [beginner: 1, intermediate: 2, expert: 3]
   end

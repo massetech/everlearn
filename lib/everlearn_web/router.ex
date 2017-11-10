@@ -25,10 +25,16 @@ defmodule EverlearnWeb.Router do
     resources "/classrooms", ClassroomController
     resources "/topics", TopicController
     resources "/packs", PackController
-    resources "/items", ItemController
-    resources "/cards", CardController
+    resources "/items", ItemController do
+      resources "/cards", CardController, only: [:new]
+    end
+    resources "/cards", CardController, except: [:new]
     post "/import", CardController, :import, as: :import_card
     resources "/memorys", MemoryController
+    # scope "/search", as: :search do
+    #   post "/pack", SearchController, :search_pack, as: :pack
+    # end
+
   end
 
   scope "/auth", EverlearnWeb do

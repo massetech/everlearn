@@ -5,6 +5,9 @@ export default class MainView {
     $(document).ready(function() {
       // Set up select in materialize
       $('select').material_select()
+      $('.empty_fields').click(function(){
+        $('#search_form').clear().submit();
+      });
       init_flash()
     });
   }
@@ -34,3 +37,21 @@ let init_flash = () => {
   // }, 5000);
   console.log("Flash fired");
 }
+
+// let init_empty_fields = () => {
+//   $('.empty_fields').click(function(){
+//     // var form = document.forms;
+//     // form[0].reset();
+//     document.getElementById("search_form").reset();
+//     // form[0].submit();
+//   });
+// }
+
+jQuery.fn.clear = function()
+{
+    var $form = $(this);
+    $form.find('input:text, input:password, input:file, textarea').val('');
+    $form.find('select option:selected').removeAttr('selected');
+    $form.find('input:checkbox, input:radio').removeAttr('checked');
+    return this;
+};

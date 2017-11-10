@@ -35,6 +35,17 @@ a.marged {
   margin: 0 1em;
 }
 
+.submit-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  a {
+    margin-left: 10em;
+    position: absolute;
+  }
+  a:hover {cursor: pointer;}
+}
+
 .full_center {
   display: flex;
   align-items: center;

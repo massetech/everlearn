@@ -1,40 +1,11 @@
 ITEM_ID;GROUP;TITLE;LEVEL;DESCRIPTION;ACTIVE;LANGUAGE;TITLE;ACTIVE
-;noun;house;1;Place to live;Y;EN;house;Y
-;verb;to house;2;Keep someone at home;Y;EN;to house;Y
-;noun;dog;3;Nice animal;N;;;
-;verb;to feed;1;Give food;Y;EN;to give;N
-;noun;house;1;Place to live;Y;EN;house;Y
-;verb;to house;2;Keep someone at home;Y;EN;to house;Y
-;noun;dog;3;Nice animal;N;;;
-;verb;to feed;1;Give food;Y;EN;to give;N
-;noun;house;1;Place to live;Y;EN;house;Y
-;verb;to house;2;Keep someone at home;Y;EN;to house;Y
-;noun;dog;3;Nice animal;N;;;
-;verb;to feed;1;Give food;Y;EN;to give;N
-;noun;house;1;Place to live;Y;EN;house;Y
-;verb;to house;2;Keep someone at home;Y;EN;to house;Y
-;noun;dog;3;Nice animal;N;;;
-;verb;to feed;1;Give food;Y;EN;to give;N
-;noun;house;1;Place to live;Y;EN;house;Y
-;verb;to house;2;Keep someone at home;Y;EN;to house;Y
-;noun;dog;3;Nice animal;N;;;
-;verb;to feed;1;Give food;Y;EN;to give;N
-;noun;house;1;Place to live;Y;EN;house;Y
-;verb;to house;2;Keep someone at home;Y;EN;to house;Y
-;noun;dog;3;Nice animal;N;;;
-;verb;to feed;1;Give food;Y;EN;to give;N
-;noun;house;1;Place to live;Y;EN;house;Y
-;verb;to house;2;Keep someone at home;Y;EN;to house;Y
-;noun;dog;3;Nice animal;N;;;
-;verb;to feed;1;Give food;Y;EN;to give;N
-;noun;house;1;Place to live;Y;EN;house;Y
-;verb;to house;2;Keep someone at home;Y;EN;to house;Y
-;noun;dog;3;Nice animal;N;;;
-;verb;to feed;1;Give food;Y;EN;to give;N
-;noun;house;1;Place to live;Y;EN;house;Y
-;verb;to house;2;Keep someone at home;Y;EN;to house;Y
-;noun;dog;3;Nice animal;N;;;
-;verb;to feed;1;Give food;Y;EN;to give;N
-;noun;house;1;Place to live;Y;EN;house;Y
-;verb;to house;2;Keep someone at home;Y;EN;to house;Y
-;noun;dog;3;Nice animal;N;;;
+;noun;house;1;Place to live;Y;en;house;Y
+;verb;to house;2;Keep someone at home;Y;en;to house;Y
+;noun;dog;3;Nice animal;N;fr;to house;Y
+;verb;to feed;1;Give food;Y;en;to give;N
+;noun;house;1;Place to live;Y;en;house;Y
+;verb;to house;2;Keep someone at home;Y;en;to house;Y
+;noun;dog;3;Nice animal;N;mm;to house;Y
+;verb;to feed;1;Give food;Y;en;to give;N
+;noun;house;1;Place to live;Y;en;house;Y
+;verb;to house;2;Keep someone at home;Y;en;to house;Y
