@@ -8,13 +8,14 @@ defmodule Everlearn.Repo.Migrations.CreateUsers do
       add :name, :string
       add :nickname, :string
       add :role, :string
-      add :main_language, :string
       add :provider, :string
       add :token, :string
       add :token_expiration, :utc_datetime
+      add :language_id, references(:languages, on_delete: :delete_all)
 
       timestamps()
     end
-
+    create index(:users, [:language_id])
+    create unique_index(:email, [:email])
   end
 end

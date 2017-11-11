@@ -19,6 +19,7 @@
         %li= link "Memories", to: memory_path(@conn, :index), class: "color-text"
         - if @conn.assigns[:user] do
           %li= link "Log out", to: auth_path(@conn, :delete), method: :delete, class: "color-text"
+          %li= link "My packs", to: user_pack_path(@conn, :index, @conn.assigns[:user].id), class: "color-text"
         - else
           %li= link "Log in with google", to: auth_path(@conn, :request, "google"), class: "color-text"
       -# %ul.side-nav{id: "mobile-demo"}

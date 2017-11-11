@@ -14,9 +14,12 @@
         .input-field.col.s12.m2
           = select f, :level, @levels, prompt: ""
           = label f, :level
-        .input-field.col.s12.m2
-          = select f, :active, @active, prompt: ""
-          = label f, :active
+        - if Members.is_admin?(@conn.assigns[:user]) do
+          .input-field.col.s12.m2
+            = select f, :active, @active, prompt: ""
+            = label f, :active
+        - else
+          = hidden_input f, :active, value: "true"
 
   .section
     .form-group.center-align.submit-area

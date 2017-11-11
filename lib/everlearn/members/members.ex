@@ -29,7 +29,12 @@ defmodule Everlearn.Members do
 
   defp basic_info(auth) do
     %{uid: auth.uid, token: token_from_auth(auth), token_expiration: exp_token_from_auth(auth), provider: Atom.to_string(auth.provider),
-      name: name_from_auth(auth), avatar: avatar_from_auth(auth), email: email_from_auth(auth), nickname: nickname_from_auth(auth), language: "FR"}
+      name: name_from_auth(auth), avatar: avatar_from_auth(auth), email: email_from_auth(auth), nickname: nickname_from_auth(auth),
+      language_id: 1, role: test_email(email_from_auth(auth))}
+  end
+
+  defp test_email(email) do
+    if email == System.get_env("SUPER_EMAIL"), do: "SUPER", else: "MEMBER"
   end
 
   defp token_from_auth(%{credentials: %{token: token}}), do: token
@@ -99,6 +104,14 @@ defmodule Everlearn.Members do
   def list_users do
     Repo.all(User)
   end
+
+  def is_admin?(user) do
+    Enum.member?(["ADMIN", "SUPER"], user.role)
+  end
+
+  # def current_user(conn) do
+  #   conn.assigns[:current_user] || nil
+  # end
 
   def get_user!(id), do: Repo.get!(User, id)
 

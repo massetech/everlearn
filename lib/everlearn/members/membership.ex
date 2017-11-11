@@ -15,7 +15,9 @@ defmodule Everlearn.Members.Membership do
   @doc false
   def changeset(%Membership{} = membership, attrs) do
     membership
-    |> cast(attrs, [:language])
-    |> validate_required([:language])
+    |> cast(attrs, [:language, :user_id, :pack_id])
+    |> validate_required([:language, :user_id, :pack_id])
+    |> assoc_constraint(:user)
+    |> assoc_constraint(:pack)
   end
 end

@@ -9,7 +9,6 @@ defmodule EverlearnWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug Everlearn.Plugs.SetUser
-    # plug Everlearn.Plugs.SearchRummage
   end
 
   pipeline :api do
@@ -20,7 +19,9 @@ defmodule EverlearnWeb.Router do
     pipe_through :browser
 
     get "/", MainController, :welcome, as: :root
-    resources "/users", UserController
+    resources "/users", UserController do
+      get "/packs", PackController, :index
+    end
     resources "/languages", LanguageController
     resources "/classrooms", ClassroomController
     resources "/topics", TopicController
