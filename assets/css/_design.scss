@@ -1,0 +1,54 @@
+ /* -------------  Textes ---------------------------------*/
+.color-logo {
+  @extend .pink-text, .text-darken-4;
+}
+.color-title {
+  @extend .teal-text, .text-darken-2;
+}
+.color-text {
+  @extend .teal-text, .text-darken-4;
+}
+
+/* -------------  Buttons ---------------------------------*/
+
+.btn.light {
+  @extend .light-blue, .lighten-5;
+  @extend .teal-text, .text-darken-4;
+}
+
+.btn.validate {
+  @extend .teal, .accent-4;
+}
+
+ /* -------------  Backgrounds ---------------------------------*/
+ .color-btn-action {
+   @extend .teal, .darken-4;
+ }
+ .color-banner {
+   @extend .light-blue, .lighten-5;
+ }
+
+ /* -------------  Icons ---------------------------------*/
+ .color-icon-true {
+   @extend .green-text;
+ }
+ .color-icon-false {
+   @extend .pink-text;
+ }
+ .color-icon-edit {
+   @extend .blue-grey-text, .darken-4;
+ }
+
+ /* -------------  Flashes ---------------------------------*/
+.color-info {
+  @extend .light-blue, .lighten-1;
+  @extend .white-text;
+}
+.color-error {
+  @extend .red, .accent-4;
+  @extend .white-text;
+}
+.color-success {
+  @extend .teal, .accent-4;
+  @extend .white-text;
+}

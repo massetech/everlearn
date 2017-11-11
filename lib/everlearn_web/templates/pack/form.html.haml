@@ -1,0 +1,34 @@
+- form_for @changeset, @action, fn f ->
+  .section
+    .container
+      .row
+        .input-field.col.s12.m4
+          = select f, :classroom_id, @classrooms
+          = label f, :classroom_id
+        .input-field.col.s12.m4
+          = select f, :level, @levels
+          = label f, :level
+        .input-field.col.s12.m4
+          = select f, :language_id, @languages
+          = label f, :language_id
+      .row
+        .input-field.col.s12.m10.offset-m1
+          = text_input f, :title, class: "validate", type: "text"
+          = label f, :title
+          = error_tag f, :title
+      .row
+        .input-field.col.s12.m10.offset-m1
+          = text_input f, :description, class: "validate", type: "text"
+          = label f, :description
+          = error_tag f, :description
+  .section
+    .row
+      .switch.col.s12.center-align
+        %label
+          = "Off"
+          = checkbox f, :active
+          %span.lever
+          = "On"
+  .section
+    .form-group.center-align
+      = submit "Submit", class: "btn-large waves-effect waves-light teal accent-4"

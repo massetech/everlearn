@@ -1,0 +1,50 @@
+%nav.top-nav.z-depth-0.nav-extended.color-banner
+  .nav-wrapper.valign-wrapper
+    %h4.title.color-title= "Packs"
+    - link to: pack_path(@conn, :new), class: "btn-floating btn-large halfway-fab waves-effect waves-light color-btn-action" do
+      %i.material-icons= "add"
+.container
+  .row
+    .section
+      = render "search_form.html", conn: @conn, rummage: @rummage, classrooms: @classrooms, levels: @levels, active: @active, languages: @languages
+  .row
+    .section
+      %table.bordered.responsive-table
+        %tr
+          %th.center-align.color-text= "ID"
+          %th.center-align.color-text= "Language"
+          %th.center-align.color-text= "Title"
+          %th.center-align.color-text= "Classroom"
+          %th.center-align.color-text= "Level"
+          %th.center-align.color-text= "Nb active items"
+          %th.center-align.color-text= "Nb active items eligible"
+          %th.center-align.color-text= "Description"
+          %th.center-align.color-text= "Active"
+          %th.center-align.color-text= "Actions"
+        - for pack <- @packs do
+          %tr
+            %td.center-align= pack.id
+            %td.full_center
+              = img_tag static_path(@conn, "/images/flags/4x3/#{pack.language.iso2code}.svg"), class: "flag"
+            %td.center-align.color-text= pack.title
+            %td.center-align.color-text= pack.classroom.title
+            %td.center-align.color-text= pack.level
+            %td.center-align.color-text= Enum.count(pack.items)
+            %td.center-align.color-text=# Enum.count(pack.eligible_items)
+            %td.center-align.color-text= pack.description
+            %td.full_center
+              - if pack.active == true do
+                %i.material-icons.color-icon-true= "check_circle"
+              - else
+                %i.material-icons.color-icon-false= "cancel"
+            %td.center-align
+              - link to: pack_path(@conn, :show, pack), class: "waves-effect waves-light marged" do
+                %i.material-icons.color-icon-edit= "remove_red_eye"
+              - link to: pack_path(@conn, :edit, pack), class: "waves-effect waves-light marged" do
+                %i.material-icons.color-icon-edit= "edit"
+              - link to: pack_path(@conn, :delete, pack), method: :delete, data: [confirm: "Are you sure?"], class: "waves-effect waves-light marged" do
+                %i.material-icons.color-icon-false= "delete_forever"
+
+  .row
+    .section
+      = pagination_link(@conn, @rummage)

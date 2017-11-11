@@ -17,9 +17,9 @@ defmodule Everlearn.CustomMethods do
   def convert_integer(string) do
     case Integer.parse(string) do
       {value, _} ->
-        value
+        {:ok, value}
       _ ->
-        string
+        {:error, string}
     end
   end
 

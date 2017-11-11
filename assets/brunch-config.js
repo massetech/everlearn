@@ -65,9 +65,11 @@ exports.config = {
     sass: {
       options: {
         includePaths: [
+          // tells sass-brunch where to look for files to @import
           "node_modules/font-awesome/scss",
-          "node_modules/materialize-css/sass"
-        ], // tell sass-brunch where to look for files to @import
+          "node_modules/materialize-css/sass",
+          "node_modules/flag-icon-css/sass"
+        ],
       }
     }
   },
@@ -82,7 +84,7 @@ exports.config = {
     enabled: true,
     globals: {
       $: 'jquery',
-      jQuery: 'jquery',
+      jQuery: 'jquery'
     }
   }
 };

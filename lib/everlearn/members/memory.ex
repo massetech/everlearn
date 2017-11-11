@@ -5,7 +5,8 @@ defmodule Everlearn.Members.Memory do
 
 
   schema "memorys" do
-    field :status, :integer
+    field :status, :string
+    field :nb_practice, :integer
     field :membership_id, :id
     field :item_id, :id
 
@@ -15,7 +16,9 @@ defmodule Everlearn.Members.Memory do
   @doc false
   def changeset(%Memory{} = memory, attrs) do
     memory
-    |> cast(attrs, [:status])
-    |> validate_required([:status])
+    |> cast(attrs, [:status, :nb_practice, :membership_id, :item_id])
+    |> validate_required([:status, :membership_id, :item_id])
+    |> assoc_constraint(:membership)
+    |> assoc_constraint(:item)
   end
 end

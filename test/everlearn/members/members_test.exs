@@ -190,4 +190,68 @@ defmodule Everlearn.MembersTest do
       assert %Ecto.Changeset{} = Members.change_memory(memory)
     end
   end
+
+  describe "languages" do
+    alias Everlearn.Members.Language
+
+    @valid_attrs %{code: "some code", flag: "some flag", name: "some name"}
+    @update_attrs %{code: "some updated code", flag: "some updated flag", name: "some updated name"}
+    @invalid_attrs %{code: nil, flag: nil, name: nil}
+
+    def language_fixture(attrs \\ %{}) do
+      {:ok, language} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Members.create_language()
+
+      language
+    end
+
+    test "list_languages/0 returns all languages" do
+      language = language_fixture()
+      assert Members.list_languages() == [language]
+    end
+
+    test "get_language!/1 returns the language with given id" do
+      language = language_fixture()
+      assert Members.get_language!(language.id) == language
+    end
+
+    test "create_language/1 with valid data creates a language" do
+      assert {:ok, %Language{} = language} = Members.create_language(@valid_attrs)
+      assert language.code == "some code"
+      assert language.flag == "some flag"
+      assert language.name == "some name"
+    end
+
+    test "create_language/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Members.create_language(@invalid_attrs)
+    end
+
+    test "update_language/2 with valid data updates the language" do
+      language = language_fixture()
+      assert {:ok, language} = Members.update_language(language, @update_attrs)
+      assert %Language{} = language
+      assert language.code == "some updated code"
+      assert language.flag == "some updated flag"
+      assert language.name == "some updated name"
+    end
+
+    test "update_language/2 with invalid data returns error changeset" do
+      language = language_fixture()
+      assert {:error, %Ecto.Changeset{}} = Members.update_language(language, @invalid_attrs)
+      assert language == Members.get_language!(language.id)
+    end
+
+    test "delete_language/1 deletes the language" do
+      language = language_fixture()
+      assert {:ok, %Language{}} = Members.delete_language(language)
+      assert_raise Ecto.NoResultsError, fn -> Members.get_language!(language.id) end
+    end
+
+    test "change_language/1 returns a language changeset" do
+      language = language_fixture()
+      assert %Ecto.Changeset{} = Members.change_language(language)
+    end
+  end
 end

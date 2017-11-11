@@ -1,0 +1,27 @@
+%nav.top-nav.z-depth-0.nav-extended.color-banner
+  .nav-wrapper.valign-wrapper
+    %h4.title.color-title= "Classrooms"
+    - link to: classroom_path(@conn, :new), class: "btn-floating btn-large halfway-fab waves-effect waves-light color-btn-action" do
+      %i.material-icons= "add"
+
+.container
+  .row
+    .section
+      %table.bordered.responsive-table
+        %tr
+          %th.center-align.color-text= "Title"
+          %th.center-align.color-text= "Nb topics"
+          %th.center-align.color-text= "Nb items"
+          %th.center-align.color-text= "Nb packs"
+          %th.center-align.color-text= "Actions"
+        - for classroom <- @classrooms do
+          %tr
+            %td.center-align.color-text= classroom.title
+            %td.center-align.color-text= Enum.count(classroom.topics)
+            %td.center-align.color-text= Enum.count(classroom.items)
+            %td.center-align.color-text= Enum.count(classroom.packs)
+            %td.center-align
+              - link to: classroom_path(@conn, :edit, classroom), class: "waves-effect waves-light marged" do
+                %i.material-icons.color-icon-edit= "edit"
+              - link to: classroom_path(@conn, :delete, classroom), method: :delete, data: [confirm: "Are you sure?"], class: "waves-effect waves-light marged" do
+                %i.material-icons.color-icon-false= "delete_forever"

@@ -38,7 +38,7 @@ config :everlearn, EverlearnWeb.Endpoint,
       ~r{priv/gettext/.*(po)$},
       ~r{lib/everlearn_web/views/.*(ex)$},
       ~r{lib/everlearn_web/templates/.*(eex)$},
-      ~r{web/templates/.*(eex|haml)$}
+      ~r{web/templates/.*(eex|haml|drab)$}
     ]
   ]
 

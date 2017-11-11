@@ -15,9 +15,9 @@ defmodule EverlearnWeb.AuthController do
 
   def delete(conn, _params) do
     conn
-    |> configure_session(drop: true)
+    #|> configure_session(drop: true)
+    |> clear_session()
     |> put_flash(:info, "You have been logged out.")
-    |> IO.inspect()
     |> redirect(to: "/")
   end
 

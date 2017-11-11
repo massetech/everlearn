@@ -3,10 +3,12 @@ defmodule EverlearnWeb.TopicController do
 
   alias Everlearn.Contents
   alias Everlearn.Contents.Topic
+  alias Everlearn.Members
   plug :load_select when action in [:new, :edit]
 
   defp load_select(conn, _params) do
-    assign(conn, :classrooms, Everlearn.Contents.classroom_select_btn())
+    conn
+    |> assign(:classrooms, Contents.classroom_select_btn())
   end
 
   def index(conn, _params) do
@@ -30,10 +32,10 @@ defmodule EverlearnWeb.TopicController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    topic = Contents.get_topic!(id)
-    render(conn, "show.html", topic: topic)
-  end
+  # def show(conn, %{"id" => id}) do
+  #   topic = Contents.get_topic!(id)
+  #   render(conn, "show.html", topic: topic)
+  # end
 
   def edit(conn, %{"id" => id}) do
     topic = Contents.get_topic!(id)

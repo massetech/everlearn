@@ -1,0 +1,33 @@
+%nav.top-nav.z-depth-0.nav-extended.color-banner
+  .nav-wrapper.valign-wrapper
+    %h4.title.color-title= "Pack : #{@pack.title}"
+    - link to: pack_path(@conn, :index), class: "btn-floating btn-large halfway-fab waves-effect waves-light color-btn-action" do
+      %i.material-icons= "keyboard_arrow_left"
+.container
+  .row
+    .col.s3
+      = @pack.classroom.title
+    .col.s3
+      = @pack.level
+    .col.s3
+      = @pack.active
+.container.pack-show
+  .row
+    .section
+      -# Filter place
+  .row
+    .section
+      = for item <- @items do
+        - if item.packitems == [] do
+          .item.waves-effect.waves-light.btn.light{title: "#{item.id}", id: "#{item.id}", drab-click: "toogle_pack", data-item-id: "#{item.id}", data-pack-id: "#{@pack.id}"}
+            = item.title
+            %h4.title= "#{item.id}"
+        - else
+          .item.waves-effect.waves-light.btn.validate{title: "#{item.id}", id: "#{item.id}", drab-click: "toogle_pack", data-item-id: "#{item.id}", data-pack-id: "#{@pack.id}"}
+            = item.title
+            %h4.title= "#{item.id}"
+
+
+  -# .row
+  -#   .section
+  -#     = pagination_link(@conn, @rummage)

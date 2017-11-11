@@ -1,52 +1,35 @@
 defmodule EverlearnWeb.CardController do
   use EverlearnWeb, :controller
+  use Rummage.Phoenix.Controller
 
   alias Everlearn.Contents
   alias Everlearn.Contents.Card
-  plug :load_select when action in [:new, :edit]
+  plug :load_select when action in [:new, :create, :edit, :update]
 
   defp load_select(conn, _params) do
-    assign(conn, :topics, Everlearn.Contents.topic_select_btn())
+    assign(conn, :languages, Everlearn.Members.language_select_btn())
   end
 
-  def index(conn, _params) do
+  def index(conn, params) do
+    {query, rummage} = Card
+    |> Card.rummage(params["rummage"])
     cards = Contents.list_cards()
-    render(conn, "index.html", cards: cards)
+    changeset = Contents.change_card(%Card{})
+    render(conn, "index.html", cards: cards, changeset: changeset, rummage: rummage)
   end
 
   # Module to import Cards and items from CSV
   def import(conn, %{"card" => card_params}) do
-    callback = card_params["file"].path
-    |> File.stream!()
-    |> CSV.decode(separator: ?;, headers: [
-      :item_id, :item_group, :item_title, :item_level, :item_description, :item_active,
-      :card_language, :card_title, :card_active
-    ])
-    |> Enum.map(fn (card) ->
-      Everlearn.Contents.insert_card(card)
-      |> IO.inspect()
-    end)
-    #|> IO.inspect()
+    topic_id = card_params["topic_id"]
+    file = card_params["file"].path
+    Contents.import_cards(topic_id, file)
     conn
+    |> put_flash(:info, "Imported but might be some errors")
     |> redirect(to: item_path(conn, :index))
-    # |> Enum.filter(fn
-    #   {:error, _} -> true
-    #   _ -> false
-    # end)
-    # |> case do
-    #   [] ->
-    #     conn
-    #     |> put_flash(:info, "Imported without error")
-    #     |> redirect(to: item_path(conn, :index))
-    #   errors ->
-    #     conn
-    #     |> put_flash(:error, errors)
-    #     |> render("import.html")
-    # end
   end
 
-  def new(conn, _params) do
-    changeset = Contents.change_card(%Card{})
+  def new(conn, %{"item_id" => item_id}) do
+    changeset = Contents.change_card(%Card{item_id: item_id})
     render(conn, "new.html", changeset: changeset)
   end
 
@@ -55,7 +38,7 @@ defmodule EverlearnWeb.CardController do
       {:ok, card} ->
         conn
         |> put_flash(:info, "Card created successfully.")
-        |> redirect(to: card_path(conn, :show, card))
+        |> redirect(to: card_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -79,7 +62,7 @@ defmodule EverlearnWeb.CardController do
       {:ok, card} ->
         conn
         |> put_flash(:info, "Card updated successfully.")
-        |> redirect(to: card_path(conn, :show, card))
+        |> redirect(to: card_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", card: card, changeset: changeset)
     end

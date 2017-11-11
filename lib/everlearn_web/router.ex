@@ -16,17 +16,26 @@ defmodule EverlearnWeb.Router do
   end
 
   scope "/", EverlearnWeb do
-    pipe_through :browser # Use the default browser stack
+    pipe_through :browser
 
-    get "/", PageController, :index
-    resources "/users", UserController
+    get "/", MainController, :welcome, as: :root
+    resources "/users", UserController do
+      get "/packs", PackController, :index
+    end
+    resources "/languages", LanguageController
     resources "/classrooms", ClassroomController
     resources "/topics", TopicController
     resources "/packs", PackController
-    resources "/items", ItemController
-    resources "/cards", CardController
+    resources "/items", ItemController do
+      resources "/cards", CardController, only: [:new]
+    end
+    resources "/cards", CardController, except: [:new]
     post "/import", CardController, :import, as: :import_card
     resources "/memorys", MemoryController
+    # scope "/search", as: :search do
+    #   post "/pack", SearchController, :search_pack, as: :pack
+    # end
+
   end
 
   scope "/auth", EverlearnWeb do

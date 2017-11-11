@@ -1,0 +1,31 @@
+%nav.top-nav.z-depth-0.nav-extended.color-banner
+  .nav-wrapper.valign-wrapper
+    %h4.title.color-title= "Topics"
+    - link to: topic_path(@conn, :new), class: "btn-floating btn-large halfway-fab waves-effect waves-light color-btn-action" do
+      %i.material-icons= "add"
+
+.container
+  .row
+    .section
+      %table.bordered.responsive-table
+        %tr
+          %th.center-align.color-text= "ID"
+          %th.center-align.color-text= "Title"
+          %th.center-align.color-text= "Classroom"
+          %th.center-align.color-text= "Nb items"
+          %th.center-align.color-text= "Nb packs"
+          %th.center-align.color-text= "Actions"
+        - for topic <- @topics do
+          %tr
+            %td.center-align= topic.id
+            %td.center-align= topic.title
+            %td.center-align= topic.classroom.title
+            %td.center-align= Enum.count(topic.items)
+            %td.center-align= "To be defined"
+            %td.center-align
+              - link to: topic_path(@conn, :edit, topic), class: "waves-effect waves-light marged" do
+                %i.material-icons.color-icon-edit= "remove_red_eye"
+              - link to: topic_path(@conn, :edit, topic), class: "waves-effect waves-light marged" do
+                %i.material-icons.color-icon-edit= "edit"
+              - link to: topic_path(@conn, :delete, topic), method: :delete, data: [confirm: "Are you sure?"], class: "waves-effect waves-light marged" do
+                %i.material-icons.color-icon-false= "delete_forever"

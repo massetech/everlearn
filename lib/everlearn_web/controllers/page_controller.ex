@@ -1,8 +1,8 @@
-defmodule EverlearnWeb.PageController do
+defmodule EverlearnWeb.MainController do
   use EverlearnWeb, :controller
 
-  def index(conn, _params) do
-    IO.inspect(conn)
-    render conn, "index.html"
+  def welcome(conn, _params) do
+    conn
+    |> render("welcome.html")
   end
 end

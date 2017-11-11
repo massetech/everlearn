@@ -1,18 +1,24 @@
 defmodule EverlearnWeb.ItemController do
   use EverlearnWeb, :controller
+  use Rummage.Phoenix.Controller
 
   alias Everlearn.Contents
   alias Everlearn.Contents.{Item, Card}
-  plug :load_select when action in [:new, :edit, :index]
+  plug :load_select when action in [:new, :create, :edit, :update, :index]
 
   defp load_select(conn, _params) do
-    assign(conn, :topics, Everlearn.Contents.topic_select_btn())
+    conn
+    |> assign(:topics, Contents.topic_select_btn())
+    |> assign(:levels, Contents.pack_level_select_btn())
+    |> assign(:groups, Contents.item_group_select_btn())
+    # |> assign(:status, ["active", "inactive"])
   end
 
-  def index(conn, _params) do
-    items = Contents.list_items()
-    changeset = Contents.change_card(%Card{})
-    render(conn, "index.html", items: items, changeset: changeset)
+  def index(conn, params) do
+    {query, rummage} = Item
+    |> Item.rummage(params["rummage"])
+    items = Contents.list_items(query)
+    render(conn, "index.html", items: items, rummage: rummage)
   end
 
   def new(conn, _params) do

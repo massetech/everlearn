@@ -7,6 +7,7 @@ defmodule Everlearn.Repo.Migrations.CreateCards do
       add :title, :string
       add :active, :boolean, default: false, null: false
       add :item_id, references(:items, on_delete: :delete_all)
+      add :language_id, references(:languages, on_delete: :delete_all)
 
       timestamps()
     end

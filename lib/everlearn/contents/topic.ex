@@ -1,12 +1,14 @@
 defmodule Everlearn.Contents.Topic do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Everlearn.Contents.Topic
 
+  alias Everlearn.Contents.{Topic, Classroom, Item}
+  alias Everlearn.Members.{Language}
 
   schema "topics" do
     field :title, :string
-    field :classroom_id, :id
+    belongs_to :classroom, Classroom
+    has_many :items, Item
 
     timestamps()
   end
@@ -16,5 +18,6 @@ defmodule Everlearn.Contents.Topic do
     topic
     |> cast(attrs, [:title, :classroom_id])
     |> validate_required([:title, :classroom_id])
+    |> assoc_constraint(:classroom)
   end
 end

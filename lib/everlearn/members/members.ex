@@ -7,8 +7,10 @@ defmodule Everlearn.Members do
   import Everlearn.{CustomMethods}
   require Logger
   require Poison
+
   alias Everlearn.Repo
   alias Ueberauth.Auth
+  alias Everlearn.Members.{Language, User, Membership, Memory}
 
   # -------------------------------- UEBERAUTH ----------------------------------------
   #alias Everlearn.Members.Auth
@@ -27,7 +29,12 @@ defmodule Everlearn.Members do
 
   defp basic_info(auth) do
     %{uid: auth.uid, token: token_from_auth(auth), token_expiration: exp_token_from_auth(auth), provider: Atom.to_string(auth.provider),
-      name: name_from_auth(auth), avatar: avatar_from_auth(auth), email: email_from_auth(auth), nickname: nickname_from_auth(auth), language: "FR"}
+      name: name_from_auth(auth), avatar: avatar_from_auth(auth), email: email_from_auth(auth), nickname: nickname_from_auth(auth),
+      language_id: 1, role: test_email(email_from_auth(auth))}
+  end
+
+  defp test_email(email) do
+    if email == System.get_env("SUPER_EMAIL"), do: "SUPER", else: "MEMBER"
   end
 
   defp token_from_auth(%{credentials: %{token: token}}), do: token
@@ -93,11 +100,18 @@ defmodule Everlearn.Members do
   # defp validate_pass(_), do: {:error, "Password Required"}
 
   # -------------------------------- USER ----------------------------------------
-  alias Everlearn.Members.User
 
   def list_users do
     Repo.all(User)
   end
+
+  def is_admin?(user) do
+    Enum.member?(["ADMIN", "SUPER"], user.role)
+  end
+
+  # def current_user(conn) do
+  #   conn.assigns[:current_user] || nil
+  # end
 
   def get_user!(id), do: Repo.get!(User, id)
 
@@ -137,7 +151,6 @@ defmodule Everlearn.Members do
   end
 
   # -------------------------------- MEMBERSHIP ----------------------------------------
-  alias Everlearn.Members.Membership
 
   def list_memberships do
     Repo.all(Membership)
@@ -192,5 +205,131 @@ defmodule Everlearn.Members do
 
   def change_memory(%Memory{} = memory) do
     Memory.changeset(memory, %{})
+  end
+
+  # -------------------------------- LANGUAGE ----------------------------------------
+
+  @doc """
+  Returns a random language.
+
+  ## Examples
+
+      iex> list_languages()
+      [%Language{}, ...]
+
+  """
+
+  def choose_random_language do
+    Language
+    |> Repo.all()
+    |> Enum.random()
+  end
+
+  def language_select_btn do
+    Repo.all(from(c in Language, select: {c.name, c.id}))
+  end
+
+  @doc """
+  Returns the list of languages.
+
+  ## Examples
+
+      iex> list_languages()
+      [%Language{}, ...]
+
+  """
+  def list_languages do
+    Repo.all(Language)
+  end
+
+  @doc """
+  Gets a single language.
+
+  Raises `Ecto.NoResultsError` if the Language does not exist.
+
+  ## Examples
+
+      iex> get_language!(123)
+      %Language{}
+
+      iex> get_language!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_language!(id), do: Repo.get!(Language, id)
+
+  @doc """
+  Find a language by iso2code.
+
+  """
+
+  def get_language_by_code(iso2code) do
+    Language
+    |> Repo.get_by(iso2code: iso2code)
+  end
+
+  @doc """
+  Creates a language.
+
+  ## Examples
+
+      iex> create_language(%{field: value})
+      {:ok, %Language{}}
+
+      iex> create_language(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_language(attrs \\ %{}) do
+    %Language{}
+    |> Language.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a language.
+
+  ## Examples
+
+      iex> update_language(language, %{field: new_value})
+      {:ok, %Language{}}
+
+      iex> update_language(language, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_language(%Language{} = language, attrs) do
+    language
+    |> Language.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a Language.
+
+  ## Examples
+
+      iex> delete_language(language)
+      {:ok, %Language{}}
+
+      iex> delete_language(language)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_language(%Language{} = language) do
+    Repo.delete(language)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking language changes.
+
+  ## Examples
+
+      iex> change_language(language)
+      %Ecto.Changeset{source: %Language{}}
+
+  """
+  def change_language(%Language{} = language) do
+    Language.changeset(language, %{})
   end
 end

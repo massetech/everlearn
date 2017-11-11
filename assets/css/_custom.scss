@@ -7,3 +7,47 @@ body {
 main {
   flex: 1 0 auto;
 }
+a.brand-logo{
+  margin-left: 1em;
+}
+nav.top-nav .title {margin-left: 1em;}
+
+.flash_msg {
+  display: none;
+  border-radius: 15px !important;
+}
+
+.flash_msg:hover {cursor: pointer;}
+.flash {
+  position: absolute;
+  width: 100%;
+  margin-top: 5em;
+  z-index: 99;
+}
+
+.flag {
+  border-radius: 8px;
+  width: 25px;
+  height: 25px;
+}
+
+a.marged {
+  margin: 0 1em;
+}
+
+.submit-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  a {
+    margin-left: 10em;
+    position: absolute;
+  }
+  a:hover {cursor: pointer;}
+}
+
+.full_center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

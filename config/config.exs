@@ -11,7 +11,13 @@ config :everlearn,
 
 # Added to manage HAML
 config :phoenix, :template_engines,
-  haml: PhoenixHaml.Engine
+  haml: PhoenixHaml.Engine,
+  drab: Drab.Live.Engine
+
+# Added for rummage filtering
+config :rummage_ecto, Rummage.Ecto,
+  default_repo: Everlearn.Repo,
+  default_per_page: 500
 
 # Configures the endpoint
 config :everlearn, EverlearnWeb.Endpoint,

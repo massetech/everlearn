@@ -1,12 +1,23 @@
 defmodule EverlearnWeb.PackController do
   use EverlearnWeb, :controller
+  use Drab.Controller
 
-  alias Everlearn.Contents
-  alias Everlearn.Contents.Pack
+  alias Everlearn.{Contents, Members, CustomSelects}
+  alias Everlearn.Contents.{Pack, Item}
 
-  def index(conn, _params) do
-    packs = Contents.list_packs()
-    render(conn, "index.html", packs: packs)
+  plug :load_select when action in [:new, :create, :edit, :update, :index]
+
+  defp load_select(conn, _params) do
+    conn
+    |> assign(:classrooms, Contents.classroom_select_btn())
+    |> assign(:levels, Contents.pack_level_select_btn())
+    |> assign(:active, CustomSelects.status_select_btn())
+    |> assign(:languages, Members.language_select_btn())
+  end
+
+  def index(conn, params) do
+    {packs, rummage} = Contents.list_packs(params)
+    render conn, "index.html", packs: packs, rummage: @rummage
   end
 
   def new(conn, _params) do
@@ -21,13 +32,19 @@ defmodule EverlearnWeb.PackController do
         |> put_flash(:info, "Pack created successfully.")
         |> redirect(to: pack_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+        conn
+        |> load_select("")
+        |> put_flash(:error, "Please check the errors below.")
+        |> render("new.html", changeset: changeset)
     end
   end
 
   def show(conn, %{"id" => id}) do
+    # {query, rummage} = Item
+    # |> Item.rummage()
     pack = Contents.get_pack!(id)
-    render(conn, "show.html", pack: pack)
+    items = Contents.list_eligible_items(pack)
+    render conn, "show.html", pack: pack, items: items
   end
 
   def edit(conn, %{"id" => id}) do

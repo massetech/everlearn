@@ -8,7 +8,9 @@
 // therefore are always executed.
 
 import "phoenix_html";
+// import loader in views folder for specific views
 import loadView from './views/loader';
+// import add ons
 import "hammerjs";
 import "materialize-css";
 // import "swiper";

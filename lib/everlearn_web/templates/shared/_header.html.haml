@@ -1,0 +1,35 @@
+%header
+  %nav.navbar-fixed.transparent.z-depth-1
+    .nav-wrapper
+      - link to: root_path(@conn, :welcome), class: "brand-logo" do
+        .row.valign-wrapper
+          .left
+            %i.material-icons.color-logo= "verified_user"
+          .right
+            %h5.pink-text.color-logo= "Everlearn"
+        =# img_tag static_path(@conn, "/images/logo-text.png")
+      %a.button-collapse{href: "#", data-activates: "mobile-demo"}
+        %i.material-icons= "menu"
+      %ul.right.right.hide-on-med-and-down{id: "nav-mobile"}
+        %li= link "Classrooms", to: classroom_path(@conn, :index), class: "color-text"
+        %li= link "Topics", to: topic_path(@conn, :index), class: "color-text"
+        %li= link "Packs", to: pack_path(@conn, :index), class: "color-text"
+        %li= link "Items", to: item_path(@conn, :index), class: "color-text"
+        %li= link "Cards", to: card_path(@conn, :index), class: "color-text"
+        %li= link "Memories", to: memory_path(@conn, :index), class: "color-text"
+        - if @conn.assigns[:user] do
+          %li= link "Log out", to: auth_path(@conn, :delete), method: :delete, class: "color-text"
+          %li= link "My packs", to: user_pack_path(@conn, :index, @conn.assigns[:user].id), class: "color-text"
+        - else
+          %li= link "Log in with google", to: auth_path(@conn, :request, "google"), class: "color-text"
+      -# %ul.side-nav{id: "mobile-demo"}
+      -#   %li= link "Classrooms", to: classroom_path(@conn, :index)
+      -#   %li= link "Topics", to: topic_path(@conn, :index)
+      -#   %li= link "Items", to: item_path(@conn, :index)
+      -#   %li= link "Cards", to: card_path(@conn, :index)
+      -#   %li= link "Packs", to: pack_path(@conn, :index)
+      -#   %li= link "Memories", to: memory_path(@conn, :index)
+      -#   - if @conn.assigns[:user] do
+      -#     %li= link "Log out", to: auth_path(@conn, :delete), method: :delete
+      -#   - else
+      -#     %li= link "Log in with google", to: auth_path(@conn, :request, "google")
