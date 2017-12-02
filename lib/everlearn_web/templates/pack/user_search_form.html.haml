@@ -1,0 +1,22 @@
+- form_for @conn, user_pack_path(@conn, :user_index, @conn.assigns[:current_user].id), [as: :search, method: "get", id: "search_form"], fn f ->
+  .section
+    .container
+      .row{class: "position=relative"}
+        .input-field.col.s12.m3
+          = text_input f, :title
+          = label f, "Search by title"
+        .input-field.col.s12.m3
+          = select f, :classroom, @classrooms, prompt: ""
+          = label f, :classroom
+        .input-field.col.s12.m3
+          = select f, :language, @languages, prompt: ""
+          = label f, :language
+        .input-field.col.s12.m3
+          = select f, :level, @levels, prompt: ""
+          = label f, :level
+        = hidden_input f, :active, value: "true"
+
+  .section
+    .form-group.center-align.submit-area
+      = submit "Search", class: "btn-large waves-effect waves-light teal accent-4"
+      %a.empty_fields= "Empty fields"

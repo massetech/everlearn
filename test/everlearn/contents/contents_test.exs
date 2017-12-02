@@ -252,4 +252,64 @@ defmodule Everlearn.ContentsTest do
       assert %Ecto.Changeset{} = Contents.change_pack_item(pack_item)
     end
   end
+
+  describe "kinds" do
+    alias Everlearn.Contents.Kind
+
+    @valid_attrs %{name: "some name"}
+    @update_attrs %{name: "some updated name"}
+    @invalid_attrs %{name: nil}
+
+    def kind_fixture(attrs \\ %{}) do
+      {:ok, kind} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Contents.create_kind()
+
+      kind
+    end
+
+    test "list_kinds/0 returns all kinds" do
+      kind = kind_fixture()
+      assert Contents.list_kinds() == [kind]
+    end
+
+    test "get_kind!/1 returns the kind with given id" do
+      kind = kind_fixture()
+      assert Contents.get_kind!(kind.id) == kind
+    end
+
+    test "create_kind/1 with valid data creates a kind" do
+      assert {:ok, %Kind{} = kind} = Contents.create_kind(@valid_attrs)
+      assert kind.name == "some name"
+    end
+
+    test "create_kind/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Contents.create_kind(@invalid_attrs)
+    end
+
+    test "update_kind/2 with valid data updates the kind" do
+      kind = kind_fixture()
+      assert {:ok, kind} = Contents.update_kind(kind, @update_attrs)
+      assert %Kind{} = kind
+      assert kind.name == "some updated name"
+    end
+
+    test "update_kind/2 with invalid data returns error changeset" do
+      kind = kind_fixture()
+      assert {:error, %Ecto.Changeset{}} = Contents.update_kind(kind, @invalid_attrs)
+      assert kind == Contents.get_kind!(kind.id)
+    end
+
+    test "delete_kind/1 deletes the kind" do
+      kind = kind_fixture()
+      assert {:ok, %Kind{}} = Contents.delete_kind(kind)
+      assert_raise Ecto.NoResultsError, fn -> Contents.get_kind!(kind.id) end
+    end
+
+    test "change_kind/1 returns a kind changeset" do
+      kind = kind_fixture()
+      assert %Ecto.Changeset{} = Contents.change_kind(kind)
+    end
+  end
 end

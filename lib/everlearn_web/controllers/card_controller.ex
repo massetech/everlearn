@@ -2,7 +2,7 @@ defmodule EverlearnWeb.CardController do
   use EverlearnWeb, :controller
   use Rummage.Phoenix.Controller
 
-  alias Everlearn.Contents
+  alias Everlearn.{Contents, Imports}
   alias Everlearn.Contents.Card
   plug :load_select when action in [:new, :create, :edit, :update]
 
@@ -19,13 +19,21 @@ defmodule EverlearnWeb.CardController do
   end
 
   # Module to import Cards and items from CSV
+  # def import(conn, %{"card" => card_params}) do
+  #   file = card_params["file"].path
+  #   |> Contents.import_cards()
+  #   conn
+  #   |> put_flash(:info, "Cards were imported but might be some errors")
+  #   |> redirect(to: card_path(conn, :index))
+  # end
   def import(conn, %{"card" => card_params}) do
-    topic_id = card_params["topic_id"]
-    file = card_params["file"].path
-    Contents.import_cards(topic_id, file)
+    msg = card_params["file"].path
+      |> Imports.import("Contents", "card", Contents.card_import_fields, nil)
+      |> IO.inspect()
+      |> Imports.flash_answers()
     conn
-    |> put_flash(:info, "Imported but might be some errors")
-    |> redirect(to: item_path(conn, :index))
+      |> put_flash(elem(msg, 0), elem(msg, 1))
+      |> redirect(to: card_path(conn, :index))
   end
 
   def new(conn, %{"item_id" => item_id}) do

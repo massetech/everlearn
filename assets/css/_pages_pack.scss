@@ -1,0 +1,53 @@
+.pack-index {
+  .flag {
+    border-radius: 8px;
+    width: 25px;
+    height: 25px;
+  }
+}
+
+.flag {
+  border-radius: 8px;
+  width: 25px;
+  height: 25px;
+}
+
+.pack-show {
+  .item {
+    margin: 1em;
+    h4.title {
+      font-size: 10px;
+      right: 0;
+      position: absolute;
+      top: 0px;
+      display: none;
+    }
+  }
+  .item:hover {
+    h4.title {
+      display: block;
+    }
+  }
+}
+
+.pack-index-user {
+  .section.packs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card {
+    max-width: 400px;
+    margin: 2em;
+    .flag {
+      border-radius: 100px;
+      width: 40px;
+      height: 40px;
+    }
+    // img {
+    //   // position: absolute;
+    //   // top: 0;
+    //   // margin: 10px;
+    // }
+  }
+}

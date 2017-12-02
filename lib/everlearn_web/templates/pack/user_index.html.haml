@@ -1,0 +1,33 @@
+%nav.top-nav.z-depth-0.nav-extended.color-banner
+  .nav-wrapper.valign-wrapper
+    %h4.title.color-title= "Choose your packs !"
+.container.pack-index-user
+  .row
+    .section
+      = render "user_search_form.html", conn: @conn, rummage: @rummage, classrooms: @classrooms, levels: @levels, active: @active, languages: @languages
+  .row
+    .section.packs
+      - for pack <- @packs do
+        .card
+          .card-header
+            .col.4
+              = img_tag static_path(@conn, "/images/flags/1x1/#{pack.language.iso2code}.svg"), class: "flag"
+            .col.8
+              %h6= pack.classroom.title
+
+          .card-content
+            .card-title
+              %h5= pack.title
+              %h6= "Level #{pack.level}, words #{Enum.count(pack.memberships)}"
+            .card-text
+              %p= pack.description
+          - if pack.memberships == [] do
+            .pack.card-action.waves-effect.waves-light.btn.light{id: "#{pack.id}", drab-click: "toogle_membership", data-user-id: "#{@conn.assigns.current_user.id}", data-pack-id: "#{pack.id}"}
+              %h6= "Learn it"
+          - else
+            .pack.card-action.waves-effect.waves-light.btn.light{id: "#{pack.id}", drab-click: "toogle_membership", data-user-id: "#{@conn.assigns.current_user.id}", data-pack-id: "#{pack.id}"}
+              %h6= "Remove it"
+
+  .row
+    .section
+      = pagination_link(@conn, @rummage)

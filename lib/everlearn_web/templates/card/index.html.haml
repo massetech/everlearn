@@ -7,7 +7,7 @@
 .container
   .row
     .section
-      =# render CardView, "import_form.html", changeset: @changeset, topics: @topics, action: import_card_path(@conn, :import)
+      = render "import_form.html", changeset: @changeset, action: import_cards_path(@conn, :import)
     .section
       = # Place for queries search
   .row
@@ -35,7 +35,7 @@
                 %i.material-icons.red-text.darken-4= "cancel"
             %td.full_center
               = img_tag static_path(@conn, "/images/flags/4x3/#{card.language.iso2code}.svg"), class: "flag"
-            %td.center-align.color-text= card.title
+            %td.center-align.color-text= card.question
             %td.center-align.color-text= Enum.count(card.item.packitems)
             %td.center-align
               - if card.active == true do

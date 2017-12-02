@@ -2,23 +2,34 @@ defmodule EverlearnWeb.ItemController do
   use EverlearnWeb, :controller
   use Rummage.Phoenix.Controller
 
-  alias Everlearn.Contents
+  alias Everlearn.{Contents, CustomSelects, Imports}
   alias Everlearn.Contents.{Item, Card}
-  plug :load_select when action in [:new, :create, :edit, :update, :index]
+  plug :load_select when action in [:index, :new, :create, :edit, :update, :index]
 
   defp load_select(conn, _params) do
     conn
+    |> assign(:classrooms, Contents.classroom_select_btn())
     |> assign(:topics, Contents.topic_select_btn())
     |> assign(:levels, Contents.pack_level_select_btn())
-    |> assign(:groups, Contents.item_group_select_btn())
-    # |> assign(:status, ["active", "inactive"])
+    |> assign(:kinds, Contents.kind_select_btn())
+    |> assign(:active, CustomSelects.status_select_btn())
   end
 
   def index(conn, params) do
-    {query, rummage} = Item
-    |> Item.rummage(params["rummage"])
-    items = Contents.list_items(query)
-    render(conn, "index.html", items: items, rummage: rummage)
+    {items, rummage} = Contents.list_items(params)
+    changeset = Contents.change_item(%Item{})
+    render(conn, "index.html", items: items, changeset: changeset, rummage: rummage)
+  end
+
+  def import(conn, %{"item" => item_params}) do
+    topic_id = item_params["topic_id"]
+    msg = item_params["file"].path
+      |> Imports.import("Contents", "item", Contents.item_import_fields, {:topic_id, topic_id})
+      |> IO.inspect()
+      |> Imports.flash_answers()
+    conn
+      |> put_flash(elem(msg, 0), elem(msg, 1))
+      |> redirect(to: item_path(conn, :index))
   end
 
   def new(conn, _params) do

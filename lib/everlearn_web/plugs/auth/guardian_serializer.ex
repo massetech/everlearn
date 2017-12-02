@@ -1,4 +1,4 @@
-defmodule SimpleAuth.GuardianSerializer do
+defmodule Everlearn.GuardianSerializer do
   @behaviour Guardian.Serializer
   alias Everlearn.Repo
   alias Everlearn.Members.User

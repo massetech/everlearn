@@ -1,7 +1,7 @@
 defmodule Everlearn.Members.User do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Everlearn.Members.{User, Language}
+  alias Everlearn.Members.{User, Language, Membership}
 
   schema "users" do
     field :uid, :string
@@ -13,6 +13,7 @@ defmodule Everlearn.Members.User do
     field :token, :string
     field :token_expiration, :utc_datetime
     belongs_to :language, Language
+    has_many :memberships, Membership
 
     timestamps()
   end

@@ -1,0 +1,15 @@
+- form_for @changeset, @action, [multipart: true], fn f ->
+  .row
+    .col.s12.m5
+      .input-field
+        = select f, :topic_id, @topics
+        = label f, :topic_id
+    .col.s12.m5
+      .input-field.file-field
+        .btn
+          %span= "Upload items file"
+          = file_input f, :file
+        .file-path-wrapper
+          = text_input f, :title, class: "file-path validate", placeholder: "Select your file"
+    .col.s12.m2
+      = submit "Upload items", class: "btn btn-primary"

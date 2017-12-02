@@ -1,15 +1,15 @@
 defmodule EverlearnWeb.PackCommander do
   use Drab.Commander
-  alias Everlearn.Contents
+  alias Everlearn.{Contents, Members}
   onload :page_loaded
 
   def page_loaded(socket) do
     socket |> exec_js("console.log('Alert from the other side!');")
   end
 
-  def toogle_pack(socket, payload) do
+  def toogle_item_pack(socket, payload) do
     %{"itemId" => item_id, "packId" => pack_id} = payload["dataset"]
-    case Everlearn.Contents.toogle_pack_item(item_id, pack_id) do
+    case Contents.toogle_pack_item(item_id, pack_id) do
       {:created, pack_item} ->
         socket
         |> Drab.Browser.console("PackItem created for item #{item_id} and pack #{pack_id}")
@@ -21,6 +21,24 @@ defmodule EverlearnWeb.PackCommander do
       {:error, _} ->
         socket
         |> Drab.Browser.console("Couldn't create PackItem between item #{item_id} and pack #{pack_id}")
+    end
+  end
+
+  def toogle_membership(socket, payload) do
+    IO.inspect(payload)
+    %{"packId" => pack_id, "userId" => user_id} = payload["dataset"]
+    case Members.toogle_membership(user_id, pack_id) do
+      {:created, pack_item} ->
+        socket
+        |> Drab.Browser.console("Membership created for user #{user_id} and pack #{pack_id}")
+        |> set_prop(".pack[id='#{pack_id}']", %{"attributes" => %{"class" => "pack waves-effect waves-light btn validate"}})
+      {:deleted, pack_item} ->
+        socket
+        |> Drab.Browser.console("Membership removed for user #{user_id} and pack #{pack_id}")
+        |> set_prop(".pack[id='#{pack_id}']", %{"attributes" => %{"class" => "pack waves-effect waves-light btn light"}})
+      {:error, _} ->
+        socket
+        |> Drab.Browser.console("Couldn't create Membership between user #{user_id} and pack #{pack_id}")
     end
   end
 

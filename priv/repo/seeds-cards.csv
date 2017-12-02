@@ -1,11 +1,11 @@
-ITEM_ID;GROUP;TITLE;LEVEL;DESCRIPTION;ACTIVE;LANGUAGE;TITLE;ACTIVE
-;noun;house;1;Place to live;Y;en;house;Y
-;verb;to house;2;Keep someone at home;Y;en;to house;Y
-;noun;dog;3;Nice animal;N;fr;to house;Y
-;verb;to feed;1;Give food;Y;en;to give;N
-;noun;house;1;Place to live;Y;en;house;Y
-;verb;to house;2;Keep someone at home;Y;en;to house;Y
-;noun;dog;3;Nice animal;N;mm;to house;Y
-;verb;to feed;1;Give food;Y;en;to give;N
-;noun;house;1;Place to live;Y;en;house;Y
-;verb;to house;2;Keep someone at home;Y;en;to house;Y
+ITEM_TITLE;ITEM_LEVEL;LANGUAGE;QUESTION;ANSWER
+house;1;EN;house;
+house;1;FR;maison;
+house;1;BI;ein;
+house;1;ES;casa;
+dog;1;EN;dog;
+dog;1;BI;kwei
+dog;1;FR;chien;
+cat;1;EN;cat;
+cat;1;FR;chat
+cat;1;ES;pero;

@@ -1,0 +1,26 @@
+<h2>Listing Kinds</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for kind <- @kinds do %>
+    <tr>
+      <td><%= kind.name %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: kind_path(@conn, :show, kind), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: kind_path(@conn, :edit, kind), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: kind_path(@conn, :delete, kind), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Kind", to: kind_path(@conn, :new) %></span>

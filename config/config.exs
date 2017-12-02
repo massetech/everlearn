@@ -32,11 +32,11 @@ config :ueberauth, Ueberauth.Strategy.Google.OAuth,
   client_id: System.get_env("GOOGLE_CLIENT_ID"),
   client_secret: System.get_env("GOOGLE_CLIENT_SECRET")
 
-config :guardian, Guardian,
+config :everlearn, Everlearn.Auth.Guardian,
   issuer: "Everlearn.#{Mix.env}",
   ttl: {30, :days},
   verify_issuer: true,
-  serializer: Everlearn.GuardianSerializer,
+  # serializer: Everlearn.GuardianSerializer,
   secret_key: System.get_env("GUARDIAN_SECRET")
 
 config :logger, :console,

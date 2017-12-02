@@ -1,0 +1,13 @@
+<h2>Show Kind</h2>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @kind.name %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: kind_path(@conn, :edit, @kind) %></span>
+<span><%= link "Back", to: kind_path(@conn, :index) %></span>

@@ -1,13 +1,13 @@
 defmodule Everlearn.Members.Membership do
   use Ecto.Schema
+  use Rummage.Ecto
   import Ecto.Changeset
-  alias Everlearn.Members.Membership
-
+  alias Everlearn.Members.{Membership, User}
+  alias Everlearn.Contents.Pack
 
   schema "memberships" do
-    field :language, :string
-    field :user_id, :id
-    field :pack_id, :id
+    belongs_to :user, User
+    belongs_to :pack, Pack
 
     timestamps()
   end
@@ -15,9 +15,9 @@ defmodule Everlearn.Members.Membership do
   @doc false
   def changeset(%Membership{} = membership, attrs) do
     membership
-    |> cast(attrs, [:language, :user_id, :pack_id])
-    |> validate_required([:language, :user_id, :pack_id])
-    |> assoc_constraint(:user)
-    |> assoc_constraint(:pack)
+    |> cast(attrs, [:user_id, :pack_id])
+    |> validate_required([:user_id, :pack_id])
+    # |> assoc_constraint(:user)
+    # |> assoc_constraint(:pack)
   end
 end

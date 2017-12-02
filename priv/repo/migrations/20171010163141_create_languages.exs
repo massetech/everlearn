@@ -9,6 +9,7 @@ defmodule Everlearn.Repo.Migrations.CreateLanguages do
 
       timestamps()
     end
+    create unique_index(:languages, [:iso2code])
 
   end
 end

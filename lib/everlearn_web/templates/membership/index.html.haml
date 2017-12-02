@@ -1,0 +1,38 @@
+%nav.top-nav.z-depth-0.nav-extended.color-banner
+  .nav-wrapper.valign-wrapper
+    %h4.title.color-title= "Memberships"
+.container.pack-index
+  .row
+    .section
+      =# render "search_form.html", conn: @conn, rummage: @rummage, classrooms: @classrooms, levels: @levels, active: @active, languages: @languages
+  .row
+    .section
+      %table.bordered.responsive-table
+        %tr
+          %th.center-align.color-text= "ID"
+          %th.center-align.color-text= "User ID"
+          %th.center-align.color-text= "User email"
+          %th.center-align.color-text= "Pack ID"
+          %th.center-align.color-text= "Pack title"
+          %th.center-align.color-text= "Language"
+          %th.center-align.color-text= "Level"
+          %th.center-align.color-text= "Actions"
+        - for membership <- @memberships do
+          %tr
+            %td.center-align= membership.id
+            %td.center-align= membership.user_id
+            %td.center-align= membership.user.email
+            %td.center-align= membership.pack_id
+            %td.center-align= membership.pack.title
+            %td.full_center
+              = img_tag static_path(@conn, "/images/flags/4x3/#{membership.pack.language.iso2code}.svg"), class: "flag"
+            %td.center-align.color-text= membership.pack.level
+            %td.center-align
+              - link to: pack_path(@conn, :show, membership.pack), class: "waves-effect waves-light marged" do
+                %i.material-icons.color-icon-edit= "remove_red_eye"
+              - link to: pack_path(@conn, :delete, membership), method: :delete, data: [confirm: "Are you sure?"], class: "waves-effect waves-light marged" do
+                %i.material-icons.color-icon-false= "delete_forever"
+
+  .row
+    .section
+      = pagination_link(@conn, @rummage)

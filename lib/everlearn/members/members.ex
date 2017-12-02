@@ -13,15 +13,6 @@ defmodule Everlearn.Members do
   alias Everlearn.Members.{Language, User, Membership, Memory}
 
   # -------------------------------- UEBERAUTH ----------------------------------------
-  #alias Everlearn.Members.Auth
-
-  # def find_or_create(%Auth{provider: :identity} = auth) do
-  #   case validate_pass(auth.credentials) do
-  #     :ok ->
-  #       {:ok, basic_info(auth)}
-  #     {:error, reason} -> {:error, reason}
-  #   end
-  # end
 
   def signin(%Auth{} = auth) do
     insert_or_update_user(basic_info(auth))
@@ -88,30 +79,27 @@ defmodule Everlearn.Members do
     end
   end
 
-  # defp validate_pass(%{other: %{password: ""}}) do
-  #   {:error, "Password required"}
-  # end
-  # defp validate_pass(%{other: %{password: pw, password_confirmation: pw}}) do
-  #   :ok
-  # end
-  # defp validate_pass(%{other: %{password: _}}) do
-  #   {:error, "Passwords do not match"}
-  # end
-  # defp validate_pass(_), do: {:error, "Password Required"}
-
   # -------------------------------- USER ----------------------------------------
 
   def list_users do
     Repo.all(User)
   end
 
-  def is_admin?(user) do
-    Enum.member?(["ADMIN", "SUPER"], user.role)
+  def admin_user? (user) do
+    if Enum.member?(["ADMIN", "SUPER"], user.role) do
+      true
+    else
+      false
+    end
   end
 
-  # def current_user(conn) do
-  #   conn.assigns[:current_user] || nil
-  # end
+  def super_user? (user) do
+    if Enum.member?(["SUPER"], user.role) do
+      true
+    else
+      false
+    end
+  end
 
   def get_user!(id), do: Repo.get!(User, id)
 
@@ -152,11 +140,58 @@ defmodule Everlearn.Members do
 
   # -------------------------------- MEMBERSHIP ----------------------------------------
 
+  def toogle_membership(user_id, pack_id) do
+    case get_membership(user_id, pack_id) do
+      %Membership{} = membership ->
+        # There is allready a Membership : delete it
+        case delete_membership(membership) do
+          {:ok, membership} -> {:deleted, membership}
+          {:error, reason} -> {:error, reason}
+        end
+      nil ->
+        # There wasnt any Membership : create it
+        case create_membership(%{pack_id: pack_id, user_id: user_id}) do
+          {:ok, membership} -> {:created, membership}
+          {:error, reason} -> {:error, reason}
+        end
+    end
+  end
+
   def list_memberships do
     Repo.all(Membership)
   end
 
+  def list_memberships(params) do
+    case Map.has_key?(params, "search") do
+      true ->
+        search_params = %{
+          "search" => %{
+            "title" => %{"assoc" => [], "search_type" => "ilike", "search_term" => params["search"]["title"]},
+            "classroom_id" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["classroom"]},
+            "level" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["level"]},
+            "active" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["active"]},
+            "language_id" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["language"]}
+          }
+        }
+      false ->
+        search_params = %{"title" => "", "classroom_id" => "", "level" => "", "active" => "", "language_id" => ""}
+    end
+    {search, rummage} = Membership
+    |> Membership.rummage(search_params)
+    memberships = search
+    |> Repo.all()
+    |> Repo.preload([:user, :pack])
+    {memberships, "rummage"}
+  end
+
   def get_membership!(id), do: Repo.get!(Membership, id)
+
+  def get_membership(user_id, pack_id) do
+    query = from m in Membership,
+      where: m.pack_id == ^pack_id and m.user_id == ^user_id,
+      select: m
+    Repo.one(query)
+  end
 
   def create_membership(attrs \\ %{}) do
     %Membership{}
@@ -265,7 +300,13 @@ defmodule Everlearn.Members do
 
   def get_language_by_code(iso2code) do
     Language
-    |> Repo.get_by(iso2code: iso2code)
+      # |> where([u], u.iso2code == ^iso2code)
+      |> Repo.get_by(iso2code: String.downcase(iso2code))
+      # |> Repo.get_by(iso2code: iso2code)
+      # |> Repo.one
+    # Language
+    #   |> where([u], u.iso2code == iso2code)
+    #   |> Repo.one
   end
 
   @doc """

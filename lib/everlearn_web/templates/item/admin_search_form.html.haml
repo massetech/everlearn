@@ -1,0 +1,26 @@
+- form_for @conn, item_path(@conn, :index), [as: :search, method: "get", id: "search_form"], fn f ->
+  .section
+    .row{class: "position=relative"}
+      .input-field.col.s12.m2
+        = text_input f, :title
+        = label f, "Search by title"
+      .input-field.col.s12.m2
+        = select f, :classroom, @classrooms, prompt: ""
+        = label f, :classroom
+      .input-field.col.s12.m2
+        = select f, :topic, @topics, prompt: ""
+        = label f, :topic
+      .input-field.col.s12.m2
+        = select f, :kind, @kinds, prompt: ""
+        = label f, :kind
+      .input-field.col.s12.m2
+        = select f, :level, @levels, prompt: ""
+        = label f, :level
+      .input-field.col.s12.m2
+        = select f, :active, @active, prompt: ""
+        = label f, :active
+
+  .section
+    .form-group.center-align.submit-area
+      = submit "Search", class: "btn-large waves-effect waves-light teal accent-4"
+      %a.empty_fields= "Empty fields"

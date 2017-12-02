@@ -11,15 +11,17 @@
       %a.button-collapse{href: "#", data-activates: "mobile-demo"}
         %i.material-icons= "menu"
       %ul.right.right.hide-on-med-and-down{id: "nav-mobile"}
-        %li= link "Classrooms", to: classroom_path(@conn, :index), class: "color-text"
-        %li= link "Topics", to: topic_path(@conn, :index), class: "color-text"
-        %li= link "Packs", to: pack_path(@conn, :index), class: "color-text"
-        %li= link "Items", to: item_path(@conn, :index), class: "color-text"
-        %li= link "Cards", to: card_path(@conn, :index), class: "color-text"
-        %li= link "Memories", to: memory_path(@conn, :index), class: "color-text"
-        - if @conn.assigns[:user] do
+        - if @conn.assigns[:current_user] do
+          - if Members.admin_user?(@conn.assigns[:current_user]) do
+            %li= link "Classrooms", to: classroom_path(@conn, :index), class: "color-text"
+            %li= link "Topics", to: topic_path(@conn, :index), class: "color-text"
+            %li= link "Packs", to: pack_path(@conn, :index), class: "color-text"
+            %li= link "Items", to: item_path(@conn, :index), class: "color-text"
+            %li= link "Cards", to: card_path(@conn, :index), class: "color-text"
+            %li= link "Memberships", to: membership_path(@conn, :index), class: "color-text"
+            %li= link "Memories", to: memory_path(@conn, :index), class: "color-text"
           %li= link "Log out", to: auth_path(@conn, :delete), method: :delete, class: "color-text"
-          %li= link "My packs", to: user_pack_path(@conn, :index, @conn.assigns[:user].id), class: "color-text"
+          %li= link "My packs", to: user_pack_path(@conn, :user_index, @conn.assigns[:current_user].id), class: "color-text"
         - else
           %li= link "Log in with google", to: auth_path(@conn, :request, "google"), class: "color-text"
       -# %ul.side-nav{id: "mobile-demo"}

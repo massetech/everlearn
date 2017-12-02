@@ -5,7 +5,7 @@ defmodule EverlearnWeb.PackController do
   alias Everlearn.{Contents, Members, CustomSelects}
   alias Everlearn.Contents.{Pack, Item}
 
-  plug :load_select when action in [:new, :create, :edit, :update, :index]
+  plug :load_select when action in [:new, :create, :edit, :update, :index, :user_index]
 
   defp load_select(conn, _params) do
     conn
@@ -16,8 +16,18 @@ defmodule EverlearnWeb.PackController do
   end
 
   def index(conn, params) do
-    {packs, rummage} = Contents.list_packs(params)
-    render conn, "index.html", packs: packs, rummage: @rummage
+    {packs, rummage} = params
+    |> Map.put_new("user_id", conn.assigns.current_user.id)
+    |> Contents.list_packs()
+    render conn, "admin_index.html", packs: packs, rummage: @rummage
+  end
+
+  def user_index(conn, params) do
+    # Filter on active packs only for users if no search params yet
+    {packs, rummage} = params
+    |> Map.put_new("search", %{"active" => true})
+    |> Contents.list_packs()
+    render conn, "user_index.html", packs: packs, rummage: @rummage
   end
 
   def new(conn, _params) do

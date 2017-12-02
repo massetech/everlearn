@@ -7,6 +7,7 @@ body {
 main {
   flex: 1 0 auto;
 }
+a:hover {cursor: pointer;}
 a.brand-logo{
   margin-left: 1em;
 }
@@ -25,12 +26,6 @@ nav.top-nav .title {margin-left: 1em;}
   z-index: 99;
 }
 
-.flag {
-  border-radius: 8px;
-  width: 25px;
-  height: 25px;
-}
-
 a.marged {
   margin: 0 1em;
 }
@@ -43,7 +38,6 @@ a.marged {
     margin-left: 10em;
     position: absolute;
   }
-  a:hover {cursor: pointer;}
 }
 
 .full_center {

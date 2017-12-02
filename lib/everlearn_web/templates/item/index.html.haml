@@ -7,9 +7,9 @@
 .container
   .row
     .section
-      =# render CardView, "import_form.html", changeset: @changeset, topics: @topics, action: import_card_path(@conn, :import)
+      = render "import_form.html", changeset: @changeset, topics: @topics, action: import_items_path(@conn, :import)
     .section
-      = # Place for queries search
+      = render "admin_search_form.html", conn: @conn, classrooms: @classrooms, levels: @levels, active: @active, topics: @topics, kinds: @kinds
   .row
     .section
       %table.bordered.responsive-table
@@ -18,7 +18,7 @@
           %th.center-align.color-text= "Title"
           %th.center-align.color-text= "Classroom"
           %th.center-align.color-text= "Topic"
-          %th.center-align.color-text= "Group"
+          %th.center-align.color-text= "Kind"
           %th.center-align.color-text= "Level"
           %th.center-align.color-text= "Nb packs"
           %th.center-align.color-text= "Nb active packs"
@@ -33,7 +33,7 @@
             %td.center-align.color-text= item.title
             %td.center-align.color-text= item.topic.classroom.title
             %td.center-align.color-text= item.topic.title
-            %td.center-align.color-text= item.group
+            %td.center-align.color-text= item.kind.name
             %td.center-align.color-text= item.level
             %td.center-align.color-text= Enum.count(item.packs)
             %td.center-align.color-text= Enum.count(item.packs, &(&1.active == true))

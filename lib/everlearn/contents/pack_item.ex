@@ -14,7 +14,7 @@ defmodule Everlearn.Contents.PackItem do
     pack_item
     |> cast(attrs, [:item_id, :pack_id])
     |> validate_required([:item_id, :pack_id])
-    |> assoc_constraint(:item)
-    |> assoc_constraint(:pack)
+    # |> assoc_constraint(:item)
+    # |> assoc_constraint(:pack)
   end
 end
