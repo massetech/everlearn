@@ -2,33 +2,26 @@ defmodule EverlearnWeb.CardController do
   use EverlearnWeb, :controller
   use Rummage.Phoenix.Controller
 
-  alias Everlearn.{Contents, Imports}
+  alias Everlearn.{Contents, CustomSelects, Imports}
   alias Everlearn.Contents.Card
-  plug :load_select when action in [:new, :create, :edit, :update]
+  plug :load_select when action in [:index, :new, :create, :edit, :update]
 
   defp load_select(conn, _params) do
-    assign(conn, :languages, Everlearn.Members.language_select_btn())
+    conn
+      |> assign(:languages, Everlearn.Members.language_select_btn())
+      |> assign(:active, CustomSelects.status_select_btn())
   end
 
   def index(conn, params) do
-    {query, rummage} = Card
-    |> Card.rummage(params["rummage"])
-    cards = Contents.list_cards()
+    {cards, rummage} = Contents.list_cards(params)
     changeset = Contents.change_card(%Card{})
     render(conn, "index.html", cards: cards, changeset: changeset, rummage: rummage)
   end
 
   # Module to import Cards and items from CSV
-  # def import(conn, %{"card" => card_params}) do
-  #   file = card_params["file"].path
-  #   |> Contents.import_cards()
-  #   conn
-  #   |> put_flash(:info, "Cards were imported but might be some errors")
-  #   |> redirect(to: card_path(conn, :index))
-  # end
   def import(conn, %{"card" => card_params}) do
     msg = card_params["file"].path
-      |> Imports.import("Contents", "card", Contents.card_import_fields, nil)
+      |> Imports.import("Contents", "card", Card.import_fields, nil)
       |> IO.inspect()
       |> Imports.flash_answers()
     conn
@@ -43,7 +36,7 @@ defmodule EverlearnWeb.CardController do
 
   def create(conn, %{"card" => card_params}) do
     case Contents.create_card(card_params) do
-      {:ok, card} ->
+      {:ok, _card} ->
         conn
         |> put_flash(:info, "Card created successfully.")
         |> redirect(to: card_path(conn, :index))
@@ -67,7 +60,7 @@ defmodule EverlearnWeb.CardController do
     card = Contents.get_card!(id)
 
     case Contents.update_card(card, card_params) do
-      {:ok, card} ->
+      {:ok, _card} ->
         conn
         |> put_flash(:info, "Card updated successfully.")
         |> redirect(to: card_path(conn, :index))

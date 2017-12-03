@@ -5,7 +5,6 @@ defmodule EverlearnWeb.ClassroomController do
   alias Everlearn.Contents.Classroom
 
   def index(conn, _params) do
-    conn
     classrooms = Contents.list_classrooms()
     render(conn, "index.html", classrooms: classrooms)
   end
@@ -17,7 +16,7 @@ defmodule EverlearnWeb.ClassroomController do
 
   def create(conn, %{"classroom" => classroom_params}) do
     case Contents.create_classroom(classroom_params) do
-      {:ok, classroom} ->
+      {:ok, _classroom} ->
         conn
         |> put_flash(:info, "Classroom created successfully.")
         |> redirect(to: classroom_path(conn, :index))
@@ -41,7 +40,7 @@ defmodule EverlearnWeb.ClassroomController do
     classroom = Contents.get_classroom!(id)
 
     case Contents.update_classroom(classroom, classroom_params) do
-      {:ok, classroom} ->
+      {:ok, _classroom} ->
         conn
         |> put_flash(:info, "Classroom updated successfully.")
         |> redirect(to: classroom_path(conn, :index))

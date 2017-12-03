@@ -1,0 +1,20 @@
+- form_for @conn, card_path(@conn, :index), [as: :search, method: "get", id: "search_form"], fn f ->
+  .section
+    .row{class: "position=relative"}
+      .input-field.col.s12.m2
+        = text_input f, :question
+        = label f, :question
+      .input-field.col.s12.m2
+        = select f, :language_id, @languages, prompt: ""
+        = label f, :language_id
+      -# .input-field.col.s12.m2
+      -#   = text_input f, :item_id
+      -#   = label f, :item_id
+      .input-field.col.s12.m2
+        = select f, :active, @active, prompt: ""
+        = label f, :active
+
+  .section
+    .form-group.center-align.submit-area
+      = submit "Search", class: "btn-large waves-effect waves-light teal accent-4"
+      %a.empty_fields= "Empty fields"

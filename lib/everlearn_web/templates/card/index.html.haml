@@ -9,25 +9,25 @@
     .section
       = render "import_form.html", changeset: @changeset, action: import_cards_path(@conn, :import)
     .section
-      = # Place for queries search
+      = render "admin_search_form.html", conn: @conn, languages: @languages, active: @active
   .row
     .section
       %table.bordered.responsive-table
         %tr
           %th.center-align.color-text= "ID"
           %th.center-align.color-text= "Item"
-          %th.center-align.color-text= "Item ID"
           %th.center-align.color-text= "Item status"
           %th.center-align.color-text= "Language"
-          %th.center-align.color-text= "Title"
+          %th.center-align.color-text= "Question"
           %th.center-align.color-text= "Nb active packs"
           %th.center-align.color-text= "Active"
           %th.center-align.color-text= "Actions"
         - for card <- @cards do
           %tr
             %td.center-align.color-text= card.id
-            %td.center-align.color-text= card.item.title
-            %td.center-align.color-text= card.item.id
+            %td.center-align.color-text
+              = card.item.title
+              .help= card.item.id
             %td.center-align
               - if card.item.active == true do
                 %i.material-icons.green-text.darken-4= "check_circle"

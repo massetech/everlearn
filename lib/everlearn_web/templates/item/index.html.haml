@@ -21,9 +21,9 @@
           %th.center-align.color-text= "Kind"
           %th.center-align.color-text= "Level"
           %th.center-align.color-text= "Nb packs"
-          %th.center-align.color-text= "Nb active packs"
+          -# %th.center-align.color-text= "Nb active packs"
           %th.center-align.color-text= "Nb cards"
-          %th.center-align.color-text= "Nb active cards"
+          -# %th.center-align.color-text= "Nb active cards"
           %th.center-align.color-text= "Description"
           %th.center-align.color-text= "Active"
           %th.center-align.color-text= "Actions"
@@ -36,9 +36,9 @@
             %td.center-align.color-text= item.kind.name
             %td.center-align.color-text= item.level
             %td.center-align.color-text= Enum.count(item.packs)
-            %td.center-align.color-text= Enum.count(item.packs, &(&1.active == true))
+            -# %td.center-align.color-text= Enum.count(item.packs, &(&1.active == true))
             %td.center-align.color-text= Enum.count(item.cards)
-            %td.center-align.color-text= Enum.count(item.cards, &(&1.active == true))
+            -# %td.center-align.color-text= Enum.count(item.cards, &(&1.active == true))
             %td.center-align.color-text= item.description
             %td.center-align
               - if item.active == true do
@@ -48,8 +48,8 @@
             %td.center-align
               - link to: item_path(@conn, :edit, item), class: "waves-effect waves-light marged" do
                 %i.material-icons.color-icon-edit= "edit"
-              - link to: item_card_path(@conn, :new, item), class: "waves-effect waves-light marged" do
-                %i.material-icons.color-icon-edit= "add"
+              -# - link to: item_card_path(@conn, :new, item), class: "waves-effect waves-light marged" do
+              -#   %i.material-icons.color-icon-edit= "add"
               - link to: item_path(@conn, :delete, item), method: :delete, data: [confirm: "Are you sure?"], class: "waves-effect waves-light marged" do
                 %i.material-icons.color-icon-false= "delete_forever"
 

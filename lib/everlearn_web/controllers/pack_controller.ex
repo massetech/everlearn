@@ -1,10 +1,10 @@
 defmodule EverlearnWeb.PackController do
   use EverlearnWeb, :controller
+  use Rummage.Phoenix.Controller
   use Drab.Controller
 
   alias Everlearn.{Contents, Members, CustomSelects}
   alias Everlearn.Contents.{Pack, Item}
-
   plug :load_select when action in [:new, :create, :edit, :update, :index, :user_index]
 
   defp load_select(conn, _params) do
@@ -19,7 +19,8 @@ defmodule EverlearnWeb.PackController do
     {packs, rummage} = params
     |> Map.put_new("user_id", conn.assigns.current_user.id)
     |> Contents.list_packs()
-    render conn, "admin_index.html", packs: packs, rummage: @rummage
+    changeset = Contents.change_pack(%Pack{})
+    render(conn, "index.html", packs: packs, rummage: rummage, changeset: changeset)
   end
 
   def user_index(conn, params) do
@@ -27,7 +28,7 @@ defmodule EverlearnWeb.PackController do
     {packs, rummage} = params
     |> Map.put_new("search", %{"active" => true})
     |> Contents.list_packs()
-    render conn, "user_index.html", packs: packs, rummage: @rummage
+    render conn, "user_index.html", packs: packs, rummage: rummage
   end
 
   def new(conn, _params) do
@@ -53,7 +54,8 @@ defmodule EverlearnWeb.PackController do
     # {query, rummage} = Item
     # |> Item.rummage()
     pack = Contents.get_pack!(id)
-    items = Contents.list_eligible_items(pack)
+    items = Contents.get_items_for_pack(pack)
+    |> IO.inspect()
     render conn, "show.html", pack: pack, items: items
   end
 

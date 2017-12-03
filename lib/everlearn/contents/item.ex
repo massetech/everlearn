@@ -31,4 +31,12 @@ defmodule Everlearn.Contents.Item do
     |> unique_constraint(:unic_title_level, name: :index_title_level)
   end
 
+  def filters do
+    %{title: "ilike", level: "eq", active: "eq", active: "eq", kind_id: "eq", topic_id: "eq"}
+  end
+
+  def import_fields do
+    [:title, :kind, :level, :description]
+  end
+
 end

@@ -8,7 +8,7 @@ defmodule Everlearn.Contents do
   alias Everlearn.Repo
   alias Everlearn.Contents.{Pack, PackItem, Classroom, Item, Topic, Card, Kind}
   alias Everlearn.Members
-  alias Everlearn.Members.{Membership}
+  # alias Everlearn.Members.{Membership}
   alias Everlearn.QueryFilter
 
 # ---------------------------- PACKS -------------------------------------------
@@ -18,41 +18,62 @@ defmodule Everlearn.Contents do
   end
 
   def list_packs(params) do
-    search_params = case Map.has_key?(params, "search") do
-      true ->
-         %{
-          "search" => %{
-            "title" => %{"assoc" => [], "search_type" => "ilike", "search_term" => params["search"]["title"]},
-            "classroom_id" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["classroom"]},
-            "level" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["level"]},
-            "active" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["active"]},
-            "language_id" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["language"]}
-          }
-        }
-      false ->
-        %{"title" => "", "classroom_id" => "", "level" => "", "active" => "", "language_id" => ""}
-    end
-    {search, rummage} = Pack
-    |> Pack.rummage(search_params)
-    query = from pack in Pack,
-      join: pi in assoc(pack, :packitems),
-      join: it in assoc(pi, :item),
-      where: it.active == true
-    # query2 = from pack in Pack,
-    #   join: mb in assoc(pack, :memberships),
-    #   where: mb.user_id == ^params["user_id"]
-    packs = search
+    {result, rummage} = Pack
+    |> Pack.rummage(QueryFilter.filter(params, Pack))
+    packs = result
+    |> preload_items_linked_to_pack()
+    # |> preload_items_not_linked_to_pack()
     |> Repo.all()
-    |> Repo.preload([:classroom, :language, :memberships, items: query])
-    # |> Repo.preload([memberships: query2])
-    # |> Enum.map(fn (pack) ->
-    #   pack
-    #   |> list_eligible_items()
-    #   |> Enum.count()
-    #   |> IO.inspect()
-    # end)
+    |> IO.inspect()
+    |> Repo.preload([:classroom, :language, :memberships])
     {packs, rummage}
   end
+
+  # def active_items_from_pack(query) do
+  #   query
+  # end
+
+  # query = from pack in Pack,
+  #   join: pi in assoc(pack, :packitems),
+  #   join: it in assoc(pi, :item),
+  #   where: it.active == true
+
+  # def list_packs(params) do
+  #   search_params = case Map.has_key?(params, "search") do
+  #     true ->
+  #        %{
+  #         "search" => %{
+  #           "title" => %{"assoc" => [], "search_type" => "ilike", "search_term" => params["search"]["title"]},
+  #           "classroom_id" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["classroom"]},
+  #           "level" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["level"]},
+  #           "active" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["active"]},
+  #           "language_id" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["language"]}
+  #         }
+  #       }
+  #     false ->
+  #       %{"title" => "", "classroom_id" => "", "level" => "", "active" => "", "language_id" => ""}
+  #   end
+  #   {search, rummage} = Pack
+  #   |> Pack.rummage(search_params)
+  #   query = from pack in Pack,
+  #     join: pi in assoc(pack, :packitems),
+  #     join: it in assoc(pi, :item),
+  #     where: it.active == true
+  #   # query2 = from pack in Pack,
+  #   #   join: mb in assoc(pack, :memberships),
+  #   #   where: mb.user_id == ^params["user_id"]
+  #   packs = search
+  #   |> Repo.all()
+  #   |> Repo.preload([:classroom, :language, :memberships, items: query])
+  #   # |> Repo.preload([memberships: query2])
+  #   # |> Enum.map(fn (pack) ->
+  #   #   pack
+  #   #   |> list_eligible_items()
+  #   #   |> Enum.count()
+  #   #   |> IO.inspect()
+  #   # end)
+  #   {packs, rummage}
+  # end
 
   def get_pack!(id) do
     Pack
@@ -115,16 +136,8 @@ defmodule Everlearn.Contents do
 
 # --------------------- ITEMS ----------------------------------------------------
 
-  def item_group_select_btn do
-    [verb: 1, noun: 2, date: 3]
-  end
-
   def control_item_fields(item_level) do
     convert_integer(item_level)
-  end
-
-  def item_import_fields do
-    [:title, :kind, :level, :description]
   end
 
   def save_item_line(fields) do
@@ -147,63 +160,52 @@ defmodule Everlearn.Contents do
 
   def create_item(attrs \\ %{}) do
     %Item{}
-    |> Item.changeset(attrs)
-    |> Repo.insert()
+      |> Item.changeset(attrs)
+      |> Repo.insert()
   end
 
-  # def list_items(_) do
-  #   # query1 = from pi in PackItem,
-  #   #   join: pack in assoc(pi, :pack)
-  #   #   where: pack.active == true
-  #   # query2 = from c in Card,
-  #   #   where: c.active == true
-  #   Item
-  #   |> Repo.all()
-  #   |> Repo.preload([topic: [:classroom]])
-  #   |> Repo.preload([:cards, :packs, :kind])
-  #   # |> Repo.preload([packs: query3])
-  #   # |> Repo.preload([packitems: query1, cards: query2])
-  # end
-
-  # Filter on items with search form
   def list_items(params) do
     {result, rummage} = Item
-    |> Item.rummage(QueryFilter.filter(params, Item))
+      |> Item.rummage(QueryFilter.filter(params, Item))
     items = result
-    |> Repo.all()
-    |> Repo.preload([topic: [:classroom]])
-    |> Repo.preload([:cards, :packs, :kind])
+      |> Repo.all()
+      |> Repo.preload([topic: [:classroom]])
+      |> Repo.preload([:cards, :packs, :kind])
     {items, rummage}
   end
 
-  defp item_filters do
-    %{title: "ilike", level: "eq", active: "eq", active: "eq", kind_id: "eq", topic_id: "eq"}
+  defp get_items_for_pack(pack) do
+    items = Item
+      |> join(:inner, [item], _ in assoc(item, :topic))
+      |> where([item], item.active == true)
+      |> join(:inner, [_, topic], _ in assoc(topic, :classroom))
+      # On filtre sur la classroom du pack recherché
+      |> join(:inner, [_, _, classroom], _ in assoc(classroom, :packs))
+      |> where([_, _, _, pack, _], pack.id == ^pack.id)
+      # On ajoute les packitems si existants
+      |> join(:left, [item, _, _, _], _ in assoc(item, :packitems))
+      |> preload([_, _, _, _, pi], [:topic, :cards, packitems: pi])
+      |> Repo.all()
   end
 
-  def list_eligible_items(pack) do
-    p = pack
-    |> Repo.preload(:classroom)
-    # Select active items belonging to pack.classroom and having at least one card with language == pack.language
-    query1 = from item in Item,
-      join: topic in assoc(item, :topic),
-      join: class in assoc(topic, :classroom),
-      join: card in assoc(item, :cards),
-      where: class.id == ^p.classroom.id,
-      where: card.language_id == ^p.language_id,
-      where: item.active == true,
-      where: card.active == true,
-      group_by: item.id,
-      having: count(card.id) > 0
-    # Select packitems associated to pack
-    query2 = from pi in PackItem,
-      where: pi.pack_id == ^pack.id
-    query1
-    |> Repo.all()
-    |> Repo.preload([:topic, :cards, packitems: query2])
+  defp preload_items_linked_to_pack(query \\ Item) do
+    query
+      |> join(:inner, [pack], _ in assoc(pack, :packitems))
+      |> join(:inner, [pi], _ in assoc(pi, :items))
+      |> where([_, _, items], items.active == true)
+      |> preload([_, _, items], [items: items])
   end
+
+  # defp preload_items_not_linked_to_pack(query \\ Item) do
+  #   query
+  #     |> join(:left, [pack], _ in assoc(pack, :packitems))
+  #     |> join(:inner, [pi], _ in assoc(pi, :items))
+  #     |> where([_, _, items], items.active == true)
+  #     |> select([p, c], {p, c})
+  # end
 
   def choose_random_item(pack) do
-    list_eligible_items(pack)
+    get_items_for_pack(pack)
     |> Enum.random()
   end
 
@@ -278,10 +280,6 @@ defmodule Everlearn.Contents do
 
   # --------------------------- CARDS ----------------------------------------------
 
-  def card_import_fields do
-    [:item_title, :item_level, :language, :question, :answer]
-  end
-
   def save_card_line(fields) do
     case get_item_by_title_and_level(fields.item_title, fields.item_level) do
       nil -> # Item was not found
@@ -297,23 +295,32 @@ defmodule Everlearn.Contents do
               |> Map.put(:language_id, language.id)
               |> Map.drop([:item, :language]) # Remove from params
             case create_card(params) do
-              {:ok, card} -> {:ok, "Line for card #{item.title} was processed"}
+              {:ok, _card} -> {:ok, "Line for card #{item.title} was processed"}
               {_, msg} -> {:error, msg.errors}
             end
         end
     end
   end
 
-  def list_cards do
-    # query1 = from pi in PackItem,
-    #   join: pack in assoc(pi, :pack),
-    #   where: pack.active == true
-    # query = PackItem
-    #   |> where([u], u.active == true)
-    Card
-    |> Repo.all()
-    |> Repo.preload([:language, [item: [:packitems]]])
+  def list_cards(params) do
+    {result, rummage} = Card
+      |> Card.rummage(QueryFilter.filter(params, Card))
+    cards = result
+      |> Repo.all()
+      |> Repo.preload([:language, [item: [:packitems]]])
+    {cards, rummage}
   end
+
+  # def list_cards(params) do
+  #   # query1 = from pi in PackItem,
+  #   #   join: pack in assoc(pi, :pack),
+  #   #   where: pack.active == true
+  #   # query = PackItem
+  #   #   |> where([u], u.active == true)
+  #   Card
+  #   |> Repo.all()
+  #   |> Repo.preload([:language, [item: [:packitems]]])
+  # end
 
   def get_card!(id), do: Repo.get!(Card, id)
 

@@ -3,16 +3,16 @@ defmodule EverlearnWeb.ItemController do
   use Rummage.Phoenix.Controller
 
   alias Everlearn.{Contents, CustomSelects, Imports}
-  alias Everlearn.Contents.{Item, Card}
+  alias Everlearn.Contents.{Item}
   plug :load_select when action in [:index, :new, :create, :edit, :update, :index]
 
   defp load_select(conn, _params) do
     conn
-    |> assign(:classrooms, Contents.classroom_select_btn())
-    |> assign(:topics, Contents.topic_select_btn())
-    |> assign(:levels, Contents.pack_level_select_btn())
-    |> assign(:kinds, Contents.kind_select_btn())
-    |> assign(:active, CustomSelects.status_select_btn())
+      |> assign(:classrooms, Contents.classroom_select_btn())
+      |> assign(:topics, Contents.topic_select_btn())
+      |> assign(:levels, Contents.pack_level_select_btn())
+      |> assign(:kinds, Contents.kind_select_btn())
+      |> assign(:active, CustomSelects.status_select_btn())
   end
 
   def index(conn, params) do
@@ -24,7 +24,7 @@ defmodule EverlearnWeb.ItemController do
   def import(conn, %{"item" => item_params}) do
     topic_id = item_params["topic_id"]
     msg = item_params["file"].path
-      |> Imports.import("Contents", "item", Contents.item_import_fields, {:topic_id, topic_id})
+      |> Imports.import("Contents", "item", Item.import_fields, {:topic_id, topic_id})
       |> IO.inspect()
       |> Imports.flash_answers()
     conn
@@ -39,7 +39,7 @@ defmodule EverlearnWeb.ItemController do
 
   def create(conn, %{"item" => item_params}) do
     case Contents.create_item(item_params) do
-      {:ok, item} ->
+      {:ok, _item} ->
         conn
         |> put_flash(:info, "Item created successfully.")
         |> redirect(to: item_path(conn, :index))
@@ -63,7 +63,7 @@ defmodule EverlearnWeb.ItemController do
     item = Contents.get_item!(id)
 
     case Contents.update_item(item, item_params) do
-      {:ok, item} ->
+      {:ok, _item} ->
         conn
         |> put_flash(:info, "Item updated successfully.")
         |> redirect(to: item_path(conn, :index))

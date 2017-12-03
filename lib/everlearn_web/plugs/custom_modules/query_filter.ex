@@ -9,6 +9,7 @@ defmodule Everlearn.QueryFilter do
   end
 
   defp map_filters(params, model) do
+    IO.inspect(params)
     model.filters
     |> Enum.reduce(%{}, fn({k, v}, acc) -> Map.put(acc, Atom.to_string(k), query_map(params, k, v)) end)
   end

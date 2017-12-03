@@ -3,15 +3,15 @@
     .row{class: "position=relative"}
       .input-field.col.s12.m2
         = text_input f, :title
-        = label f, "Search by title"
+        = label f, :title
       .input-field.col.s12.m2
         = select f, :classroom, @classrooms, prompt: ""
         = label f, :classroom
       .input-field.col.s12.m2
-        = select f, :topic, @topics, prompt: ""
+        = select f, :topic_id, @topics, prompt: ""
         = label f, :topic
       .input-field.col.s12.m2
-        = select f, :kind, @kinds, prompt: ""
+        = select f, :kind_id, @kinds, prompt: ""
         = label f, :kind
       .input-field.col.s12.m2
         = select f, :level, @levels, prompt: ""

@@ -5,8 +5,8 @@ defmodule Everlearn.Imports do
 
   def flash_answers({nb_line, _, model, %{ok: success}}) do
     case count_success(success) do
-      nb_line -> {:info, "All #{model}s were imported"}
       0 -> {:error, "No #{model} was imported"}
+      nb_line -> {:success, "All #{model}s were imported"}
       _ -> {:info, "#{model}s were imported with errors"}
     end
   end

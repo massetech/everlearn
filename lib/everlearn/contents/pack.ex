@@ -21,12 +21,19 @@ defmodule Everlearn.Contents.Pack do
     timestamps()
   end
 
+  @required_fields ~w(title description level classroom_id language_id)a
+  @optional_fields ~w(vocabulary active)a
+
   @doc false
   def changeset(%Pack{} = pack, attrs) do
     pack
-    |> cast(attrs, [:title, :description, :level, :vocabulary, :active])
-    |> validate_required([:title, :description, :level, :active])
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
     |> assoc_constraint(:classroom)
     |> assoc_constraint(:language)
+  end
+
+  def filters do
+    %{title: "ilike", classroom_id: "eq", language_id: "eq", level: "eq", active: "eq"}
   end
 end

@@ -6,11 +6,11 @@
           = text_input f, :title
           = label f, "Search by title"
         .input-field.col.s12.m3
-          = select f, :classroom, @classrooms, prompt: ""
-          = label f, :classroom
+          = select f, :classroom_id, @classrooms, prompt: ""
+          = label f, :classroom_id
         .input-field.col.s12.m2
-          = select f, :language, @languages, prompt: ""
-          = label f, :language
+          = select f, :language_id, @languages, prompt: ""
+          = label f, :language_id
         .input-field.col.s12.m2
           = select f, :level, @levels, prompt: ""
           = label f, :level
