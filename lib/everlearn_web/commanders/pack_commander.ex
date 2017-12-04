@@ -28,17 +28,18 @@ defmodule EverlearnWeb.PackCommander do
     IO.inspect(payload)
     %{"packId" => pack_id, "userId" => user_id} = payload["dataset"]
     case Members.toogle_membership(user_id, pack_id) do
-      {:created, pack_item} ->
+      {:ok, _msg} ->
         socket
         |> Drab.Browser.console("Membership created for user #{user_id} and pack #{pack_id}")
         |> set_prop(".pack[id='#{pack_id}']", %{"attributes" => %{"class" => "pack waves-effect waves-light btn validate"}})
-      {:deleted, pack_item} ->
+      {:deleted, _msg} ->
         socket
         |> Drab.Browser.console("Membership removed for user #{user_id} and pack #{pack_id}")
         |> set_prop(".pack[id='#{pack_id}']", %{"attributes" => %{"class" => "pack waves-effect waves-light btn light"}})
-      {:error, _} ->
+      {:error, msg} ->
         socket
         |> Drab.Browser.console("Couldn't create Membership between user #{user_id} and pack #{pack_id}")
+        |> Drab.Browser.console(msg)
     end
   end
 

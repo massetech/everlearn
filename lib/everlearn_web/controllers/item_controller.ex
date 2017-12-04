@@ -4,7 +4,7 @@ defmodule EverlearnWeb.ItemController do
 
   alias Everlearn.{Contents, CustomSelects, Imports}
   alias Everlearn.Contents.{Item}
-  plug :load_select when action in [:index, :new, :create, :edit, :update, :index]
+  plug :load_select when action in [:index, :new, :create, :edit, :update]
 
   defp load_select(conn, _params) do
     conn

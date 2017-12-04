@@ -4,7 +4,7 @@
 .container.pack-index-user
   .row
     .section
-      = render "user_search_form.html", conn: @conn, rummage: @rummage, classrooms: @classrooms, levels: @levels, active: @active, languages: @languages
+      = render "pack_search_form.html", conn: @conn, rummage: @rummage, classrooms: @classrooms, levels: @levels, active: @active, languages: @languages
   .row
     .section.packs
       - for pack <- @packs do
@@ -18,7 +18,7 @@
           .card-content
             .card-title
               %h5= pack.title
-              %h6= "Level #{pack.level}, words #{Enum.count(pack.memberships)}"
+              %h6= "Level #{pack.level}, words #{Enum.count(pack.items)}"
             .card-text
               %p= pack.description
           - if pack.memberships == [] do

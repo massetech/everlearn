@@ -30,7 +30,7 @@
             %td.center-align
               - link to: pack_path(@conn, :show, membership.pack), class: "waves-effect waves-light marged" do
                 %i.material-icons.color-icon-edit= "remove_red_eye"
-              - link to: pack_path(@conn, :delete, membership), method: :delete, data: [confirm: "Are you sure?"], class: "waves-effect waves-light marged" do
+              - link to: membership_path(@conn, :delete, membership), method: :delete, data: [confirm: "Are you sure?"], class: "waves-effect waves-light marged" do
                 %i.material-icons.color-icon-false= "delete_forever"
 
   .row

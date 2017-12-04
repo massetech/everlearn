@@ -13,5 +13,6 @@ defmodule Everlearn.Repo.Migrations.CreateMemorys do
 
     create index(:memorys, [:membership_id])
     create index(:memorys, [:item_id])
+    create unique_index(:memorys, [:membership_id, :item_id], name: :index_membership_item)
   end
 end

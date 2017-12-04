@@ -17,18 +17,17 @@ defmodule EverlearnWeb.PackController do
 
   def index(conn, params) do
     {packs, rummage} = params
-    |> Map.put_new("user_id", conn.assigns.current_user.id)
     |> Contents.list_packs()
     changeset = Contents.change_pack(%Pack{})
     render(conn, "index.html", packs: packs, rummage: rummage, changeset: changeset)
   end
 
   def user_index(conn, params) do
-    # Filter on active packs only for users if no search params yet
     {packs, rummage} = params
-    |> Map.put_new("search", %{"active" => true})
+    |> Map.put_new("user_id", conn.assigns.current_user.id)
     |> Contents.list_packs()
-    render conn, "user_index.html", packs: packs, rummage: rummage
+    changeset = Contents.change_pack(%Pack{})
+    render(conn, EverlearnWeb.PublicView, "pack_index.html", packs: packs, rummage: rummage, changeset: changeset)
   end
 
   def new(conn, _params) do
@@ -54,7 +53,7 @@ defmodule EverlearnWeb.PackController do
     # {query, rummage} = Item
     # |> Item.rummage()
     pack = Contents.get_pack!(id)
-    items = Contents.get_items_for_pack(pack)
+    items = Contents.get_items_possible_for_pack(id)
     |> IO.inspect()
     render conn, "show.html", pack: pack, items: items
   end

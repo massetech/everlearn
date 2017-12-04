@@ -3,6 +3,6 @@ defmodule EverlearnWeb.MainController do
 
   def welcome(conn, _params) do
     conn
-    |> render("welcome.html")
+      |> render EverlearnWeb.PublicView, "welcome.html"
   end
 end

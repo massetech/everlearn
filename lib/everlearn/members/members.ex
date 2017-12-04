@@ -8,9 +8,9 @@ defmodule Everlearn.Members do
   require Logger
   require Poison
 
-  alias Everlearn.Repo
   alias Ueberauth.Auth
   alias Everlearn.Members.{Language, User, Membership, Memory}
+  alias Everlearn.{Repo, QueryFilter, Contents}
 
   # -------------------------------- UEBERAUTH ----------------------------------------
 
@@ -138,50 +138,38 @@ defmodule Everlearn.Members do
     User.changeset(user, %{})
   end
 
-  # -------------------------------- MEMBERSHIP ----------------------------------------
+  # -------------------------------- MEMBERSHIPS ----------------------------------------
 
   def toogle_membership(user_id, pack_id) do
     case get_membership(user_id, pack_id) do
       %Membership{} = membership ->
-        # There is allready a Membership : delete it
+        # There is allready a Membership : delete it (and delete the memories)
         case delete_membership(membership) do
           {:ok, membership} -> {:deleted, membership}
           {:error, reason} -> {:error, reason}
         end
       nil ->
         # There wasnt any Membership : create it
-        case create_membership(%{pack_id: pack_id, user_id: user_id}) do
-          {:ok, membership} -> {:created, membership}
+        case create_membership(%{user_id: user_id, pack_id: pack_id}) do
+          {:ok, membership} ->
+            case copy_items_to_memory(pack_id, membership.id) do
+              {:ok, msg} -> {:ok, msg}
+              {:error, msg} ->
+                delete_membership(membership)
+                {:error, msg}
+            end
           {:error, reason} -> {:error, reason}
         end
     end
   end
 
-  def list_memberships do
-    Repo.all(Membership)
-  end
-
   def list_memberships(params) do
-    case Map.has_key?(params, "search") do
-      true ->
-        search_params = %{
-          "search" => %{
-            "title" => %{"assoc" => [], "search_type" => "ilike", "search_term" => params["search"]["title"]},
-            "classroom_id" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["classroom"]},
-            "level" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["level"]},
-            "active" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["active"]},
-            "language_id" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["language"]}
-          }
-        }
-      false ->
-        search_params = %{"title" => "", "classroom_id" => "", "level" => "", "active" => "", "language_id" => ""}
-    end
-    {search, rummage} = Membership
-    |> Membership.rummage(search_params)
-    memberships = search
-    |> Repo.all()
-    |> Repo.preload([:user, :pack])
-    {memberships, "rummage"}
+    {result, rummage} = Membership
+      |> Membership.rummage(QueryFilter.filter(params, Membership))
+    memberships = result
+      |> Repo.all()
+      |> Repo.preload([:user, [pack: :language]])
+    {memberships, rummage}
   end
 
   def get_membership!(id), do: Repo.get!(Membership, id)
@@ -213,7 +201,7 @@ defmodule Everlearn.Members do
     Membership.changeset(membership, %{})
   end
 
-  # -------------------------------- MEMORY ----------------------------------------
+  # -------------------------------- MEMORYS ----------------------------------------
   alias Everlearn.Members.Memory
 
   def list_memorys do
@@ -221,6 +209,30 @@ defmodule Everlearn.Members do
   end
 
   def get_memory!(id), do: Repo.get!(Memory, id)
+
+  def copy_items_to_memory(pack_id, membership_id) do
+    memorys = Contents.get_items_from_pack(pack_id)
+    # Keep a list of maps fith item_id concerned by the pack and membership_id
+    |> Enum.reduce([], fn(item, acc) -> acc ++ [%{membership_id: membership_id, item_id: item.id, status: "new"}] end)
+    # |> IO.inspect()
+    # Enum on this list to save in the memory
+    # |> Enum.each(fn(m) -> create_memory(m) end)
+    |> Enum.reduce(%{ok: [], errors: []}, &insert_memory/2)
+    # |> IO.inspect()
+    case Enum.count(memorys.errors) do
+      0 -> {:ok, "Everything ok for #{pack_id}"}
+      _ -> {:error, "Errors on #{pack_id}"}
+    end
+  end
+
+  def insert_memory(params, results) do
+    case create_memory(params) do
+      {:ok, membership} ->
+        %{ok: results.ok ++ [{:ok, membership}], errors: results.errors}
+      {:error, reason} ->
+        %{ok: results.ok, errors: results.errors ++ [{:error, reason}]}
+    end
+  end
 
   def create_memory(attrs \\ %{}) do
     %Memory{}

@@ -5,11 +5,8 @@ defmodule Everlearn.Contents do
   import Ecto.Query, warn: false
   import Everlearn.{CustomMethods}
 
-  alias Everlearn.Repo
   alias Everlearn.Contents.{Pack, PackItem, Classroom, Item, Topic, Card, Kind}
-  alias Everlearn.Members
-  # alias Everlearn.Members.{Membership}
-  alias Everlearn.QueryFilter
+  alias Everlearn.{Repo, Members, QueryFilter}
 
 # ---------------------------- PACKS -------------------------------------------
 
@@ -21,64 +18,24 @@ defmodule Everlearn.Contents do
     {result, rummage} = Pack
     |> Pack.rummage(QueryFilter.filter(params, Pack))
     packs = result
-    |> preload_items_linked_to_pack()
-    # |> preload_items_not_linked_to_pack()
-    |> Repo.all()
-    |> IO.inspect()
-    |> Repo.preload([:classroom, :language, :memberships])
+      # |> preload_items_linked_to_each_pack()
+      # |> preload_items_not_linked_to_pack()
+      |> where([pack], pack.active == true)
+      |> Repo.all()
+      |> IO.inspect()
+      |> Repo.preload([:classroom, :language, :memberships, :items])
     {packs, rummage}
   end
-
-  # def active_items_from_pack(query) do
-  #   query
-  # end
-
-  # query = from pack in Pack,
-  #   join: pi in assoc(pack, :packitems),
-  #   join: it in assoc(pi, :item),
-  #   where: it.active == true
-
-  # def list_packs(params) do
-  #   search_params = case Map.has_key?(params, "search") do
-  #     true ->
-  #        %{
-  #         "search" => %{
-  #           "title" => %{"assoc" => [], "search_type" => "ilike", "search_term" => params["search"]["title"]},
-  #           "classroom_id" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["classroom"]},
-  #           "level" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["level"]},
-  #           "active" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["active"]},
-  #           "language_id" => %{"assoc" => [], "search_type" => "eq", "search_term" => params["search"]["language"]}
-  #         }
-  #       }
-  #     false ->
-  #       %{"title" => "", "classroom_id" => "", "level" => "", "active" => "", "language_id" => ""}
-  #   end
-  #   {search, rummage} = Pack
-  #   |> Pack.rummage(search_params)
-  #   query = from pack in Pack,
-  #     join: pi in assoc(pack, :packitems),
-  #     join: it in assoc(pi, :item),
-  #     where: it.active == true
-  #   # query2 = from pack in Pack,
-  #   #   join: mb in assoc(pack, :memberships),
-  #   #   where: mb.user_id == ^params["user_id"]
-  #   packs = search
-  #   |> Repo.all()
-  #   |> Repo.preload([:classroom, :language, :memberships, items: query])
-  #   # |> Repo.preload([memberships: query2])
-  #   # |> Enum.map(fn (pack) ->
-  #   #   pack
-  #   #   |> list_eligible_items()
-  #   #   |> Enum.count()
-  #   #   |> IO.inspect()
-  #   # end)
-  #   {packs, rummage}
-  # end
 
   def get_pack!(id) do
     Pack
     |> Repo.get!(id)
     |> Repo.preload([:classroom])
+  end
+
+  def pack_from_id(pack_id) do
+    Pack
+      |> where([pack], pack.id == ^pack_id)
   end
 
   def create_pack(attrs \\ %{}) do
@@ -174,25 +131,45 @@ defmodule Everlearn.Contents do
     {items, rummage}
   end
 
-  defp get_items_for_pack(pack) do
+  def items_from_pack(query \\ Pack) do
+    query
+      |> join(:inner, [pack], _ in assoc(pack, :packitems))
+      |> join(:inner, [_, packitems], _ in assoc(packitems, :item))
+      |> select([_, _, item], item)
+  end
+
+  def items_active(query \\ Item) do
+    query
+      |> where([..., item], item.active == true)
+  end
+
+  def get_items_from_pack(pack_id) do
+    pack_from_id(pack_id)
+      |> items_from_pack()
+      |> items_active()
+      |> Repo.all()
+  end
+
+  # Get all items possible for a pack
+  def get_items_possible_for_pack(pack_id) do
     items = Item
       |> join(:inner, [item], _ in assoc(item, :topic))
       |> where([item], item.active == true)
       |> join(:inner, [_, topic], _ in assoc(topic, :classroom))
       # On filtre sur la classroom du pack recherché
       |> join(:inner, [_, _, classroom], _ in assoc(classroom, :packs))
-      |> where([_, _, _, pack, _], pack.id == ^pack.id)
+      |> where([_, _, _, pack], pack.id == ^pack_id)
       # On ajoute les packitems si existants
       |> join(:left, [item, _, _, _], _ in assoc(item, :packitems))
       |> preload([_, _, _, _, pi], [:topic, :cards, packitems: pi])
       |> Repo.all()
   end
 
-  defp preload_items_linked_to_pack(query \\ Item) do
+  defp preload_items_linked_to_each_pack(query \\ Item) do
     query
-      |> join(:inner, [pack], _ in assoc(pack, :packitems))
+      |> join(:left, [pack], _ in assoc(pack, :packitems))
       |> join(:inner, [pi], _ in assoc(pi, :items))
-      |> where([_, _, items], items.active == true)
+      # |> where([_, _, items], items.active == true)
       |> preload([_, _, items], [items: items])
   end
 
@@ -205,7 +182,7 @@ defmodule Everlearn.Contents do
   # end
 
   def choose_random_item(pack) do
-    get_items_for_pack(pack)
+    get_items_possible_for_pack(pack.id)
     |> Enum.random()
   end
 
