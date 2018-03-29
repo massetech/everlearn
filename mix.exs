@@ -20,7 +20,8 @@ defmodule Everlearn.Mixfile do
   def application do
     [
       mod: {Everlearn.Application, []},
-      extra_applications: [:logger, :runtime_tools, :ueberauth, :ueberauth_google, :timex, :xlsxir]
+      extra_applications: [:logger, :runtime_tools, :timex, :xlsxir]
+      # , :ueberauth, :ueberauth_google
     ]
   end
 
