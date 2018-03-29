@@ -8,7 +8,7 @@ Path.join(["rel", "plugins", "*.exs"])
 
 use Mix.Releases.Config,
     # This sets the default release built by `mix release`
-    default_release: :default,
+    default_release: :everlearn,
     # This sets the default environment used by `mix release`
     default_environment: Mix.env()
 
@@ -50,4 +50,3 @@ release :everlearn do
     :runtime_tools
   ]
 end
-
