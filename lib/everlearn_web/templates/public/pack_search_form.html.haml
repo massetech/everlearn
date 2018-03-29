@@ -1,0 +1,23 @@
+- form_for @conn, user_pack_path(@conn, :public_index, @current_user.id), [as: :search, method: "get", id: "search_form"], fn f ->
+  = hidden_input f, :active, value: "true"
+    -# A virer !
+    .row{class: "position=relative"}
+      .input-field.col.s12.m2
+        = select f, :student_lg_id, @languages, value: @query_languages.student_lg_id
+        = label f, :student_lg_id, "Your language"
+      .input-field.col.s12.m2
+        = select f, :classroom_id, @classrooms, prompt: ""
+        = label f, :classroom_id
+      .input-field.col.s12.m2
+        = select f, :teacher_lg_id, @languages, value: @query_languages.teacher_lg_id
+        = label f, :teacher_lg_id, "Teacher language"
+      .input-field.col.s12.m1
+        = select f, :level, @levels, prompt: ""
+        = label f, :level
+      .input-field.col.s12.m5
+        = text_input f, :title
+        = label f, "Search by title"
+      %a.empty_fields.hide-on-small-only
+        %i.material-icons= "cancel"
+  .form-group.center-align.submit-area
+    = submit "Search", class: "btn-large waves-effect waves-light btn-action"

@@ -1,0 +1,26 @@
+.row
+  .col.s12.m8.offset-m2
+    %ul.collection.with-header
+      %li.collection-header
+        %h5= "Select pack languages"
+      - for language <- @languages do
+        %li.collection-item.avatar{id: "language_#{language.id}"}
+          %form
+            = img_tag static_path(@conn, "/images/flags/1x1/#{language.iso2code}.svg"), class: "flag circle"
+            %span.title.success-text{id: "span_#{language.id}"}
+              - if List.first(language.packlanguages) != nil do
+                = "Title : #{List.first(language.packlanguages).title}"
+              - else
+                = "Title : "
+            %p="Nb active items : #{Enum.count(@pack.items)}"
+            %p="Nb active cards : #{Enum.count(language.cards)}"
+            %p
+              .input-field
+                %input{placeholder: "New title", id: "title", type: "text", class: "validate"}
+            %a.secondary-content{id: "language_#{language.id}", drab-click: "toogle_pack_language", data-language-id: "#{language.id}", data-pack-id: "#{@pack.id}"}
+              - if List.first(language.packlanguages) != nil do
+                %i.small.toogle_btn.material-icons.color-yellow{id: "icon_language_#{language.id}"}
+                  = "star"
+              - else
+                %i.small.toogle_btn.material-icons{id: "icon_language_#{language.id}"}
+                  = "star_border"

@@ -1,0 +1,35 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container
+  .section
+    = render "search_form.html", assigns
+  .section
+    %table.bordered.responsive-table
+      %tr
+        %th= "ID"
+        %th= "Classroom"
+        %th= "Title"
+        %th= "Description"
+        %th= "Level"
+        %th= "Languages"
+        %th= "Nb active items"
+        %th= "Active"
+        %th= "Actions"
+      - for pack <- @packs do
+        %tr
+          %td= pack.id
+          %td= pack.classroom.title
+          %td= pack.title
+          %td= pack.description
+          %td= render EverlearnWeb.SharedView, "_level.html", level: pack.level
+          %td
+            - for packlanguage <- pack.packlanguages do
+              = img_tag static_path(@conn, "/images/flags/1x1/#{packlanguage.language.iso2code}.svg"), class: "flag_small"
+          %td= Enum.count(pack.packitems)
+          %td= render EverlearnWeb.SharedView, "_active.html", active: pack.active
+          %td.box-inline-even
+            - link to: pack_path(@conn, :show, pack) do
+              %i.material-icons= "remove_red_eye"
+            - link to: pack_path(@conn, :edit, pack) do
+              %i.material-icons= "edit"
+            - link to: pack_path(@conn, :delete, pack), method: :delete, data: [confirm: "Are you sure?"] do
+              %i.material-icons.color-danger= "delete_forever"

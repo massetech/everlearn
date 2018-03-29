@@ -1,0 +1,30 @@
+- form_for @conn, item_path(@conn, :index), [as: :search, method: "get", id: "search_form"], fn f ->
+  .section
+    .row{class: "position=relative"}
+      %a.empty_fields
+        %i.material-icons= "remove_circle_outline"
+      .input-field.col.s12.m1
+        = text_input f, :id
+        = label f, :id
+      .input-field.col.s12.m1
+        = select f, :active, @active, prompt: ""
+        = label f, :active
+      .input-field.col.s12.m2
+        = select f, :classroom_id, @classrooms, prompt: ""
+        = label f, :classroom_id
+      .input-field.col.s12.m2
+        = select f, :topic_id, @topics, prompt: ""
+        = label f, :topic
+      .input-field.col.s12.m1
+        = select f, :kind_id, @kinds, prompt: ""
+        = label f, :kind
+      .input-field.col.s12.m2
+        = select f, :level, @levels, prompt: ""
+        = label f, :level
+      .input-field.col.s12.m3
+        = text_input f, :title
+        = label f, :title
+  .section
+    .form-group.center-align.submit-area
+      = submit "Search", class: "btn-large waves-effect waves-light btn-action"
+      = link "Export", to: export_items_path(@conn, :item), class: "btn-large waves-effect waves-light btn-action hide-on-small-only"

@@ -1,0 +1,25 @@
+- form_for @conn, pack_path(@conn, :show, @pack), [as: :search, method: "get", id: "search_form"], fn f ->
+  .row{class: "position=relative"}
+    .input-field.col.s12.m1
+      = text_input f, :id
+      = label f, :id
+    .input-field.col.s12.m2
+      = select f, :topic_id, @topics, prompt: ""
+      = label f, :topic
+    .input-field.col.s12.m1
+      = select f, :kind_id, @kinds, prompt: ""
+      = label f, :kind
+    .input-field.col.s12.m2
+      = select f, :level, @levels, prompt: ""
+      = label f, :level
+    .input-field.col.s12.m2
+      = select f, :packitemlink, @packitemlinks, prompt: ""
+      = label f, :packitemlink, "Link to pack"
+    .input-field.col.s12.m4
+      = text_input f, :title
+      = label f, :title
+    %a.empty_fields
+      %i.material-icons= "cancel"
+  .row
+    .form-group.center-align
+      = submit "Search Items in #{@pack.classroom.title}", class: "btn-large waves-effect waves-light btn-action"

@@ -1,0 +1,21 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container
+  .section
+    %table.bordered.responsive-table
+      %tr
+        %th= "ID"
+        %th= "Title"
+        %th= "Nb active items"
+        %th= "Nb active packs"
+        %th= "Actions"
+      - for classroom <- @classrooms do
+        %tr
+          %td= classroom.id
+          %td= classroom.title
+          %td= Enum.count(classroom.items)
+          %td= Enum.count(classroom.packs)
+          %td.box-inline-even
+            - link to: classroom_path(@conn, :edit, classroom) do
+              %i.material-icons= "edit"
+            - link to: classroom_path(@conn, :delete, classroom), method: :delete, data: [confirm: "Are you sure?"] do
+              %i.material-icons.color-danger= "delete_forever"

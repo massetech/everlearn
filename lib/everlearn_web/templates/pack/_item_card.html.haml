@@ -1,0 +1,11 @@
+.card-content
+  %span.card-title.center-align.truncate= @item.title
+  %ul
+    %li.center-align
+      = render EverlearnWeb.SharedView, "_level.html", level: @item.level
+    %li.center-align
+      %span= "Item #{@item.id}"
+    %li.center-align
+      %span= "#{@item.kind.title}, #{@item.topic.title}"
+    %li.center-align
+      %span= "Nb cards"

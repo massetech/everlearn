@@ -1,0 +1,17 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container
+  .section
+    %table.bordered.responsive-table
+      %tr
+        %th= "ID"
+        %th= "Title"
+        %th= "Actions"
+      - for kind <- @kinds do
+        %tr
+          %td= kind.id
+          %td= kind.title
+          %td.box-inline-even
+            - link to: kind_path(@conn, :edit, kind) do
+              %i.material-icons= "edit"
+            - link to: kind_path(@conn, :delete, kind), method: :delete, data: [confirm: "Are you sure?"] do
+              %i.material-icons.color-danger= "delete_forever"

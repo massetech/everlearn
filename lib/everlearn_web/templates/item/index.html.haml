@@ -1,0 +1,39 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container
+  .section
+    = render "import_form.html", assigns
+  .section
+    = render "search_form.html", assigns
+  .section
+    %table.bordered.responsive-table
+      %tr
+        %th= "ID"
+        %th= "Title"
+        %th= "Classroom"
+        %th= "Topic"
+        %th= "Kind"
+        %th= "Level"
+        %th= "Nb active packs"
+        %th= "Nb active cards"
+        %th= "Active"
+        %th= "Actions"
+      - for item <- @items do
+        %tr
+          %td= item.id
+          %td= item.title
+          %td= item.classroom.title
+          %td= item.topic.title
+          %td= item.kind.title
+          %td= render EverlearnWeb.SharedView, "_level.html", level: item.level
+          %td= Enum.count(item.packs)
+          %td= Enum.count(item.cards)
+          %td= render EverlearnWeb.SharedView, "_active.html", active: item.active
+          %td.box-inline-even
+            - link to: item_card_path(@conn, :new, item) do
+              %i.material-icons= "add_circle"
+            - link to: item_path(@conn, :show, item) do
+              %i.material-icons= "remove_red_eye"
+            - link to: item_path(@conn, :edit, item) do
+              %i.material-icons= "edit"
+            - link to: item_path(@conn, :delete, item), method: :delete, data: [confirm: "Are you sure?"] do
+              %i.material-icons.color-danger= "delete_forever"

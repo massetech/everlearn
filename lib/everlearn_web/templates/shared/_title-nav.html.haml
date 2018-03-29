@@ -1,0 +1,9 @@
+%nav.title-nav.z-depth-0.nav-extended
+  .nav-wrapper.valign-wrapper
+    %h5.title= @nav_title
+    - if assigns[:nav_new_path] do
+      - link to: @nav_new_path, class: "btn-floating btn-large halfway-fab waves-effect waves-light" do
+        %i.material-icons= "add"
+    - if assigns[:nav_index_path] do
+      - link to: @nav_index_path, class: "btn-floating btn-large halfway-fab waves-effect waves-light" do
+        %i.material-icons= "keyboard_arrow_left"

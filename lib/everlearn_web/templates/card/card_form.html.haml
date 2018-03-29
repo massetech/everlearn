@@ -1,0 +1,22 @@
+- form_for @conn, @action, [as: :card, method: "put", id: "card_#{@card.id}_form"], fn f ->
+  .row
+    .input-field.col.s12
+      = label f, :question, "Change the question"
+      = text_input f, :question, class: "validate", type: "text", value: @card.question
+    .input-field.col.s12
+      = label f, :answer, "Change the answer"
+      = text_input f, :answer, class: "validate", type: "text", value: @card.answer
+    .input-field.col.s12
+      = label f, :sound, "Change the sound url"
+      = text_input f, :sound, class: "validate", type: "text", value: @card.question
+    .input-field.col.s12
+      = label f, :phonetic, "Change the phonetic"
+      = text_input f, :phonetic, class: "validate", type: "text", value: @card.answer
+    .switch.col.s12
+      %label
+        = "Off"
+        = checkbox f, :active, value: @card.active
+        %span.lever
+        = "On"
+  .row
+    = submit "Save", class: "btn-large waves-effect waves-light btn-action"

@@ -1,0 +1,19 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container
+  .section
+    = render "pack_search_form.html", assigns
+  .section
+    .row
+      - for pack <- @packs do
+        .col.s8.offset-s2.m4.l3.xl2
+          %a{id: "a_#{pack.id}", drab-click: "toogle_membership", data-user-id: "#{@conn.assigns.current_user.id}", data-pack-id: "#{pack.id}", data-student-lg-id: "#{@query_languages.student_lg_id}", data-teacher-lg-id: "#{@query_languages.teacher_lg_id}"}
+            - if length(pack.memberships) > 0 do
+              .card.pack-card
+                = render "_pack_card.html", pack: pack, conn: @conn
+                .selected{id: "pack_#{pack.id}"}
+                  %i.material-icons= "cloud_circle"
+            - else
+              .card.pack-card
+                = render "_pack_card.html", pack: pack, conn: @conn
+                .selected.hide{id: "pack_#{pack.id}"}
+                  %i.material-icons= "cloud_circle"

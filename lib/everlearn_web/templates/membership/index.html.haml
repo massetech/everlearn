@@ -1,0 +1,33 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container
+  -# .section
+    =# render "search_form.html", conn: @conn, rummage: @rummage, classrooms: @classrooms, levels: @levels, active: @active, languages: @languages
+  .section
+    %table.bordered.responsive-table
+      %tr
+        %th= "ID"
+        %th= "User ID"
+        %th= "User email"
+        %th= "Classroom"
+        %th= "Pack ID"
+        %th= "Pack title"
+        %th= "Pack level"
+        %th= "Student lg"
+        %th= "Learning lg"
+        %th= "Actions"
+      - for membership <- @memberships do
+        %tr
+          %td= membership.id
+          %td= membership.user_id
+          %td= membership.user.email
+          %td= membership.pack.classroom.title
+          %td= membership.pack_id
+          %td= membership.pack.title
+          %td= membership.pack.level
+          %td= img_tag static_path(@conn, "/images/flags/1x1/#{membership.student_lg.iso2code}.svg"), class: "flag_small"
+          %td= img_tag static_path(@conn, "/images/flags/1x1/#{membership.teacher_lg.iso2code}.svg"), class: "flag_small"
+          %td.box-inline-even
+            - link to: pack_path(@conn, :show, membership.pack) do
+              %i.material-icons= "remove_red_eye"
+            - link to: membership_path(@conn, :delete, membership), method: :delete, data: [confirm: "Are you sure?"] do
+              %i.material-icons.color-danger= "delete_forever"

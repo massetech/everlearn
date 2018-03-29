@@ -1,0 +1,9 @@
+- form_for @changeset, @action, fn f ->
+  .row
+    .input-field.col.s12.m3
+      = select f, :role, @roles, prompt: ""
+      = label f, :role
+      = error_tag f, :role
+  .row
+    .form-group.center-align
+      = submit "Submit", class: "btn-large waves-effect waves-light btn-action"

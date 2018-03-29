@@ -1,0 +1,7 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container.pack-edit
+  .section
+    = render "form.html", Map.put(assigns, :action, pack_path(@conn, :update, @pack))
+
+  .section
+    = render "_packlanguage_form.html", conn: @conn, languages: @languages, pack: @pack

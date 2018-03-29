@@ -1,0 +1,33 @@
+!!! 5
+%html(lang="en")
+  %head
+    %meta(charset="utf-8")
+    %meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    %meta(name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no")
+    %meta(name="description" content="")
+    %meta(name="author" content="")
+
+    %title= 'Welcome to Everlean !'
+    %link(rel="stylesheet" href='#{static_path(@conn, "/css/app.css")}')
+    %link(rel="stylesheet" href='https://fonts.googleapis.com/icon?family=Material+Icons')
+
+  %body{data-js-view-name: "#{js_view_name(@conn, @view_template)}"}
+    %header
+      - unless @conn.request_path =~ "/player" do
+        = render EverlearnWeb.SharedView, "_header.html", conn: @conn
+    %main{id: "slidebar_container", canvas: "container"}
+      =# render EverlearnWeb.SharedView, "_flash.html", conn: @conn
+      = render @view_module, @view_template, assigns
+    %footer.page-footer
+      - unless @conn.request_path =~ "/player" do
+        = render EverlearnWeb.SharedView, "_footer.html", conn: @conn
+    - if assigns[:slidebars] do
+      .sidebar.sidebar1.z-depth-3{off-canvas: "slidebar1 left overlay"}
+        = render EverlearnWeb.SharedView, "_sidebar1.html", assigns
+      .sidebar.sidebar2.z-depth-3{off-canvas: "slidebar2 right overlay"}
+        = render EverlearnWeb.SharedView, "_sidebar2.html", assigns
+
+    = render_gon_script(@conn)
+    %script(src='#{static_path(@conn, "/js/app.js")}')
+    = Drab.Client.js(@conn)
+    = raw(@conn.assigns.flash_messages)

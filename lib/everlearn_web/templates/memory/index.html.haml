@@ -1,0 +1,35 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container
+  .section
+    %table.bordered.responsive-table
+      %tr
+        %th= "User ID"
+        %th= "User email"
+        %th= "Pack ID"
+        %th= "Pack title"
+        %th= "Membership ID"
+        %th= "Student language"
+        %th= "Teacher language"
+        %th= "Card ID"
+        %th= "Status"
+        %th= "Nb practice"
+        %th= "Last update"
+        %th= "Actions"
+      - for memory <- @memorys do
+        %tr
+          %td= memory.membership.user.id
+          %td= memory.membership.user.email
+          %td= memory.membership.pack.id
+          %td= memory.membership.pack.title
+          %td= memory.membership.id
+          %td= img_tag static_path(@conn, "/images/flags/1x1/#{memory.membership.student_lg.iso2code}.svg"), class: "flag_small"
+          %td= img_tag static_path(@conn, "/images/flags/1x1/#{memory.membership.teacher_lg.iso2code}.svg"), class: "flag_small"
+          %td= memory.card_id
+          %td= render EverlearnWeb.SharedView, "_status.html", status: memory.status
+          %td= memory.nb_practice
+          %td= memory.updated_at
+          %td.center-align
+            - link to: card_path(@conn, :show, memory.card_id), target: "_blank" do
+              %i.material-icons= "remove_red_eye"
+            - link to: memory_path(@conn, :delete, memory), method: :delete do
+              %i.material-icons.color-danger= "delete_forever"

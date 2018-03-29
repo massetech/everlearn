@@ -1,0 +1,29 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container
+  .section
+    = render "import_form.html", assigns
+  .section
+    = render "search_form.html", assigns
+  .section
+    %table.bordered.responsive-table
+      %tr
+        %th= "ID"
+        %th= "Language"
+        %th= "Item"
+        %th= "Item ID"
+        %th= "Question"
+        %th= "Active"
+        %th= "Actions"
+      - for card <- @cards do
+        %tr
+          %td= card.id
+          %td= img_tag static_path(@conn, "/images/flags/1x1/#{card.language.iso2code}.svg"), class: "flag_small"
+          %td= card.item.title
+          %td= card.item.id
+          %td.truncate= card.question
+          %td= render EverlearnWeb.SharedView, "_active.html", active: card.active
+          %td.box-inline-even
+            - link to: item_path(@conn, :show, card.item_id) do
+              %i.material-icons= "remove_red_eye"
+            - link to: card_path(@conn, :delete, card), method: :delete, data: [confirm: "Are you sure?"] do
+              %i.material-icons.color-danger= "delete_forever"

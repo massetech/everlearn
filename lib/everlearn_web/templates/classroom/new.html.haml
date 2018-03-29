@@ -1,0 +1,4 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container
+  .section
+    = render "form.html", Map.put(assigns, :action, classroom_path(@conn, :create))

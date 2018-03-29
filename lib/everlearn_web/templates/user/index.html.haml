@@ -1,0 +1,25 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container
+  .section
+    %table.bordered.responsive-table
+      %tr
+        %th= "UID"
+        %th= "Email"
+        %th= "Language"
+        %th= "Provider"
+        %th= "Exp"
+        %th= "Role"
+        %th= "Actions"
+      - for user <- @users do
+        %tr
+          %td= user.uid
+          %td= user.email
+          %td= user.language.title
+          %td= user.provider
+          %td= user.token_expiration
+          %td= user.role
+          %td.box-inline-even
+            - link to: user_path(@conn, :edit, user) do
+              %i.material-icons= "edit"
+            - link to: user_path(@conn, :delete, user), method: :delete, data: [confirm: "Are you sure?"] do
+              %i.material-icons.color-danger= "delete_forever"

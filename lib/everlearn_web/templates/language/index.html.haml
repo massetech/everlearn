@@ -1,0 +1,19 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container
+  .section
+    %table.bordered.responsive-table
+      %tr
+        %th= "ID"
+        %th= "Flag"
+        %th= "Title"
+        %th= "Actions"
+      - for language <- @languages do
+        %tr
+          %td= language.id
+          %td= img_tag static_path(@conn, "/images/flags/1x1/#{language.iso2code}.svg"), class: "flag_small"
+          %td= language.title
+          %td.box-inline-even
+            - link to: language_path(@conn, :edit, language) do
+              %i.material-icons= "edit"
+            - link to: language_path(@conn, :delete, language), method: :delete, data: [confirm: "Are you sure?"] do
+              %i.material-icons.color-danger= "delete_forever"

@@ -1,0 +1,9 @@
+- form_for @changeset, @action, fn f ->
+  .row
+    .input-field.col.s12
+      = text_input f, :title, class: "validate", type: "text"
+      = label f, :title
+      = error_tag f, :title
+  .row
+    .form-group.center-align
+      = submit "Submit", class: "btn-large waves-effect waves-light btn-action"

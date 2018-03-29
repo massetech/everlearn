@@ -1,0 +1,33 @@
+/* ------------------------------ Colors  ------------------------------ */
+$main-color: rgba(232,83,86,1);
+$main-title-color: rgba(99,90,83,1);
+
+$info: rgba(15,119,143,1);
+$info-light: rgba(15,119,143,0.5);
+$danger: rgba(232,83,86,1);
+$yellow: rgba(243,192,90,1);
+$success: rgba(60,145,60,1);
+// $success-trsp: rgba(15,119,143,0.8);
+
+$text-color: rgba(104,111,121,1);
+$middle-grey: rgba(161,167,179,1);
+$light-grey: rgba(242,243,245,1);
+
+
+
+$subtitle-color: rgba(80,87,98,1);
+$title-color-strong: rgba(41,48,49,1);
+
+/* ------------------------------ Fonts  ------------------------------ */
+$main-font: Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
+$logo-font: 'Kaushan Script', cursive;
+
+ /* -------------  Flashes ---------------------------------*/
+.color-info {
+  @extend .light-blue, .lighten-1;
+  @extend .white-text;
+}
+.color-error {
+  @extend .red, .accent-4;
+  @extend .white-text;
+}

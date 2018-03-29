@@ -1,0 +1,30 @@
+%nav.navbar-fixed.transparent.z-depth-1.top-nav
+  .nav-wrapper
+    -# %a.button-collapse.right{href: "#", data-activates: "mobile-demo"}
+    -#   %i.material-icons= "menu"
+    = render EverlearnWeb.SharedView, "_logo.html", assigns
+    =# img_tag static_path(@conn, "/images/logo-text.png")
+
+    %ul.right.hide-on-med-and-down{id: "nav-mobile"}
+      - if @conn.assigns[:current_user] do
+        %li= link "Select packs", to: user_pack_path(@conn, :public_index, @conn.assigns[:current_user].id)
+        %li= link "Learn !", to: user_player_path(@conn, :show_player, @conn.assigns[:current_user].id), target: "_blank"
+        - if Members.admin_user?(@conn.assigns[:current_user]) do
+          %li
+            %a.dropdown-button{href: "#" data-activates: "dropdown1"}="Admin"
+              %i.material-icons.right= "arrow_drop_down"
+            %ul.dropdown-content{id: "dropdown1"}
+              %li= link "Users", to: user_path(@conn, :index)
+              %li= link "Classrooms", to: classroom_path(@conn, :index)
+              %li= link "Languages", to: language_path(@conn, :index)
+              %li= link "Kinds", to: kind_path(@conn, :index)
+              %li= link "Topics", to: topic_path(@conn, :index)
+              %li= link "Packs", to: pack_path(@conn, :index)
+              %li= link "Items", to: item_path(@conn, :index)
+              %li= link "Cards", to: card_path(@conn, :index)
+              %li= link "Memberships", to: membership_path(@conn, :index)
+              %li= link "Memories", to: memory_path(@conn, :index)
+        %li= link "Log out", to: auth_path(@conn, :delete), method: :delete
+      - else
+        %li= link "Log in (Gmail)", to: auth_path(@conn, :request, "google"), class: "waves-effect waves-light btn"
+      -# %ul.side-nav{id: "mobile-demo"}

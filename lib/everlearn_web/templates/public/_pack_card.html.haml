@@ -1,0 +1,13 @@
+.card-image
+  = img_tag static_path(@conn, "/images/packs/pack_1.jpg")
+.card-content
+  %span.title= String.upcase(get_from_array(@pack.packlanguages).title)
+  %span.info.box-inline-left
+    %span.box-inline
+      = render EverlearnWeb.SharedView, "_level.html", level: @pack.level
+      %span= "Medium"
+    %span.box-inline
+      %i.material-icons= "description"
+      %span= "#{Enum.count(@pack.items)}"
+  %span.stars.box-inline-left
+    = render EverlearnWeb.SharedView, "_stars.html", nb_stars: 4

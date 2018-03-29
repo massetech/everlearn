@@ -1,0 +1,27 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container
+  .section
+    .row
+      %p= "Item ID : #{@item.id}"
+      %p= "Item title : #{@item.title}"
+  .section
+    .row
+      - for card <- @item.cards do
+        .col.s12.m4
+          .card.medium
+            .card-content
+              %span.card-title.center-align.activator= card.question
+              %p.center-align.activator= card.answer
+              %p.center-align.activator= "Card ID : #{card.id}"
+            .card-action
+              .left.center-align
+                = img_tag static_path(@conn, "/images/flags/1x1/#{card.language.iso2code}.svg"), class: "flag"
+              .right.center-align
+                = render EverlearnWeb.SharedView, "_active.html", active: card.active
+                - link to: card_path(@conn, :delete, card), method: :delete do
+                  %i.material-icons.color-danger= "delete_forever"
+            .card-reveal
+              %span.card-title.center-align.truncate
+                %i.material-icons.right= "close"
+              .center-align
+                = render CardView, "card_form.html", conn: @conn, action: card_path(@conn, :update, card), card: card, languages: @languages

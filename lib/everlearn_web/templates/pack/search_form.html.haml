@@ -1,0 +1,22 @@
+- form_for @conn, pack_path(@conn, :index), [as: :search, method: "get", id: "search_form"], fn f ->
+  .row{class: "position=relative"}
+    .input-field.col.s12.m1
+      = text_input f, :id
+      = label f, "Id"
+    .input-field.col.s12.m2
+      = select f, :active, @active, prompt: ""
+      = label f, :active
+    .input-field.col.s12.m2
+      = select f, :classroom_id, @classrooms, prompt: ""
+      = label f, :classroom_id
+    .input-field.col.s12.m2
+      = select f, :level, @levels, prompt: ""
+      = label f, :level
+    .input-field.col.s12.m5
+      = text_input f, :title
+      = label f, "Search by title"
+    %a.empty_fields
+      %i.material-icons= "cancel"
+  .row
+    .form-group.center-align
+      = submit "Search", class: "btn-large waves-effect waves-light btn-action"

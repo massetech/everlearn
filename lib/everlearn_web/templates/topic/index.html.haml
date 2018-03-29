@@ -1,0 +1,19 @@
+= render EverlearnWeb.SharedView, "_title-nav.html", assigns
+.container
+  .section
+    %table.bordered.responsive-table
+      %tr
+        %th= "ID"
+        %th= "Title"
+        %th= "Nb active items"
+        %th= "Actions"
+      - for topic <- @topics do
+        %tr
+          %td= topic.id
+          %td= topic.title
+          %td= Enum.count(topic.items)
+          %td.box-inline-even
+            - link to: topic_path(@conn, :edit, topic) do
+              %i.material-icons= "edit"
+            - link to: topic_path(@conn, :delete, topic), method: :delete, data: [confirm: "Are you sure?"] do
+              %i.material-icons.color-danger= "delete_forever"
