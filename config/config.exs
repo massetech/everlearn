@@ -1,8 +1,3 @@
-# This file is responsible for configuring your application
-# and its dependencies with the aid of the Mix.Config module.
-#
-# This configuration file is loaded before any dependency and
-# is restricted to this project.
 use Mix.Config
 
 config :everlearn,
@@ -17,42 +12,18 @@ config :rummage_ecto, Rummage.Ecto,
   default_per_page: 500
 
 config :everlearn, EverlearnWeb.Endpoint,
-  # url: [host: "localhost"],
-  http: [port: String.to_integer(System.get_env("HTTP_PORT"))],
-  url: [host: System.get_env("HOSTNAME"), port: {:system, "HTTP_PORT"}],
-  secret_key_base: System.get_env("SECRET_KEY_BASE"),
   render_errors: [view: EverlearnWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Everlearn.PubSub,
-           adapter: Phoenix.PubSub.PG2]
-
- config :everlearn, Everlearn.Repo,
-   adapter: Ecto.Adapters.Postgres,
-   username: System.get_env("REPO_USERNAME"),
-   password: System.get_env("REPO_PASSWORD"),
-   database: System.get_env("REPO_DATABASE"),
-   hostname: System.get_env("REPO_HOSTNAME"),
-   pool_size: String.to_integer(System.get_env("REPO_POOL_SIZE") || "1")
+  pubsub: [name: Everlearn.PubSub, adapter: Phoenix.PubSub.PG2]
 
 config :ueberauth, Ueberauth,
   providers: [
     google: {Ueberauth.Strategy.Google, [default_scope: "profile email https://www.googleapis.com/auth/plus.login"]}
   ]
 
-config :ueberauth, Ueberauth.Strategy.Google.OAuth,
-  client_id: System.get_env("GOOGLE_CLIENT_ID"),
-  client_secret: System.get_env("GOOGLE_CLIENT_SECRET")
-
 config :everlearn, Everlearn.Auth.Guardian,
   issuer: "Everlearn.#{Mix.env}",
   ttl: {30, :days},
-  verify_issuer: true,
-  # serializer: Everlearn.GuardianSerializer,
-  secret_key: System.get_env("GUARDIAN_SECRET")
-
-# config :cors_plug,
-#   origin: ["http://localhost:4000"],
-#   max_age: 86400,
-#   methods: ["GET", "POST"]
+  verify_issuer: true
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
