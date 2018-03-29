@@ -52,9 +52,10 @@ defmodule Everlearn.Mixfile do
       {:rummage_phoenix, "~> 1.2.0"}, # Pls dont get further than 1.0.0 !
       {:poison, "~> 3.1"},
       {:phoenix_gon, "~> 0.3.2"},
-      {:cors_plug, "~> 1.5"},
+      {:cors_plug, "~> 1.5", only: :dev},
       {:xlsxir, "~> 1.6.2"},
-      {:elixlsx, "~> 0.4.0"}
+      {:elixlsx, "~> 0.4.0"},
+      {:distillery, "~> 1.5", runtime: false}
     ]
   end
 

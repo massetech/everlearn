@@ -12,6 +12,7 @@ config :everlearn, EverlearnWeb.Endpoint,
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
+  secret_key_base: System.get_env("SECRET_KEY_BASE"),
   watchers: [node: ["node_modules/brunch/bin/brunch", "watch", "--stdin",
                     cd: Path.expand("../assets", __DIR__)]]
 

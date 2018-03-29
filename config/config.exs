@@ -17,8 +17,8 @@ config :rummage_ecto, Rummage.Ecto,
   default_per_page: 500
 
 config :everlearn, EverlearnWeb.Endpoint,
-  url: [host: "localhost"],
-  secret_key_base: System.get_env("SECRET_KEY_BASE"),
+  # url: [host: "localhost"],
+  # secret_key_base: System.get_env("SECRET_KEY_BASE"),
   render_errors: [view: EverlearnWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Everlearn.PubSub,
            adapter: Phoenix.PubSub.PG2]

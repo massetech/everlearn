@@ -38,7 +38,9 @@ defmodule EverlearnWeb.Endpoint do
     key: "_everlearn_key",
     signing_salt: "s4hN7bNF"
 
-  plug CORSPlug
+  unless Mix.env == :prod do
+    plug CORSPlug
+  end
   plug EverlearnWeb.Router
 
   @doc """
