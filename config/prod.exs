@@ -4,7 +4,7 @@ config :everlearn,
   secret_key_base: "${SECRET_KEY_BASE}",
   client_id: "${GOOGLE_CLIENT_ID}",
   client_secret: "${GOOGLE_CLIENT_SECRET}",
-  secret_key: "${GUARDIAN_SECRET}"
+  secret_key: "${GUARDIAN_SECRET}",
   host: "${MY_HOSTNAME}",
   port: "${PORT}"
 
