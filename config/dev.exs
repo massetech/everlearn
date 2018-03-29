@@ -7,12 +7,11 @@ use Mix.Config
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
 config :everlearn, EverlearnWeb.Endpoint,
-  http: [port: 4000],
-  url: [host: "localhost"],
+  # http: [port: 4000],
+  # url: [host: "localhost"],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
-  secret_key_base: System.get_env("SECRET_KEY_BASE"),
   watchers: [node: ["node_modules/brunch/bin/brunch", "watch", "--stdin",
                     cd: Path.expand("../assets", __DIR__)]]
 
@@ -57,10 +56,10 @@ config :logger, :console, format: "[$level] $message\n"
 config :phoenix, :stacktrace_depth, 20
 
 # Configure your database
-config :everlearn, Everlearn.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
-  database: "everlearn_dev",
-  hostname: "localhost",
-  pool_size: 10
+# config :everlearn, Everlearn.Repo,
+#   adapter: Ecto.Adapters.Postgres,
+#   username: "postgres",
+#   password: "postgres",
+#   database: "everlearn_dev",
+#   hostname: "localhost",
+#   pool_size: 10

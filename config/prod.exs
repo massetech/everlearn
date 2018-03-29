@@ -3,19 +3,19 @@ use Mix.Config
 config :everlearn, EverlearnWeb.Endpoint,
   load_from_system_env: true,
   server: true, # Without this line, your app will not start the web server!
-  secret_key_base: "${SECRET_KEY_BASE}",
-  url: [host: "example.com", port: 80],
+  # secret_key_base: "${SECRET_KEY_BASE}",
+  # url: [host: "example.com", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
 config :logger, level: :info
 
-config :everlearn, Everlearn.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  url: "${DATABASE_URL}",
-  database: "",
-  ssl: true,
-  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "1") # Free tier db only allows 1 connection
+# config :everlearn, Everlearn.Repo,
+#   adapter: Ecto.Adapters.Postgres,
+#   url: "${DATABASE_URL}",
+#   database: "",
+#   ssl: true,
+#   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "1") # Free tier db only allows 1 connection
 
 # ## SSL Support
 #

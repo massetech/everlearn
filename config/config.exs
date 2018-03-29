@@ -18,10 +18,20 @@ config :rummage_ecto, Rummage.Ecto,
 
 config :everlearn, EverlearnWeb.Endpoint,
   # url: [host: "localhost"],
-  # secret_key_base: System.get_env("SECRET_KEY_BASE"),
+  http: [port: String.to_integer(System.get_env("HTTP_PORT"))],
+  url: [host: System.get_env("HOSTNAME"), port: {:system, "HTTP_PORT"}],
+  secret_key_base: System.get_env("SECRET_KEY_BASE"),
   render_errors: [view: EverlearnWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Everlearn.PubSub,
            adapter: Phoenix.PubSub.PG2]
+
+ config :everlearn, Everlearn.Repo,
+   adapter: Ecto.Adapters.Postgres,
+   username: System.get_env("REPO_USERNAME"),
+   password: System.get_env("REPO_PASSWORD"),
+   database: System.get_env("REPO_DATABASE"),
+   hostname: System.get_env("REPO_HOSTNAME"),
+   pool_size: String.to_integer(System.get_env("REPO_POOL_SIZE") || "1")
 
 config :ueberauth, Ueberauth,
   providers: [
