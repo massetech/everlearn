@@ -39,10 +39,10 @@ config :everlearn, Everlearn.Auth.Guardian,
   # serializer: Everlearn.GuardianSerializer,
   secret_key: System.get_env("GUARDIAN_SECRET")
 
-config :cors_plug,
-  origin: ["http://localhost:4000"],
-  max_age: 86400,
-  methods: ["GET", "POST"]
+# config :cors_plug,
+#   origin: ["http://localhost:4000"],
+#   max_age: 86400,
+#   methods: ["GET", "POST"]
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
