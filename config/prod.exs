@@ -1,10 +1,19 @@
 use Mix.Config
 
+config :everlearn,
+  secret_key_base: "${SECRET_KEY_BASE}",
+  client_id: "${GOOGLE_CLIENT_ID}",
+  client_secret: "${GOOGLE_CLIENT_SECRET}",
+  secret_key: "${GUARDIAN_SECRET}"
+  host: "${MY_HOSTNAME}",
+  port: "${PORT}"
+
 config :everlearn, EverlearnWeb.Endpoint,
   load_from_system_env: true,
   server: true, # Without this line, your app will not start the web server!
-  secret_key_base: "${SECRET_KEY_BASE}",
-  url: [host: "${MY_HOSTNAME}", port: "${PORT}"],
+  secret_key_base: Application.get_env(:everlearn, :secret_key_base),
+  url: [host: Application.get_env(:everlearn, :host),
+        port: Application.get_env(:everlearn, :port)],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 config :everlearn, Everlearn.Repo,
@@ -15,11 +24,11 @@ config :everlearn, Everlearn.Repo,
   pool_size: 1 # Free tier db only allows 1 connection
 
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
-  client_id: "${GOOGLE_CLIENT_ID}",
-  client_secret: "${GOOGLE_CLIENT_SECRET}"
+  client_id: Application.get_env(:everlearn, :client_id),
+  client_secret: Application.get_env(:everlearn, :client_secret)
 
 config :everlearn, Everlearn.Auth.Guardian,
-  secret_key: "${GUARDIAN_SECRET}"
+  secret_key: Application.get_env(:everlearn, :secret_key)
 
 # Do not print debug messages in production
 config :logger, level: :info
