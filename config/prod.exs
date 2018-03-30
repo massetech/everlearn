@@ -11,24 +11,24 @@ config :everlearn,
 config :everlearn, EverlearnWeb.Endpoint,
   load_from_system_env: true,
   server: true, # Without this line, your app will not start the web server!
-  secret_key_base: ${SECRET_KEY_BASE},
-  url: [host: ${HOST},
-        port: ${PORT}],
+  secret_key_base: "${SECRET_KEY_BASE}",
+  url: [host: "${HOST}",
+        port: "${PORT}"],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 config :everlearn, Everlearn.Repo,
   adapter: Ecto.Adapters.Postgres,
-  url: ${DATABASE_URL},
+  url: "${DATABASE_URL}",
   database: "",
   ssl: true,
   pool_size: 1 # Free tier db only allows 1 connection
 
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
-  client_id: ${GOOGLE_CLIENT_ID},
-  client_secret: ${GOOGLE_CLIENT_SECRET}
+  client_id: "${GOOGLE_CLIENT_ID}",
+  client_secret: "${GOOGLE_CLIENT_SECRET}"
 
 config :everlearn, Everlearn.Auth.Guardian,
-  secret_key: ${GUARDIAN_SECRET}
+  secret_key: "${GUARDIAN_SECRET}"
 
 # Do not print debug messages in production
 config :logger, level: :info
