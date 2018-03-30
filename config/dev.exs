@@ -17,6 +17,7 @@ config :everlearn, Everlearn.Repo,
   database: "everlearn_dev",
   hostname: "localhost",
   pool_size: 10
+  # postgresql://postgres:postgres@localhost:5432/everlearn_dev
 
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
   client_id: System.get_env("GOOGLE_CLIENT_ID"),
