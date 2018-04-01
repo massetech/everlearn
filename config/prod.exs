@@ -5,8 +5,8 @@ use Mix.Config
 #   client_id: "${GOOGLE_CLIENT_ID}",
 #   client_secret: "${GOOGLE_CLIENT_SECRET}",
 #   secret_key: "${GUARDIAN_SECRET}",
-#   host: "${MY_HOSTNAME}",
-#   port: "${PORT}"
+  # host: "${MY_HOSTNAME}",
+  # port: "${PORT}"
 
 config :everlearn, EverlearnWeb.Endpoint,
   load_from_system_env: true,
