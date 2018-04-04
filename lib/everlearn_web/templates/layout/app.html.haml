@@ -12,14 +12,14 @@
     %link(rel="stylesheet" href='https://fonts.googleapis.com/icon?family=Material+Icons')
 
   %body{data-js-view-name: "#{js_view_name(@conn, @view_template)}"}
-    %header
-      - unless @conn.request_path =~ "/player" do
+    - unless @conn.request_path =~ "/player" do
+      %header
         = render EverlearnWeb.SharedView, "_header.html", conn: @conn
     %main{id: "slidebar_container", canvas: "container"}
       =# render EverlearnWeb.SharedView, "_flash.html", conn: @conn
       = render @view_module, @view_template, assigns
-    %footer.page-footer
-      - unless @conn.request_path =~ "/player" do
+    - unless @conn.request_path =~ "/player" do
+      %footer.page-footer
         = render EverlearnWeb.SharedView, "_footer.html", conn: @conn
     - if assigns[:slidebars] do
       .sidebar.sidebar1.z-depth-3{off-canvas: "slidebar1 left overlay"}

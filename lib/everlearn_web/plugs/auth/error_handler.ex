@@ -3,9 +3,7 @@ defmodule Everlearn.Auth.ErrorHandler do
   use EverlearnWeb, :controller
 
   def auth_error(conn, {_type, _reason}, claims) do
-    # Unsuccessful user login
     # called with conn, {:unauthenticated, :unauthenticated} and [claims: %{"typ" => "user-access"}]
-    IO.inspect(claims)
     case conn.private.phoenix_format do
       "json" ->
         conn

@@ -1,6 +1,6 @@
 /* ------------------------------ Layout  ------------------------------ */
 a, h1, h2, h3, h4, h5, input, span, p, th, td {
-  font-family: $main-font;
+  font-family: $main-font !important;
   color: $text-color !important;
 }
 * {
@@ -212,8 +212,8 @@ img.flag_small {
 }
 /* ------------------------------ Player  ------------------------------ */
 .player-container {
-  height: 100vh;
-  width: 100vw;
+  height: 100vh; // Align vertically for Ipad
+  width: 100%;  // Avoid container scollbar
 }
 .player {
   width: 100vw; height: 100vh; max-width: 414px; max-height: 736px;
@@ -254,5 +254,8 @@ img.flag_small {
         border-bottom-right-radius: 3px;
       }
     }
+  }
+  .carousel-item{
+    display: flex !important;
   }
 }

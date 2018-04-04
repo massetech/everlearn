@@ -1,5 +1,9 @@
 - form_for @changeset, @import_action, [multipart: true], fn f ->
   .row
+    .col.s12.m3
+      .input-field
+        = select f, :language_id, @languages
+        = label f, :language_id
     .col.s12.m5
       .input-field.file-field
         .btn.import-file

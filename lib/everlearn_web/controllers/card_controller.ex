@@ -35,16 +35,15 @@ defmodule EverlearnWeb.CardController do
       |> render("index.html", cards: cards, changeset: changeset, rummage: rummage)
   end
 
-  # Module to import Cards and items from CSV
-  def import(conn, %{"card" => card_params}) do
-    msg = card_params["file"].path
-      |> Imports.import("Contents", "card", Card.import_fields, nil)
-      |> IO.inspect()
-      |> Imports.flash_answers()
-    conn
-      |> put_flash(elem(msg, 0), elem(msg, 1))
-      |> redirect(to: card_path(conn, :index))
-  end
+  # # Module to import Cards and items from CSV
+  # def import(conn, %{"card" => card_params}) do
+  #   msg = card_params["file"].path
+  #     |> Imports.import("Contents", "card", Card.import_fields, nil)
+  #     |> Imports.flash_answers()
+  #   conn
+  #     |> put_flash(elem(msg, 0), elem(msg, 1))
+  #     |> redirect(to: card_path(conn, :index))
+  # end
 
   def new(conn, %{"item_id" => item_id}) do
     changeset = Contents.change_card(%Card{item_id: item_id})

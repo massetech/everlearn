@@ -2,7 +2,7 @@ defmodule EverlearnWeb.Reports.ItemView do
   use EverlearnWeb, :view
   alias Elixlsx.{Workbook, Sheet}
 
-  @header ["ID", "Classroom", "Topic", "Kind", "Level", "Title", "Description"]
+  @header ["Topic_id", "Topic", "Kind_id", "Kind", "Item_id", "Item title", "Level", "Description"]
 
   def render("report.xlsx", %{items: items}) do
     report_generator(items)
@@ -13,10 +13,11 @@ defmodule EverlearnWeb.Reports.ItemView do
 
   def report_generator(items) do
     rows = items |> Enum.map(&(row(&1)))
-    %Workbook{sheets: [%Sheet{name: "Items", rows: [@header] ++ rows}]}
+    classroom = List.first(items).classroom.title
+    %Workbook{sheets: [%Sheet{name: "#{classroom}", rows: [@header] ++ rows}]}
   end
 
   def row(item) do
-    [item.id, item.classroom.title, item.topic.title, item.kind.title, item.level, item.title, item.description]
+    [item.topic.id, item.topic.title, item.kind.id, item.kind.title, item.id, item.title, item.level, item.description]
   end
 end

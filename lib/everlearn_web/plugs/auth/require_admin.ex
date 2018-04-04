@@ -15,9 +15,10 @@ defmodule Everlearn.Plugs.RequireAdmin do
       false ->
         conn
         |> put_flash(:error, "You cant access to this part.")
+        |> redirect(to: "/")
         # |> redirect(to: root_path(conn, :welcome))
         # |> redirect(to: "/")
-        |> redirect(to: Routes.root_path(conn, :welcome))
+        # |> redirect(to: Routes.root_path(conn, :welcome))
         # |> halt()
     end
   end

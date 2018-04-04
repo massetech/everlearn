@@ -151,6 +151,7 @@ let init_action_btns = () => {
     event.stopPropagation()
     event.preventDefault()
     call_api(window.everlearn.token)
+    slidebars_controller.toggle('slidebar2')
   })
 }
 

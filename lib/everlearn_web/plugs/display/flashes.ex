@@ -10,7 +10,6 @@ defmodule Everlearn.Plug.DisplayFlashes do
       |> Enum.join("\n")
     conn
       |> assign(:flash_messages, flash_messages)
-      # |> IO.inspect()
   end
 
   defp build_flash_html(type, msg) do

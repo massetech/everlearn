@@ -24,7 +24,6 @@ defmodule Everlearn.Contents do
       join: i in assoc(pi, :item),
       where: i.active == true
     packs = result
-      |> IO.inspect()
       |> order_by([pack, ...], [desc: pack.updated_at])
       |> Repo.all()
       |> Repo.preload([:classroom, [packlanguages: :language, packitems: pi_query]])
@@ -54,14 +53,12 @@ defmodule Everlearn.Contents do
       where: mb.teacher_lg_id in [^student_lg_id, ^teacher_lg_id],
       where: mb.user_id == ^user_id
     packs = result
-      |> IO.inspect()
       |> filter_language(student_lg_id, teacher_lg_id)
       |> filter_classroom(student_lg_id, teacher_lg_id)
       |> order_by([pack, ...], pack.title)
       |> where([pack, ...], pack.active == true)
       |> Repo.all()
       |> Repo.preload([memberships: query3, packlanguages: query1, items: query2])
-      |> IO.inspect()
     {packs, rummage}
   end
 
@@ -165,7 +162,6 @@ defmodule Everlearn.Contents do
         params = fields
         |> Map.put(:kind_id, kind.id)
         |> Map.delete(:kind) # Add kind_id instead of kind
-        |> IO.inspect()
         case create_item(params) do
           {:ok, item} -> {:ok, "Line for item #{item.title} was processed"}
           {:error, msg} -> {:error, msg.errors}
@@ -413,7 +409,6 @@ defmodule Everlearn.Contents do
             {:error, "Language #{fields.language} couldn't be found"}
           language -> # Language was found
             params = fields
-              |> IO.inspect()
               |> Map.put(:item_id, item.id)
               |> Map.put(:language_id, language.id)
               |> Map.drop([:item, :language]) # Remove from params

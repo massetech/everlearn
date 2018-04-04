@@ -14,7 +14,6 @@ defmodule EverlearnWeb.AuthController do
     conn
       |> Guardian.Plug.sign_out()
       |> put_flash(:info, "You are logged out.")
-      |> IO.inspect()
       |> redirect(to: root_path(conn, :welcome))
   end
 

@@ -5,19 +5,24 @@ defmodule Everlearn.Imports do
 
   def add_flash_answers(conn, %{success_lines: success_lines, error_lines: error_lines, nb_line: nb_line} = results) do
     cond do
-      length(success_lines) == nb_line ->
+      length(error_lines) == 0 ->
         conn
           |> put_flash(:success, "All #{nb_line} lines were imported")
       length(success_lines) == 0 ->
-        IO.inspect(results)
         conn
           |> put_flash(:error, "No line were imported (#{nb_line} lines)")
       true ->
-        IO.inspect(results)
         conn
           |> put_flash(:info, "#{length(success_lines)} lines were imported")
           |> put_flash(:error, "#{length(error_lines)} lines were not imported")
     end
+  end
+
+  defp insert_line(line_array, headers, params) do
+    params = headers
+      |> Enum.zip(line_array)
+      |> Enum.into(params)
+      |> IO.inspect()
   end
 
   def import(file, module, model, params, excluded_atoms \\ []) do
@@ -29,14 +34,12 @@ defmodule Everlearn.Imports do
         headers = table_id
           # Convert first row into list of header atoms
           |> Xlsxir.get_row(1)
-          |> Enum.map(fn(header) -> String.to_atom(header) end)
-          # |> Enum.filter(fn(atom) -> atom not in excluded_atoms end)
-          # |> IO.inspect()
+          |> Enum.map(fn(header_atom) -> String.downcase(header_atom) end)
+          |> Enum.map(fn(header_atom) -> String.to_atom(header_atom) end)
         import_result = table_id
           |> Xlsxir.get_list()
           # Remove the first line with headers
           |> Enum.drop(1)
-          # |> IO.inspect()
           # Try to save each line
           |> Enum.map(fn(line_array) -> insert_imported_line(module, model, line_array, headers, params, excluded_atoms) end)
           # Filter the report from saving to debug
@@ -53,9 +56,6 @@ defmodule Everlearn.Imports do
       |> Enum.zip(line_array)
       |> Enum.into(params)
       |> Map.drop(excluded_atoms)
-      # |> IO.inspect()
-      # |> Enum.map(fn(k, v) -> x * 2 end)
-      # |> IO.inspect()
     # Call the create function of the model iex Contents.create_item(params)
     apply(Module.concat(Everlearn, module), String.to_atom("create_#{model}"), [params])
   end
@@ -72,35 +72,4 @@ defmodule Everlearn.Imports do
   defp convert_xls_time(time_array) do
     "#{Enum.at(time_array, 0)}h #{Enum.at(time_array, 1)}min #{Enum.at(time_array, 2)}seconds}"
   end
-
-  # def import(file, module, model, headers, nested_tuple \\ nil) do
-  #   case nested_tuple do
-  #     nil ->
-  #       file
-  #         |> File.stream!()
-  #         |> CSV.decode(separator: ?;, headers: headers)
-  #         |> Enum.drop(1) # Remove the first line with headers
-  #         |> Enum.reduce({1, module, model, %{ok: [], errors: []}}, &insert_line/2)
-  #     {nested_key, nested_id} -> # There is a nested map ie topic_id
-  #       file
-  #         |> File.stream!()
-  #         |> CSV.decode(separator: ?;, headers: headers)
-  #         |> Enum.drop(1) # Remove the first line with headers
-  #         |> Enum.map(fn {k, v} -> {k, Map.put(v, nested_key, nested_id)} end)
-  #         |> Enum.reduce({1, module, model, %{ok: [], errors: []}}, &insert_line/2)
-  #   end
-  # end
-
-  # defp insert_line({status, fields}, {x, module, model, results}) do
-  #   case status do
-  #     :ok -> # This line is ok for inserting
-  #       case apply(Module.concat(Everlearn, module), String.to_atom("save_#{model}_line"), [fields]) do
-  #         {:ok, _msg} -> {x + 1, module, model, %{ok: results.ok ++ ["line_#{x}"], errors: results.errors}}
-  #         {:error, msg} -> {x + 1, module, model, %{ok: results.ok, errors: results[:errors] ++ [{"line_#{x}", msg}]}}
-  #       end
-  #     _ -> # This line has a problem in the file
-  #       {x + 1, module, model, %{ok: results.ok, errors: results[:errors] ++ ["line_#{x}"]}}
-  #   end
-  # end
-
 end

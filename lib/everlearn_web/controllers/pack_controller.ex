@@ -58,7 +58,6 @@ defmodule EverlearnWeb.PackController do
 
   def show(conn, params) do
     {pack, items, _rummage} = Contents.list_items_eligible_to_pack(params)
-    IO.inspect(pack)
     render conn, "show.html", pack: pack, items: items
   end
 

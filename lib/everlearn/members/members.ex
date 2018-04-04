@@ -219,16 +219,11 @@ defmodule Everlearn.Members do
     item_translations_array = item.cards
       # Load Item translations in array
       |> Enum.reduce([], fn(card, acc) -> test_card_student_language_id(card, acc, membership) end)
-      # |> IO.inspect()
-    # IO.puts("translation made for item #{item.id} : #{item_translations_array}")
     picture = item.picture
     item_id = item.id
     cards = item.cards
       |> Enum.map(fn(card) -> filter_public_data_card(card, membership, item_id, picture, item_translations_array) end)
       |> Enum.filter(fn x -> x != nil end)
-      # |> List.first()
-      # |> IO.inspect()
-    # %{item_id: item.id, cards: cards}
     cards
   end
 

@@ -4,7 +4,6 @@ defmodule Everlearn.Slidebars do
     menu = data.classrooms
       |> Enum.map(fn(classroom) -> %{title: classroom.title, id: classroom.id, memberships: get_memberships_slidebar_data(classroom)} end)
   %{slidebar: menu}
-    |> IO.inspect()
   end
 
   defp get_memberships_slidebar_data(classroom) do
@@ -15,7 +14,6 @@ defmodule Everlearn.Slidebars do
   defp get_membership_slidebar_data(membership) do
     nb_cards_in_membership = membership.cards
       |> length()
-      # |> Enum.reduce(0, fn(item, acc) -> acc + count_cards_in_item(item) end)
     %{id: membership.id, title: membership.title, languages: membership.languages, nb_cards: nb_cards_in_membership}
   end
 

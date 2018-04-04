@@ -9,7 +9,6 @@ defmodule EverlearnWeb.PackCommander do
 
   def toogle_item_pack(socket, payload) do
     %{"itemId" => item_id, "packId" => pack_id} = payload["dataset"]
-    |> IO.inspect()
     case Contents.toogle_pack_item(item_id, pack_id) do
       {:created, _pack_item} ->
         socket
@@ -36,7 +35,6 @@ defmodule EverlearnWeb.PackCommander do
   end
 
   def toogle_pack_language(socket, payload) do
-    IO.inspect(payload)
     %{"languageId" => language_id, "packId" => pack_id} = payload["dataset"]
     %{"title" => title} = payload["form"]
     # Empty title field
@@ -66,7 +64,6 @@ defmodule EverlearnWeb.PackCommander do
 
   def toogle_membership(socket, payload) do
     %{"studentLgId" => student_lg_id, "teacherLgId" => teacher_lg_id, "packId" => pack_id, "userId" => user_id} = payload["dataset"]
-    # IO.puts("+++")
     # IO.inspect(payload["dataset"])
     case Members.toogle_membership(user_id, student_lg_id, teacher_lg_id, pack_id) do
       {:created, msg} ->
