@@ -1,19 +1,12 @@
 use Mix.Config
 
-# config :everlearn,
-#   secret_key_base: "${SECRET_KEY_BASE}",
-#   client_id: "${GOOGLE_CLIENT_ID}",
-#   client_secret: "${GOOGLE_CLIENT_SECRET}",
-#   secret_key: "${GUARDIAN_SECRET}",
-  # host: "${MY_HOSTNAME}",
-  # port: "${PORT}"
-
 config :everlearn, EverlearnWeb.Endpoint,
   load_from_system_env: true,
   server: true, # Without this line, your app will not start the web server!
   secret_key_base: "${SECRET_KEY_BASE}",
   url: [host: "${MY_HOSTNAME}",
         port: "${PORT}"],
+  check_origin: ["//*.gigalixirapp.com", "//*.everlearn.com"],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 config :everlearn, Everlearn.Repo,
