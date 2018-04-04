@@ -1,5 +1,9 @@
 - form_for @changeset, @action, fn f ->
   .row
+    .col.s12.m3
+      .input-field
+        = select f, :classroom_id, @classrooms
+        = label f, :classroom_id
     .input-field.col.s12.m4
       = select f, :level, @levels
       = label f, :level

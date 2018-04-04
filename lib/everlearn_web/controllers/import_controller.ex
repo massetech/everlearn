@@ -4,7 +4,7 @@ defmodule EverlearnWeb.ImportController do
 
   def item(conn, %{"item" => %{"classroom_id" => classroom_id, "file" => file}}) do
     import_result = file.path
-      |> Imports.import("Contents", "item", %{classroom_id: classroom_id}, [])
+      |> Imports.import("Contents", "item", %{classroom_id: classroom_id}, [:kind, :topic])
     case import_result do
       {:ok, results} ->
         IO.inspect(results)
