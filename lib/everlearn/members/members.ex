@@ -175,9 +175,11 @@ defmodule Everlearn.Members do
       # Get public datas from repo
       |> query_user_public_classrooms()
       |> Repo.all()
+      |> IO.inspect
       # Build the public data map
       |> Enum.map(fn(classroom) -> filter_public_data_classroom(classroom) end)
     %{classrooms: classrooms, options: %{}}
+      |> IO.inspect
   end
 
   defp filter_public_data_classroom(classroom) do
