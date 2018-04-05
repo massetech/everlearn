@@ -25,7 +25,6 @@ defmodule EverlearnWeb.MainController do
     content = Members.get_user_learning_data(conn.assigns.current_user.id)
     token = Guardian.Plug.current_token(conn)
     json_data = %{token: token, content: content}
-      # |> IO.inspect()
       |> Poison.encode!()
     slidebars = content
       |> Slidebars.navbar_player()
