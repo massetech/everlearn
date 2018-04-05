@@ -25,7 +25,6 @@ config :everlearn, Everlearn.Auth.Guardian,
 
 # Do not print debug messages in production
 config :logger, level: :info
-# config :logger, level: :debug
 
 # ## SSL Support
 #
