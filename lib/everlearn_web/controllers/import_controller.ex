@@ -4,7 +4,7 @@ defmodule EverlearnWeb.ImportController do
 
   def item(conn, %{"item" => %{"classroom_id" => classroom_id, "file" => file}}) do
     import_result = file.path
-      |> Imports.import("Contents", "item", %{classroom_id: classroom_id}, [:kind, :topic])
+      |> Imports.import("Contents", "item", %{classroom_id: classroom_id, active: true}, [:kind, :topic])
     case import_result do
       {:ok, results} ->
         IO.inspect(results)
@@ -20,7 +20,7 @@ defmodule EverlearnWeb.ImportController do
 
   def card(conn, %{"card" => %{"language_id" => language_id, "file" => file}}) do
     import_result = file.path
-      |> Imports.import("Contents", "card", %{language_id: language_id}, [:topic_id, :topic, :kind_id, :kind, :item_title, :level, :description])
+      |> Imports.import("Contents", "card", %{language_id: language_id, active: true}, [:topic_id, :topic, :kind_id, :kind, :item_title, :level, :description])
     case import_result do
       {:ok, results} ->
         IO.inspect(results)
