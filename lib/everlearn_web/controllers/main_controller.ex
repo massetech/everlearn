@@ -21,7 +21,7 @@ defmodule EverlearnWeb.MainController do
 
   def show_player(conn, _params) do
     IO.puts("XXXX User ID XXXXX")
-    IO.inspect(conn.assigns)
+    IO.inspect(conn.assigns.current_user.id)
     content = Members.get_user_learning_data(conn.assigns.current_user.id)
     token = Guardian.Plug.current_token(conn)
     json_data = %{token: token, content: content}
