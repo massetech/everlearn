@@ -22,8 +22,9 @@ defmodule EverlearnWeb.MainController do
 
   def show_player(conn, _params) do
     Logger.info("XXXX User ID XXXXX")
-    Logger.debug("Conn: #{inspect(conn.assigns)}")
+    Logger.info("Conn: #{inspect(conn.assigns)}")
     content = Members.get_user_learning_data(conn.assigns.current_user.id)
+    Logger.info("Content: #{inspect(content)}")
     token = Guardian.Plug.current_token(conn)
     json_data = %{token: token, content: content}
       |> Poison.encode!()
