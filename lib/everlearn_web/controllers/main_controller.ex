@@ -2,6 +2,7 @@ defmodule EverlearnWeb.MainController do
   use EverlearnWeb, :controller
   alias Everlearn.{Members, Slidebars}
   import PhoenixGon.Controller
+  require Logger
 
   plug Everlearn.Plug.DisplayFlashes
 
@@ -20,8 +21,8 @@ defmodule EverlearnWeb.MainController do
   end
 
   def show_player(conn, _params) do
-    IO.puts("XXXX User ID XXXXX")
-    IO.inspect(conn.assigns.current_user.id)
+    Logger.info("XXXX User ID XXXXX")
+    Logger.debug("Conn: #{inspect(conn.assigns)}")
     content = Members.get_user_learning_data(conn.assigns.current_user.id)
     token = Guardian.Plug.current_token(conn)
     json_data = %{token: token, content: content}

@@ -24,7 +24,8 @@ config :everlearn, Everlearn.Auth.Guardian,
   secret_key: "${GUARDIAN_SECRET}"
 
 # Do not print debug messages in production
-config :logger, level: :info
+# config :logger, level: :info
+config :logger, level: :debug
 
 # ## SSL Support
 #
