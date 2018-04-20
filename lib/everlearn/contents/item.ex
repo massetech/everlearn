@@ -16,8 +16,6 @@ defmodule Everlearn.Contents.Item do
     has_many :cards, Card
     has_many :packitems, PackItem
     has_many :packs, through: [:packitems, :pack]
-    # has_many :memberships, through: [:packs, :memberships]
-    # has_many :memorys, Memory
     timestamps()
   end
 
@@ -29,10 +27,10 @@ defmodule Everlearn.Contents.Item do
     item
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
-    # |> cast_assoc(:cards)
     |> assoc_constraint(:topic)
     |> assoc_constraint(:kind)
     |> assoc_constraint(:classroom)
+    |> unique_constraint(:unic_kind_title_classroom, name: :index_kind_title_classroom, message: "kind title classroom is already taken")
   end
 
   def filters do

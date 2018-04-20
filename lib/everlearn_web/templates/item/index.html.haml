@@ -4,14 +4,18 @@
     = render "import_form.html", assigns
   .section
     = render "search_form.html", assigns
+    .search_results.box-inline
+      %h5= "#{Enum.count(@items)}items found"
+      - link to: export_items_path(@conn, :export_items, rummage: @rummage), class: "btn margin waves-effect waves-light" do
+        %i.material-icons= "cloud_download"
   .section
     %table.bordered.responsive-table
       %tr
         %th= "ID"
+        %th= "Kind"
         %th= "Title"
         %th= "Classroom"
         %th= "Topic"
-        %th= "Kind"
         %th= "Level"
         %th= "Nb active packs"
         %th= "Nb active cards"
@@ -20,10 +24,10 @@
       - for item <- @items do
         %tr
           %td= item.id
+          %td= item.kind.title
           %td= item.title
           %td= item.classroom.title
           %td= item.topic.title
-          %td= item.kind.title
           %td= render EverlearnWeb.SharedView, "_level.html", level: item.level
           %td= Enum.count(item.packs)
           %td= Enum.count(item.cards)

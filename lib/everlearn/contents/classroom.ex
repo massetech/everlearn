@@ -20,6 +20,6 @@ defmodule Everlearn.Contents.Classroom do
     classroom
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
-    |> unique_constraint(:title)
+    |> unique_constraint(:title, message: "Title is already taken")
   end
 end

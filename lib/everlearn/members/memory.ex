@@ -23,6 +23,6 @@ defmodule Everlearn.Members.Memory do
     |> validate_required(@required_fields)
     |> assoc_constraint(:membership)
     |> assoc_constraint(:card)
-    |> unique_constraint(:unic_membership_item, name: :index_membership_card)
+    |> unique_constraint(:unic_membership_item, name: :index_membership_card, message: "membership item already taken")
   end
 end

@@ -11,5 +11,6 @@ defmodule Everlearn.Repo.Migrations.CreatePackitems do
 
     create index(:packitems, [:pack_id])
     create index(:packitems, [:item_id])
+    create unique_index(:packitems, [:pack_id, :item_id], name: :index_pack_item)
   end
 end

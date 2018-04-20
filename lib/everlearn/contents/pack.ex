@@ -27,7 +27,6 @@ defmodule Everlearn.Contents.Pack do
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:classroom)
-    # |> assoc_constraint(:language)
   end
 
   def filters do

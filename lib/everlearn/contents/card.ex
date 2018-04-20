@@ -27,7 +27,7 @@ defmodule Everlearn.Contents.Card do
     |> validate_required(@required_fields)
     |> assoc_constraint(:item)
     |> assoc_constraint(:language)
-    # |> unique_constraint(:unic_question_item, name: :index_question_item)
+    |> unique_constraint(:unic_question_item, name: :index_question_item, message: "question item is already taken")
   end
 
   def import_fields do

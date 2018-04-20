@@ -120,11 +120,12 @@ a.empty_fields {
   @extend .box-inline;
   justify-content: space-between;
 }
-.box-inline-left{
-  display: flex;
-  align-items: center;
-}
+// .box-inline-left{
+//   display: flex;
+//   align-items: center;
+// }
 .active_box > i { width: 20px; height: 20px;}
+.margin {margin: 1em;}
 
 /* ------------------------------ Logo  ------------------------------ */
 span.logo {
@@ -169,6 +170,11 @@ img.flag_small {
   img {margin-right: 1rem;}
   span {font-size: 1.3rem;}
   .badge {background-color: transparent !important;}
+}
+
+/* ------------------------------ Pack show  ------------------------------ */
+.search_results{
+  h5 {color: $info !important;}
 }
 
 /* ------------------------------ Pack show  ------------------------------ */

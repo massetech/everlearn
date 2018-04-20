@@ -7,62 +7,17 @@ defmodule Everlearn.Contents do
   alias Everlearn.{Repo, Members, QueryFilter}
 
 # ---------------------------- PACKS -------------------------------------------
-# PACKS QUERIES ------------------------------------------------------------------
-  def pack_from_id(pack_id) do
+# QUERIES ------------------------------------------------------------------
+  defp select_pack_by_id(pack_id) do
     from p in Pack, where: p.id == ^pack_id
   end
 
-# PACKS METHODS ------------------------------------------------------------------
-  def pack_level_select_btn do
-    [beginner: 1, advanced: 2, expert: 3]
+  defp filter_packs_active(query \\ Pack) do
+    from p in Pack,
+      where: p.active == true
   end
 
-  def list_packs(params) do
-    {result, rummage} = Pack
-      |> Rummage.Ecto.rummage(QueryFilter.filter(params, Pack))
-    pi_query = from pi in PackItem,
-      join: i in assoc(pi, :item),
-      where: i.active == true
-    packs = result
-      |> order_by([pack, ...], [desc: pack.updated_at])
-      |> Repo.all()
-      |> Repo.preload([:classroom, [packlanguages: :language, packitems: pi_query]])
-    {packs, rummage}
-  end
-
-  def list_public_packs(params, user_id) do
-    student_lg_id = params["search"]["student_lg_id"]
-    teacher_lg_id = params["search"]["teacher_lg_id"]
-    {result, rummage} = Pack
-      |> Rummage.Ecto.rummage(QueryFilter.filter(params, Pack))
-    query1 = from pl in PackLanguage,
-      # A voir si encore besoin de ça
-      join: l in assoc(pl, :language),
-      where: l.id == ^student_lg_id,
-      preload: [:language]
-    query2 = from i in Item,
-      where: i.active == true,
-      # Add clause : having at least one active card in [^student_lg_id, ^teacher_lg_id]
-      # join: c in assoc(i, :card),
-      # where: c.active == true,
-      # where: c.language_id in [^student_lg_id, ^teacher_lg_id],
-      select: i
-    query3 = from mb in Membership,
-      # Preload the memberships existing in languages parameters
-      where: mb.student_lg_id in [^student_lg_id, ^teacher_lg_id],
-      where: mb.teacher_lg_id in [^student_lg_id, ^teacher_lg_id],
-      where: mb.user_id == ^user_id
-    packs = result
-      |> filter_language(student_lg_id, teacher_lg_id)
-      |> filter_classroom(student_lg_id, teacher_lg_id)
-      |> order_by([pack, ...], pack.title)
-      |> where([pack, ...], pack.active == true)
-      |> Repo.all()
-      |> Repo.preload([memberships: query3, packlanguages: query1, items: query2])
-    {packs, rummage}
-  end
-
-  defp filter_language(query, student_lg_id, teacher_lg_id) do
+  defp filter_packs_by_active_language(query \\ Pack, student_lg_id, teacher_lg_id) do
     # On cherche tous les Packs ayant un PackLanguage == student_lg_id ET teacher_lg_id
     filtered_query = from p in query,
       join: pl1 in assoc(p, :packlanguages),
@@ -70,9 +25,9 @@ defmodule Everlearn.Contents do
       where: pl1.language_id == ^student_lg_id and pl2.language_id == ^teacher_lg_id
   end
 
-  defp filter_classroom(query, student_lg_id, teacher_lg_id) do
+  defp filter_packs_by_monolanguage_classroom(query \\ Pack, monolanguage) do
     # On filtre les Classrooms en fonction des langues souhaitées
-    if student_lg_id == teacher_lg_id do
+    if monolanguage == true do
       filtered_query = from p in query,
         join: cl in assoc(p, :classroom),
         where: cl.mono_language == true
@@ -83,24 +38,60 @@ defmodule Everlearn.Contents do
     end
   end
 
+# METHODS ------------------------------------------------------------------
+  def pack_level_select_btn do
+    [beginner: 1, advanced: 2, expert: 3]
+  end
+
+  def list_packs(params) do
+    {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Pack)
+    pi_query = filter_packitems_active()
+    packs = rummage_query
+      |> order_by([pack, ...], [desc: pack.updated_at])
+      |> Repo.all()
+      |> Repo.preload([:classroom, [packlanguages: :language, packitems: pi_query]])
+    {packs, rummage}
+  end
+
+  def list_public_packs(params, user_id) do
+    student_lg_id = params["search"]["student_lg_id"]
+    teacher_lg_id = params["search"]["teacher_lg_id"]
+    if student_lg_id == teacher_lg_id, do: monolanguage = true, else: monolanguage = false
+    {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Pack)
+    query1 = from pl in PackLanguage,
+      # A voir si encore besoin de ça
+      join: l in assoc(pl, :language),
+      where: l.id == ^student_lg_id,
+      preload: [:language]
+    query2 = filter_items_active()
+    query3 = Members.filter_memberships_for_user_query(student_lg_id, teacher_lg_id, user_id)
+    packs = rummage_query
+      |> filter_packs_active()
+      |> order_by([pack, ...], pack.title)
+      |> filter_packs_by_active_language(student_lg_id, teacher_lg_id)
+      |> filter_packs_by_monolanguage_classroom(monolanguage)
+      |> Repo.all()
+      |> Repo.preload([memberships: query3, packlanguages: query1, items: query2])
+    {packs, rummage}
+  end
+
   def get_pack!(id) do
-    query = from i in Item,
-      where: i.active == true
+    query = filter_items_active()
     Pack
-    |> Repo.get!(id)
-    |> Repo.preload([:classroom, items: query])
+      |> Repo.get!(id)
+      |> Repo.preload([:classroom, items: query])
   end
 
   def create_pack(attrs \\ %{}) do
     %Pack{}
-    |> Pack.changeset(attrs)
-    |> Repo.insert()
+      |> Pack.changeset(attrs)
+      |> Repo.insert()
   end
 
   def update_pack(%Pack{} = pack, attrs) do
     pack
-    |> Pack.changeset(attrs)
-    |> Repo.update()
+      |> Pack.changeset(attrs)
+      |> Repo.update()
   end
 
   def delete_pack(%Pack{} = pack) do
@@ -112,32 +103,38 @@ defmodule Everlearn.Contents do
   end
 
 # ------------------------ CLASSROOMS ------------------------------------------------
+# QUERIES ------------------------------------------------------------------
+  defp select_classrooms_for_dropdown do
+    from c in Classroom,
+      select: {c.title, c.id}
+  end
 
+# METHODS ------------------------------------------------------------------
   def classroom_select_btn do
-    Repo.all(from(c in Classroom, select: {c.title, c.id}))
+    select_classrooms_for_dropdown
+      |> Repo.all()
   end
 
   def list_classrooms do
-    item_query = from i in Item,
-      where: i.active == true
-    pack_query = from p in Pack,
-      where: p.active == true
-    Repo.all(Classroom)
-    |> Repo.preload([[items: item_query], [packs: pack_query]])
+    item_query = filter_items_active()
+    pack_query = filter_packs_active()
+    Classroom
+      |> Repo.all()
+      |> Repo.preload([[items: item_query], [packs: pack_query]])
   end
 
   def get_classroom!(id), do: Repo.get!(Classroom, id)
 
   def create_classroom(attrs \\ %{}) do
     %Classroom{}
-    |> Classroom.changeset(attrs)
-    |> Repo.insert()
+      |> Classroom.changeset(attrs)
+      |> Repo.insert()
   end
 
   def update_classroom(%Classroom{} = classroom, attrs) do
     classroom
-    |> Classroom.changeset(attrs)
-    |> Repo.update()
+      |> Classroom.changeset(attrs)
+      |> Repo.update()
   end
 
   def delete_classroom(%Classroom{} = classroom) do
@@ -149,7 +146,66 @@ defmodule Everlearn.Contents do
   end
 
 # --------------------- ITEMS ----------------------------------------------------
+# QUERIES ------------------------------------------------------------------
+defp filter_items_by_title(query \\ Item, title) do
+  query
+    |> where([i], i.title == ^title)
+end
 
+defp filter_items_by_level(query \\ Item, level) do
+  query
+    |> where([i], i.level == ^level)
+end
+
+defp filter_items_active(query \\ Item) do
+  from i in query,
+    where: i.active == true,
+    order_by: i.title
+end
+
+defp filter_packitemlink(query, pack, filter) do
+  case filter do
+    "true" ->
+      filtered_query = from i in query,
+        join: pi in assoc(i, :packitems),
+        where: pi.pack_id == ^pack.id
+    "false" ->
+      filtered_query = from i in query,
+        left_join: pi in assoc(i, :packitems),
+        where: is_nil(pi.id)
+    _ -> query
+  end
+end
+
+defp filter_items_eligible_for_pack(query, pack) do
+  classroom_id = get_pack!(pack.id).classroom.id
+  from i in query,
+    join: c in assoc(i, :classroom),
+    where: c.id == ^classroom_id
+  # query
+  #   |> join(:inner, [item, ...], _ in assoc(item, :classroom))
+  #   |> where([item, ...], item.active == true)
+  #   |> where([..., classroom], classroom.id == ^classroom_id)
+    # |> order_by([item, ...], item.title)
+end
+
+# defp preload_items_linked_to_each_pack(query) do
+#   query
+#     |> join(:left, [pack], _ in assoc(pack, :packitems))
+#     |> join(:inner, [pi], _ in assoc(pi, :items))
+#     # |> where([_, _, items], items.active == true)
+#     |> preload([_, _, items], [items: items])
+# end
+
+# defp preload_items_not_linked_to_pack(query \\ Item) do
+#   query
+#     |> join(:left, [pack], _ in assoc(pack, :packitems))
+#     |> join(:inner, [pi], _ in assoc(pi, :items))
+#     |> where([_, _, items], items.active == true)
+#     |> select([p, c], {p, c})
+# end
+
+# METHODS ------------------------------------------------------------------
   def control_item_fields(item_level) do
     convert_integer(item_level)
   end
@@ -169,6 +225,10 @@ defmodule Everlearn.Contents do
     end
   end
 
+  # def list_items_to_download(params) do
+  #   {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Item)
+  # end
+
   def create_item(attrs \\ %{}) do
     %Item{}
       |> Item.changeset(attrs)
@@ -176,120 +236,43 @@ defmodule Everlearn.Contents do
   end
 
   def list_items(params) do
-    {result, rummage} = Item
-      |> Rummage.Ecto.rummage(QueryFilter.filter(params, Item))
-    pack_query = from p in Pack,
-      where: p.active == true
-    card_query = from c in Card,
-      where: c.active == true
-    items = result
+    {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Item)
+    pack_query = filter_packs_active()
+    card_query = filter_cards_active()
+    items = rummage_query
       |> order_by([item, ...], [desc: item.updated_at])
-      # |> filter_classroom(params["search"]["classroom"])
       |> Repo.all()
       |> Repo.preload([:kind, :topic, :classroom, [cards: card_query], [packs: pack_query]])
     {items, rummage}
   end
 
-  # defp filter_classroom(query \\ Item, filter) do
-  #   case filter do
-  #     "" -> query
-  #     nil -> query
-  #     _ ->
-  #       classroom = get_classroom!(filter)
-  #       filtered_query = from i in query,
-  #         where: i.classroom_id == ^classroom.id
-  #   end
-  # end
-
-  @doc """
-  Imports `(params)`, finds pack from params[id], filters with rummage then lists the active items eligible to this pack depending
-  on the pack classroom. Items are ordered by title ASC
-  Returns an `{pack, items, rummage}` tupple with the list of items.
-
-  ## Examples
-
-  """
   def list_items_eligible_to_pack(params \\ %{}) do
-    pack = get_pack!(params["id"])
-    |> Repo.preload(:classroom)
+    # Add the 2 rules since can be called by show or other action
+    case Map.has_key?(params, "pack_id") do
+      true -> pack_id = params["pack_id"]
+      false -> pack_id = params["id"]
+    end
+    pack = get_pack!(pack_id)
+      |> Repo.preload(:classroom)
+    IO.inspect(params)
+    {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Item)
+    # Load items list to show
     packitem_filter = params["search"]["packitemlink"]
-    {result, rummage} = Item
-    |> Rummage.Ecto.rummage(QueryFilter.filter(params, Item))
-    pi_query = from pi in PackItem, where: pi.pack_id == ^pack.id
-    items = result
-    |> filter_packitemlink(pack, packitem_filter)
-    |> filter_items_eligible_for_pack(pack)
-    |> Repo.all()
-    |> Repo.preload([:topic, :kind, packitems: pi_query])
+    pi_query = filter_packitems_by_pack_id(pack.id)
+    items = rummage_query
+      |> filter_items_active()
+      |> filter_packitemlink(pack, packitem_filter)
+      |> filter_items_eligible_for_pack(pack)
+      |> Repo.all()
+      |> Repo.preload([:topic, :kind, packitems: pi_query])
     {pack, items, rummage}
   end
 
-  defp filter_packitemlink(query, pack, filter) do
-    case filter do
-      "true" ->
-        filtered_query = from i in query,
-          join: pi in assoc(i, :packitems),
-          where: pi.pack_id == ^pack.id
-      "false" ->
-        filtered_query = from i in query,
-          left_join: pi in assoc(i, :packitems),
-          where: is_nil(pi.id)
-      _ -> query
-    end
-  end
-
-  defp filter_items_eligible_for_pack(query, pack) do
-    classroom_id = get_pack!(pack.id).classroom.id
-    query
-      |> join(:inner, [item, ...], _ in assoc(item, :classroom))
-      # |> join(:inner, [..., topic], _ in assoc(topic, :classroom))
-      |> where([item, ...], item.active == true)
-      |> where([..., classroom], classroom.id == ^classroom_id)
-      |> order_by([item, ...], item.title)
-  end
-
-  # def items_from_pack(query \\ Pack) do
-  #   query
-  #     |> join(:inner, [pack], _ in assoc(pack, :packitems))
-  #     |> join(:inner, [_, packitems], _ in assoc(packitems, :item))
-  #     |> select([_, _, item], item)
-  # end
-
-  def items_active(query \\ Item) do
-    query
-      |> where([..., item], item.active == true)
-  end
-
-  # Get all items possible for a pack
   def get_items_possible_for_pack(pack_id) do
-    Item
-      |> join(:inner, [item], _ in assoc(item, :topic))
-      |> where([item], item.active == true)
-      |> join(:inner, [_, topic], _ in assoc(topic, :classroom))
-      # On filtre sur la classroom du pack recherché
-      |> join(:inner, [_, _, classroom], _ in assoc(classroom, :packs))
-      |> where([_, _, _, pack], pack.id == ^pack_id)
-      # On ajoute les packitems si existants
-      |> join(:left, [item, _, _, _], _ in assoc(item, :packitems))
-      |> preload([_, _, _, _, pi], [:topic, :cards, packitems: pi])
+    pack_id
+      |> filter_items_eligible_to_pack()
       |> Repo.all()
   end
-
-  defp preload_items_linked_to_each_pack(query) do
-    query
-      |> join(:left, [pack], _ in assoc(pack, :packitems))
-      |> join(:inner, [pi], _ in assoc(pi, :items))
-      # |> where([_, _, items], items.active == true)
-      |> preload([_, _, items], [items: items])
-  end
-
-  # defp preload_items_not_linked_to_pack(query \\ Item) do
-  #   query
-  #     |> join(:left, [pack], _ in assoc(pack, :packitems))
-  #     |> join(:inner, [pi], _ in assoc(pi, :items))
-  #     |> where([_, _, items], items.active == true)
-  #     |> select([p, c], {p, c})
-  # end
 
   def choose_random_item(pack) do
     get_items_possible_for_pack(pack.id)
@@ -303,27 +286,17 @@ defmodule Everlearn.Contents do
 
   def get_item(id), do: Repo.get(Item, id)
 
-  def item_with_title(query, title) do
-    query
-    |> where([u], u.title == ^title)
-  end
-
-  def item_with_level(query, level) do
-    query
-    |> where([u], u.level == ^level)
-  end
-
   def get_item_by_title_and_level(title, level) do
     Item
-      |> item_with_title(title)
-      |> item_with_level(level)
+      |> filter_items_by_title(title)
+      |> filter_items_by_level(level)
       |> Repo.one
   end
 
   def update_item(%Item{} = item, attrs) do
     item
-    |> Item.changeset(attrs)
-    |> Repo.update()
+      |> Item.changeset(attrs)
+      |> Repo.update()
   end
 
   def delete_item(%Item{} = item) do
@@ -335,31 +308,37 @@ defmodule Everlearn.Contents do
   end
 
 # -------------------------------- TOPICS ------------------------------------------
+# QUERIES ------------------------------------------------------------------
+  defp select_topics_for_dropdown do
+    from t in Topic,
+      select: {t.title, t.id}
+  end
 
+# METHODS ------------------------------------------------------------------
   def topic_select_btn do
-    Repo.all(from(c in Topic, select: {c.title, c.id}))
+    select_topics_for_dropdown
+      |> Repo.all()
   end
 
   def list_topics do
-    item_query = from i in Item,
-      where: i.active == true
+    query = filter_items_active()
     Topic
-    |> Repo.all()
-    |> Repo.preload([items: item_query])
+      |> Repo.all()
+      |> Repo.preload([items: query])
   end
 
   def get_topic!(id), do: Repo.get!(Topic, id)
 
   def create_topic(attrs \\ %{}) do
     %Topic{}
-    |> Topic.changeset(attrs)
-    |> Repo.insert()
+      |> Topic.changeset(attrs)
+      |> Repo.insert()
   end
 
   def update_topic(%Topic{} = topic, attrs) do
     topic
-    |> Topic.changeset(attrs)
-    |> Repo.update()
+      |> Topic.changeset(attrs)
+      |> Repo.update()
   end
 
   def delete_topic(%Topic{} = topic) do
@@ -372,30 +351,40 @@ defmodule Everlearn.Contents do
 
   # --------------------------- CARDS ----------------------------------------------
   # CARDS QUERIES ------------------------------------------------------------------
-  def cards_active(query \\ Card) do
-    query
-      |> where([..., card], card.active == true)
+  defp filter_cards_active(query \\ Card) do
+    from c in Card,
+      where: c.active == true
   end
 
-  def cards_from_pack(query \\ Pack) do
-    query
-      |> join(:inner, [p, ...], _ in assoc(p, :packitems))
-      |> join(:inner, [..., pi], _ in assoc(pi, :item))
-      |> join(:inner, [..., i], _ in assoc(i, :cards))
-      |> select([..., card], card)
+  defp filter_cards_by_item(query \\ Card, item_id) do
+    from c in query,
+      where: c.item_id == ^item_id
   end
 
-  def cards_with_language(query \\ Card, language_id) do
-    query
-      |> where([..., card], card.language_id == ^language_id)
+  def select_cards_from_pack(query \\ Pack) do
+    from p in query,
+      join: pi in assoc(p, :packitems),
+      join: i in assoc(pi, :item),
+      join: c in assoc(i, :cards),
+      select: c
+    # query
+    #   |> join(:inner, [p, ...], _ in assoc(p, :packitems))
+    #   |> join(:inner, [..., pi], _ in assoc(pi, :item))
+    #   |> join(:inner, [..., i], _ in assoc(i, :cards))
+    #   |> select([..., card], card)
+  end
+
+  defp filter_cards_by_language(query \\ Card, language_id) do
+    from [..., c] in query,
+      where: c.language_id == ^language_id
   end
 
   # CARDS METHODS ------------------------------------------------------------------
   def get_cards_for_memory(pack_id, language_id) do
-    pack_from_id(pack_id)
-      |> cards_from_pack()
-      |> cards_active()
-      |> cards_with_language(language_id)
+    pack_id
+      |> select_pack_by_id()
+      |> select_cards_from_pack()
+      |> filter_cards_by_language(language_id)
       |> Repo.all()
   end
 
@@ -421,43 +410,32 @@ defmodule Everlearn.Contents do
   end
 
   def list_cards(params) do
-    {result, rummage} = Card
-      |> Rummage.Ecto.rummage(QueryFilter.filter(params, Card))
-    cards = result
+    {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Card)
+    cards = rummage_query
       |> Repo.all()
-      |> Repo.preload([:language, [item: [:packitems]]])
+      |> Repo.preload([:language, [item: [:packitems, :topic, :kind]]])
     {cards, rummage}
   end
 
   def get_cards_from_item(item) do
-    from(c in Card, where: c.item_id == ^item.id)
+    Card
+      |> filter_cards_by_item(item.id)
       |> Repo.all()
       |> Repo.preload([:language])
   end
-
-  # def list_cards(params) do
-  #   # query1 = from pi in PackItem,
-  #   #   join: pack in assoc(pi, :pack),
-  #   #   where: pack.active == true
-  #   # query = PackItem
-  #   #   |> where([u], u.active == true)
-  #   Card
-  #   |> Repo.all()
-  #   |> Repo.preload([:language, [item: [:packitems]]])
-  # end
 
   def get_card!(id), do: Repo.get!(Card, id)
 
   def create_card(attrs \\ %{}) do
     %Card{}
-    |> Card.changeset(attrs)
-    |> Repo.insert()
+      |> Card.changeset(attrs)
+      |> Repo.insert()
   end
 
   def update_card(%Card{} = card, attrs) do
     card
-    |> Card.changeset(attrs)
-    |> Repo.update()
+      |> Card.changeset(attrs)
+      |> Repo.update()
   end
 
   def delete_card(%Card{} = card) do
@@ -469,244 +447,205 @@ defmodule Everlearn.Contents do
   end
 
   # ------------------------- PACKITEMS ----------------------------------------------
+  # QUERIES ------------------------------------------------------------------
+  defp filter_packitems_active(query \\ PackItem) do
+    from pi in query,
+      join: i in assoc(pi, :item),
+      where: i.active == true
+  end
 
-  # def generate_pack_items(pack) do
-  #   pack
-  #   |> choose_random_item()
-  #   |> Ecto.build_assoc(:packitems, %{pack_id: pack.id})
-  #   |> Repo.insert!()
-  # end
+  defp filter_packitems_by_pack_id(query \\ PackItem, pack_id) do
+    from pi in query,
+      where: pi.pack_id == ^pack_id
+  end
 
-  def toogle_pack_item(item_id, pack_id) do
-    case get_pack_item(item_id, pack_id) do
-      %PackItem{} = pack_item ->
+  defp filter_packitems_by_item_id(query \\ PackItem, item_id) do
+    from pi in query,
+      where: pi.item_id == ^item_id
+  end
+
+  defp filter_items_eligible_to_pack(query \\ Item, pack_id) do
+    query
+      |> join(:inner, [item], _ in assoc(item, :topic))
+      |> join(:inner, [_, topic], _ in assoc(topic, :classroom))
+      |> join(:inner, [_, _, classroom], _ in assoc(classroom, :packs))
+      |> where([_, _, _, pack], pack.id == ^pack_id)
+      # On ajoute les packitems si existants
+      |> join(:left, [item, _, _, _], _ in assoc(item, :packitems))
+      |> preload([_, _, _, _, pi], [:topic, :cards, packitems: pi])
+  end
+
+  # METHODS ------------------------------------------------------------------
+  def add_items_to_pack(item_list, pack_id) do
+    item_list
+      |> Enum.map(fn(item) -> create_packitem(%{item_id: item.id, pack_id: pack_id}) end)
+  end
+
+  def remove_items_from_pack(item_list, pack_id) do
+    item_list
+      |> Enum.map(fn(item) -> get_packitem(item.id, pack_id) end)
+      |> Enum.map(fn(packitem) -> delete_packitem(packitem) end)
+  end
+
+  def toogle_packitem(item_id, pack_id) do
+    case get_packitem(item_id, pack_id) do
+      %PackItem{} = packitem ->
         # There is allready a PackItem : delete it
-        case delete_pack_item(pack_item) do
-          {:ok, pack_item} -> {:deleted, pack_item}
+        case delete_packitem(packitem) do
+          {:ok, packitem} -> {:deleted, packitem}
           {:error, reason} -> {:error, reason}
         end
       nil ->
         # There wasnt any PackItem : create it
-        case create_pack_item(%{item_id: item_id, pack_id: pack_id}) do
-          {:ok, pack_item} -> {:created, pack_item}
+        case create_packitem(%{item_id: item_id, pack_id: pack_id}) do
+          {:ok, packitem} -> {:created, packitem}
           {:error, reason} -> {:error, reason}
         end
     end
   end
 
-  def get_pack_item(item_id, pack_id) do
-    query = from p in PackItem,
-      where: p.item_id == ^item_id and p.pack_id == ^pack_id,
-      select: p
-    Repo.one(query)
+  def get_packitem(item_id, pack_id) do
+    PackItem
+      |> filter_packitems_by_item_id(item_id)
+      |> filter_packitems_by_pack_id(pack_id)
+      |> Repo.one()
   end
 
-  def list_pack_items(pack_id) do
-    query = from p in PackItem, where: p.pack_id == ^pack_id
-    Repo.all(query)
+  def list_packitems(pack_id) do
+    PackItem
+      |> filter_packitems_by_pack_id(pack_id)
+      |> Repo.all()
   end
 
-  def create_pack_item(attrs \\ %{}) do
+  def create_packitem(attrs \\ %{}) do
     %PackItem{}
-    |> PackItem.changeset(attrs)
-    |> Repo.insert()
+      |> PackItem.changeset(attrs)
+      |> Repo.insert()
   end
 
-  def delete_pack_item(%PackItem{} = pack_item) do
-    Repo.delete(pack_item)
+  def delete_packitem(%PackItem{} = packitem) do
+    Repo.delete(packitem)
   end
 
   def clean_existing_packitems(item) do
     case item.active do
-      false -> delete_pack_items(item.id)
+      false -> delete_packitems(item)
       true -> nil
     end
   end
 
-  defp delete_pack_items(item_id) do
-    query = from p in PackItem, where: p.item_id == ^item_id
-    Repo.delete_all(query)
+  defp delete_packitems(item) do
+    PackItem
+      |> filter_packitems_by_item_id(item.id)
+      |> Repo.delete_all()
   end
 
-  # def change_pack_item(%PackItem{} = pack_item) do
-  #   PackItem.changeset(pack_item, %{})
-  # end
-
-
   # ------------------------- KINDS ----------------------------------------------
+  # QUERIES ------------------------------------------------------------------
+    defp select_kinds_for_dropdown do
+      from k in Kind,
+        select: {k.title, k.id}
+    end
 
+  # METHODS ------------------------------------------------------------------
   def kind_select_btn do
-    Repo.all(from(c in Kind, select: {c.title, c.id}))
+    select_kinds_for_dropdown
+      |> Repo.all()
   end
 
   def get_kind_by_name(title) do
     Kind
-    |> Repo.get_by(name: title)
+      |> Repo.get_by(name: title)
   end
 
-  @doc """
-  Returns the list of kinds.
-
-  ## Examples
-
-      iex> list_kinds()
-      [%Kind{}, ...]
-
-  """
   def list_kinds do
     Repo.all(Kind)
   end
 
-  @doc """
-  Gets a single kind.
-
-  Raises `Ecto.NoResultsError` if the Kind does not exist.
-
-  ## Examples
-
-      iex> get_kind!(123)
-      %Kind{}
-
-      iex> get_kind!(456)
-      ** (Ecto.NoResultsError)
-
-  """
   def get_kind!(id), do: Repo.get!(Kind, id)
 
-  @doc """
-  Creates a kind.
-
-  ## Examples
-
-      iex> create_kind(%{field: value})
-      {:ok, %Kind{}}
-
-      iex> create_kind(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_kind(attrs \\ %{}) do
     %Kind{}
-    |> Kind.changeset(attrs)
-    |> Repo.insert()
+      |> Kind.changeset(attrs)
+      |> Repo.insert()
   end
 
-  @doc """
-  Updates a kind.
-
-  ## Examples
-
-      iex> update_kind(kind, %{field: new_value})
-      {:ok, %Kind{}}
-
-      iex> update_kind(kind, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_kind(%Kind{} = kind, attrs) do
     kind
-    |> Kind.changeset(attrs)
-    |> Repo.update()
+      |> Kind.changeset(attrs)
+      |> Repo.update()
   end
 
-  @doc """
-  Deletes a Kind.
-
-  ## Examples
-
-      iex> delete_kind(kind)
-      {:ok, %Kind{}}
-
-      iex> delete_kind(kind)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_kind(%Kind{} = kind) do
     Repo.delete(kind)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking kind changes.
-
-  ## Examples
-
-      iex> change_kind(kind)
-      %Ecto.Changeset{source: %Kind{}}
-
-  """
   def change_kind(%Kind{} = kind) do
     Kind.changeset(kind, %{})
   end
 
   # ------------------------- PACKLANGUAGES ----------------------------------------------
+  # QUERIES ------------------------------------------------------------------
+    defp select_kinds_for_dropdown do
+      from k in Kind,
+        select: {k.title, k.id}
+    end
 
-  @doc """
-  Returns the list of packlanguages.
+    def filter_packlanguages_by_pack_id(query \\ PackLanguage, pack_id) do
+      from pl in query,
+          where: pl.pack_id == ^pack_id
+    end
 
-  ## Examples
+    defp filter_packlanguages_by_language_id(query \\ PackLanguage, language_id) do
+      from pl in query,
+        where: pl.language_id == ^language_id
+    end
 
-      iex> list_packlanguages()
-      [%PackLanguage{}, ...]
+    defp count_active_items_in_packlanguage (query \\ PackLanguage) do
+      from pl in query,
+        join: p in assoc(pl, :pack),
+        join: i in assoc(p, :items),
+        where: i.active == true,
+        select: count("*")
+    end
 
-  """
-  def list_packlanguages do
-    Repo.all(PackLanguage)
-  end
-
-  def count_items_for_packlanguages(pack_id, language_id) do
-    query = from pl in PackLanguage,
-      where: pl.language_id == ^language_id and pl.pack_id == ^pack_id,
-      join: p in assoc(pl, :pack),
-      join: i in assoc(p, :items),
-      where: i.active == true,
-      select: count("*")
-    Repo.one(query)
-  end
-
-  def count_cards_for_packlanguages(pack_id, language_id) do
-    query = from pl in PackLanguage,
-      where: pl.language_id == ^language_id and pl.pack_id == ^pack_id,
+    defp count_active_cards_in_packlanguage (query \\ PackLanguage) do
+      from pl in query,
       join: p in assoc(pl, :pack),
       join: i in assoc(p, :items),
       join: c in assoc(i, :cards),
       where: i.active == true,
       where: c.active == true,
       select: count("*")
-    Repo.one(query)
   end
 
-  @doc """
-  Gets a single packlanguage.
+  # METHODS ------------------------------------------------------------------
+  def list_packlanguages do
+    Repo.all(PackLanguage)
+  end
 
-  Raises `Ecto.NoResultsError` if the PackLanguage does not exist.
+  def count_items_for_packlanguages(pack_id, language_id) do
+    PackLanguage
+      |> filter_packlanguages_by_pack_id(pack_id)
+      |> filter_packlanguages_by_language_id(language_id)
+      |> count_active_items_in_packlanguage
+      |> Repo.one()
+  end
 
-  ## Examples
+  def count_cards_for_packlanguages(pack_id, language_id) do
+    PackLanguage
+      |> filter_packlanguages_by_pack_id(pack_id)
+      |> filter_packlanguages_by_language_id(language_id)
+      |> count_active_cards_in_packlanguage
+      |> Repo.one()
+  end
 
-      iex> get_packlanguage!(123)
-      %PackLanguage{}
-
-      iex> get_packlanguage!(456)
-      ** (Ecto.NoResultsError)
-
-  """
   def get_packlanguage!(id), do: Repo.get!(PackLanguage, id)
 
-  @doc """
-  Creates a packlanguage.
-
-  ## Examples
-
-      iex> create_packlanguage(%{field: value})
-      {:ok, %PackLanguage{}}
-
-      iex> create_packlanguage(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_packlanguage(attrs \\ %{}) do
     %PackLanguage{}
-    |> PackLanguage.changeset(attrs)
-    |> Repo.insert()
+      |> PackLanguage.changeset(attrs)
+      |> Repo.insert()
   end
 
   def toogle_packlanguage(language_id, pack_id, title) do
@@ -727,56 +666,24 @@ defmodule Everlearn.Contents do
   end
 
   defp get_packlanguage(language_id, pack_id) do
-    query = from pl in PackLanguage,
-      where: pl.language_id == ^language_id and pl.pack_id == ^pack_id
-      # select: p
-    Repo.one(query)
+    PackLanguage
+      |> filter_packlanguages_by_language_id(language_id)
+      |> filter_packlanguages_by_pack_id(pack_id)
+      |> Repo.one()
   end
 
-  @doc """
-  Updates a packlanguage.
-
-  ## Examples
-
-      iex> update_packlanguage(packlanguage, %{field: new_value})
-      {:ok, %PackLanguage{}}
-
-      iex> update_packlanguage(packlanguage, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_packlanguage(%PackLanguage{} = packlanguage, attrs) do
     packlanguage
-    |> PackLanguage.changeset(attrs)
-    |> Repo.update()
+      |> PackLanguage.changeset(attrs)
+      |> Repo.update()
   end
 
-  @doc """
-  Deletes a PackLanguage.
-
-  ## Examples
-
-      iex> delete_packlanguage(packlanguage)
-      {:ok, %PackLanguage{}}
-
-      iex> delete_packlanguage(packlanguage)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_packlanguage(%PackLanguage{} = packlanguage) do
     Repo.delete(packlanguage)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking packlanguage changes.
-
-  ## Examples
-
-      iex> change_packlanguage(packlanguage)
-      %Ecto.Changeset{source: %PackLanguage{}}
-
-  """
   def change_packlanguage(%PackLanguage{} = packlanguage) do
     PackLanguage.changeset(packlanguage, %{})
   end
+
 end

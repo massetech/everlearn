@@ -22,9 +22,9 @@ defmodule EverlearnWeb.CardController do
 
   defp load_select(conn, _params) do
     conn
-    |> assign(:languages, Everlearn.Members.language_select_btn())
+    |> assign(:languages, Everlearn.Members.languages_select_btn())
     |> assign(:active, CustomSelects.status_select_btn())
-    |> assign(:languages, Everlearn.Members.language_select_btn())
+    |> assign(:languages, Everlearn.Members.languages_select_btn())
   end
 
   def index(conn, params) do

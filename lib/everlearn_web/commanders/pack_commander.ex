@@ -9,7 +9,7 @@ defmodule EverlearnWeb.PackCommander do
 
   def toogle_item_pack(socket, payload) do
     %{"itemId" => item_id, "packId" => pack_id} = payload["dataset"]
-    case Contents.toogle_pack_item(item_id, pack_id) do
+    case Contents.toogle_packitem(item_id, pack_id) do
       {:created, _pack_item} ->
         socket
           |> Drab.Browser.console("PackItem created for item #{item_id} and pack #{pack_id}")

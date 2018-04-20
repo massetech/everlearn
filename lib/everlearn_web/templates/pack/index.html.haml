@@ -2,6 +2,8 @@
 .container
   .section
     = render "search_form.html", assigns
+    .search_results.box-inline
+      %h5= "#{Enum.count(@packs)}items found"
   .section
     %table.bordered.responsive-table
       %tr

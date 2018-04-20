@@ -15,7 +15,7 @@ defmodule EverlearnWeb.MembershipController do
 
   defp load_select(conn, _params) do
     conn
-    |> assign(:languages, Members.language_select_btn())
+    |> assign(:languages, Members.languages_select_btn())
   end
 
   def index(conn, params) do

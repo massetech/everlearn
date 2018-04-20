@@ -11,14 +11,14 @@ defmodule EverlearnWeb.ItemController do
 
   defp fetch_navtitle_index(conn, _params) do
     conn
-    |> assign(:nav_title, "Items")
-    |> assign(:nav_new_path, item_path(conn, :new))
+      |> assign(:nav_title, "Items")
+      |> assign(:nav_new_path, item_path(conn, :new))
   end
 
   defp fetch_navtitle_other(conn, _params) do
     conn
-    |> assign(:nav_title, "Item")
-    |> assign(:nav_index_path, item_path(conn, :index))
+      |> assign(:nav_title, "Item")
+      |> assign(:nav_index_path, item_path(conn, :index))
   end
 
   defp load_select(conn, _params) do
@@ -28,7 +28,7 @@ defmodule EverlearnWeb.ItemController do
       |> assign(:levels, Contents.pack_level_select_btn())
       |> assign(:kinds, Contents.kind_select_btn())
       |> assign(:active, CustomSelects.status_select_btn())
-      |> assign(:languages, Everlearn.Members.language_select_btn())
+      |> assign(:languages, Everlearn.Members.languages_select_btn())
   end
 
   def index(conn, params) do

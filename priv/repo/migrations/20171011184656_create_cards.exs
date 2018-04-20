@@ -14,6 +14,6 @@ defmodule Everlearn.Repo.Migrations.CreateCards do
     end
 
     create index(:cards, [:item_id])
-    # create unique_index(:cards, [:question, :item_id], name: :index_question_item)
+    create unique_index(:cards, [:question, :item_id], name: :index_question_item)
   end
 end

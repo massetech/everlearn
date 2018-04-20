@@ -16,9 +16,6 @@ defmodule Everlearn.Contents.PackItem do
     |> validate_required([:item_id, :pack_id])
     |> assoc_constraint(:pack)
     |> assoc_constraint(:item)
-    # Validates that the item is active
-
-    # |> assoc_constraint(:item)
-    # |> assoc_constraint(:pack)
+    |> unique_constraint(:unic_pack_item, name: :index_pack_item, message: "pack item is already taken")
   end
 end

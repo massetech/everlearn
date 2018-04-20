@@ -26,7 +26,7 @@ defmodule Everlearn.Members.User do
     user
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
-    |> unique_constraint(:email)
+    |> unique_constraint(:email, message: "Email is already taken")
     |> validate_format(:email, ~r/@/)
     |> validate_inclusion(:provider, ["google", "facebook"])
     |> validate_inclusion(:role, ["GUEST", "ADMIN", "SUPER"])

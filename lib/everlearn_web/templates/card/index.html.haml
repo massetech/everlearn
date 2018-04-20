@@ -4,6 +4,10 @@
     = render "import_form.html", assigns
   .section
     = render "search_form.html", assigns
+    .search_results.box-inline
+      %h5= "#{Enum.count(@cards)}cards found"
+      - link to: export_cards_path(@conn, :export_cards, rummage: @rummage), class: "btn margin waves-effect waves-light" do
+        %i.material-icons= "cloud_download"
   .section
     %table.bordered.responsive-table
       %tr

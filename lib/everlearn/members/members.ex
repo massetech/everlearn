@@ -10,7 +10,8 @@ defmodule Everlearn.Members do
   alias Everlearn.{Repo, QueryFilter, Contents}
 
   # -------------------------------- UEBERAUTH ----------------------------------------
-
+  # QUERIES ------------------------------------------------------------------
+  # METHODS ------------------------------------------------------------------
   def sign_in_user(%Auth{} = auth) do
     insert_or_update_user(basic_info(auth))
   end
@@ -77,6 +78,7 @@ defmodule Everlearn.Members do
       build_nickname(auth)
     end
   end
+
   defp build_nickname(auth) do
     if %{info: %{first_name: first_name}} = auth do
       first_name
@@ -100,8 +102,8 @@ defmodule Everlearn.Members do
   end
 
   # ---------------------------- USERS -------------------------------------------
-  # USERS QUERIES ------------------------------------------------------------------
-  def query_user_public_classrooms(user_id) do
+  # QUERIES ------------------------------------------------------------------
+  defp filter_user_learning_datas(user_id) do
     from cl in Classroom,
       join: mb in assoc(cl, :memberships),
       join: u in assoc(mb, :user), where: u.id == ^user_id,
@@ -115,30 +117,32 @@ defmodule Everlearn.Members do
       preload: [memberships: {mb, pack: {p, packlanguages: pl}, student_lg: lg1, teacher_lg: lg2, items: {i, cards: {c, memorys: mem}}}]
   end
 
-  defp query_card_by_membership(card_id, membership_id) do
+  defp count_membership_card_link(card_id, membership_id) do
     from mb in Membership,
       where: mb.id == ^membership_id,
       join: i in assoc(mb, :items), where: i.active == true,
       join: c in assoc(i, :cards), where: c.active == true and c.id == ^card_id,
-      select: fragment("count(?)", mb.id)
+      # select: fragment("count(?)", mb.id)
+      select: count("*")
   end
 
-  # USERS METHODS ------------------------------------------------------------------
-
+  # METHODS ------------------------------------------------------------------
   def update_user_data(classroom_array) do
-    # On traite les données à mémoriser
     classroom_array
-    |> Enum.map(fn(classroom) -> filter_user_data_classroom(classroom) end)
-    |> List.flatten()
-    |> Enum.filter(fn(memory_map) -> check_membership_to_card_link(memory_map) end)
-    |> Enum.map(fn(memory_map) -> update_user_memory(memory_map) end)
+      |> Enum.map(fn(classroom) -> filter_user_data_classroom(classroom) end)
+      |> List.flatten()
+      |> Enum.filter(fn(memory_map) -> check_membership_to_card_link(memory_map) end)
+      |> Enum.map(fn(memory_map) -> update_user_memory(memory_map) end)
   end
+
   defp check_membership_to_card_link(%{card_id: card_id, membership_id: membership_id}) do
     # We control that the Card is linked to a Membership and active
-    query = query_card_by_membership(card_id, membership_id)
-    |> Repo.one()
+    # since a user can have card locally that do not exist anymore for this membership
+    query = count_membership_card_link(card_id, membership_id)
+      |> Repo.one()
     if query > 0, do: true, else: false
   end
+
   defp update_user_memory(memory_params) do
     old_memory = get_user_memory(memory_params.membership_id, memory_params.card_id)
     case old_memory do
@@ -150,15 +154,17 @@ defmodule Everlearn.Members do
         Repo.update!(changeset)
     end
   end
-  defp filter_user_data_classroom(classroom) do
-    classroom["memberships"]
-    |> Enum.map(fn(membership) -> filter_user_data_membership(membership) end)
+
+  defp filter_user_data_classroom(%{"memberships" => memberships}) do
+    memberships
+      |> Enum.map(fn(membership) -> filter_user_data_membership(membership) end)
   end
-  defp filter_user_data_membership(membership) do
-    membership_id = membership["id"]
-    membership["cards"]
-    |> Enum.map(fn(card) -> filter_user_data_card(card, membership_id) end)
+
+  defp filter_user_data_membership(%{"cards" => cards, "membership_id" => membership_id}) do
+    cards
+      |> Enum.map(fn(card) -> filter_user_data_card(card, membership_id) end)
   end
+
   defp filter_user_data_card(card, membership_id) do
     %{
       membership_id: membership_id,
@@ -168,12 +174,10 @@ defmodule Everlearn.Members do
     }
   end
 
-
-
   def get_user_learning_data(user_id) do
     classrooms = user_id
       # Get public datas from repo
-      |> query_user_public_classrooms()
+      |> filter_user_learning_datas()
       |> Repo.all()
       # Build the public data map
       |> Enum.map(fn(classroom) -> filter_public_data_classroom(classroom) end)
@@ -315,8 +319,7 @@ defmodule Everlearn.Members do
   end
 
   # -------------------------------- MEMBERSHIPS ----------------------------------------
-  # MEMBERSHIPS QUERIES ------------------------------------------------------------------
-
+  # QUERIES ------------------------------------------------------------------
   defp query_membership_cards (query \\ Membership) do
     query
       |> join(:left, [..., membership], _ in assoc(membership, :items))
@@ -325,6 +328,18 @@ defmodule Everlearn.Members do
       |> where([..., card], card.active == true)
       |> where([..., membership, item, card], card.language_id in [membership.teacher_lg_id, membership.student_lg_id])
       |> preload([..., item, card], [items: {item, cards: card}])
+  end
+
+  defp filter_memberships_by_languages(query \\ Membership, pack_id, user_id, query_languages) do
+    from m in query,
+    where: m.pack_id == ^pack_id and m.user_id == ^user_id and m.teacher_lg_id in ^query_languages and m.student_lg_id in ^query_languages
+  end
+
+  def filter_memberships_for_user_query(student_lg_id, teacher_lg_id, user_id) do
+    from mb in Membership,
+      where: mb.student_lg_id in [^student_lg_id, ^teacher_lg_id],
+      where: mb.teacher_lg_id in [^student_lg_id, ^teacher_lg_id],
+      where: mb.user_id == ^user_id
   end
 
   # MEMBERSHIPS METHODS ------------------------------------------------------------------
@@ -340,20 +355,14 @@ defmodule Everlearn.Members do
         # There wasnt any Membership : create it
         case create_membership(%{user_id: user_id, pack_id: pack_id, student_lg_id: student_lg_id, teacher_lg_id: teacher_lg_id}) do
           {:ok, membership} -> {:created, "membership #{membership.id} was created"}
-            # {:ok, membership}
-            # Copy the Cards found for this pack to the User memory on teacher_lg
-            # case copy_cards_to_memory(pack_id, membership.id, teacher_lg) do
-            #   {:ok, msg} -> {:created, "membership #{membership.id} was created #{msg}"}
-            # end
           {:error, reason} -> {:error, reason}
         end
     end
   end
 
   def list_memberships(params) do
-    {result, rummage} = Membership
-      |> Rummage.Ecto.rummage(QueryFilter.filter(params, Membership))
-    memberships = result
+    {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Membership)
+    memberships = rummage_query
       |> Repo.all()
       |> Repo.preload([:user, :student_lg, :teacher_lg, pack: [:classroom]])
     {memberships, rummage}
@@ -363,22 +372,21 @@ defmodule Everlearn.Members do
 
   def get_membership(user_id, pack_id, student_lg_id, teacher_lg_id) do
     query_languages = [student_lg_id, teacher_lg_id]
-    query = from m in Membership,
-      where: m.pack_id == ^pack_id and m.user_id == ^user_id and m.teacher_lg_id in ^query_languages and m.student_lg_id in ^query_languages,
-      select: m
-    Repo.one(query)
+    Membership
+      |> filter_memberships_by_languages(pack_id, user_id, query_languages)
+      |> Repo.one()
   end
 
   def create_membership(attrs \\ %{}) do
     %Membership{}
-    |> Membership.changeset(attrs)
-    |> Repo.insert()
+      |> Membership.changeset(attrs)
+      |> Repo.insert()
   end
 
   def update_membership(%Membership{} = membership, attrs) do
     membership
-    |> Membership.changeset(attrs)
-    |> Repo.update()
+      |> Membership.changeset(attrs)
+      |> Repo.update()
   end
 
   def delete_membership(%Membership{} = membership) do
@@ -391,6 +399,10 @@ defmodule Everlearn.Members do
 
   # -------------------------------- MEMORYS ----------------------------------------
   # MEMORYS QUERIES ------------------------------------------------------------------
+  defp filter_memory_by_card_id(query \\ Memory, membership_id, card_id) do
+    from m in query,
+      where: m.membership_id == ^membership_id and m.card_id == ^card_id
+  end
 
   # MEMORYS METHODS ------------------------------------------------------------------
   def list_memorys do
@@ -402,10 +414,9 @@ defmodule Everlearn.Members do
   def get_memory!(id), do: Repo.get!(Memory, id)
 
   def get_user_memory(membership_id, card_id) do
-    query = from m in Memory,
-      where: m.membership_id == ^membership_id and m.card_id == ^card_id
-    query
-    |> Repo.one()
+    Memory
+      |> filter_memory_by_card_id(membership_id, card_id)
+      |> Repo.one()
   end
 
   # def copy_cards_to_memory(pack_id, membership_id, learning_lg_id) do
@@ -443,14 +454,14 @@ defmodule Everlearn.Members do
 
   def create_memory(attrs \\ %{}) do
     %Memory{}
-    |> Memory.changeset(attrs)
-    |> Repo.insert()
+      |> Memory.changeset(attrs)
+      |> Repo.insert()
   end
 
   def update_memory(%Memory{} = memory, attrs) do
     memory
-    |> Memory.changeset(attrs)
-    |> Repo.update()
+      |> Memory.changeset(attrs)
+      |> Repo.update()
   end
 
   def delete_memory(%Memory{} = memory) do
@@ -462,148 +473,68 @@ defmodule Everlearn.Members do
   end
 
   # -------------------------------- LANGUAGES ----------------------------------------
+  # QUERIES ------------------------------------------------------------------
+    defp select_languages_for_dropdown do
+      from l in Language,
+        select: {l.title, l.id}
+    end
 
-  @doc """
-  Returns a random language.
-
-  ## Examples
-
-      iex> list_languages()
-      [%Language{}, ...]
-
-  """
+  # METHODS ------------------------------------------------------------------
+  def languages_select_btn do
+    select_languages_for_dropdown
+      |> Repo.all()
+  end
 
   def choose_random_language do
     Language
-    |> Repo.all()
-    |> Enum.random()
+      |> Repo.all()
+      |> Enum.random()
   end
 
-  def language_select_btn do
-    Repo.all(from(c in Language, select: {c.title, c.id}))
-  end
-
-  @doc """
-  Returns the list of languages.
-
-  ## Examples
-
-      iex> list_languages()
-      [%Language{}, ...]
-
-  """
   def list_languages do
     Repo.all(Language)
   end
 
   def list_pack_languages(pack_id) do
-    query1 = from pl in PackLanguage,
-      join: p in assoc(pl, :pack),
-      where: pl.pack_id == ^pack_id
-    query2 = from c in Card,
-      join: i in assoc(c, :item),
-      join: p in assoc(i, :packs),
-      where: p.id == ^pack_id,
-      where: c.active == true
+    query1 = Contents.filter_packlanguages_by_pack_id(pack_id)
+    # from pl in PackLanguage,
+    #   join: p in assoc(pl, :pack),
+    #   where: pl.pack_id == ^pack_id
+    query2 = Contents.select_cards_from_pack(pack_id)
+      # from c in Card,
+      # join: i in assoc(c, :item),
+      # join: p in assoc(i, :packs),
+      # where: p.id == ^pack_id,
+      # where: c.active == true
     # All language are proposed to Pack
     Language
       |> Repo.all()
       |> Repo.preload([packlanguages: query1, cards: query2])
   end
 
-  @doc """
-  Gets a single language.
-
-  Raises `Ecto.NoResultsError` if the Language does not exist.
-
-  ## Examples
-
-      iex> get_language!(123)
-      %Language{}
-
-      iex> get_language!(456)
-      ** (Ecto.NoResultsError)
-
-  """
   def get_language!(id), do: Repo.get!(Language, id)
-
-  @doc """
-  Find a language by iso2code.
-
-  """
 
   def get_language_by_code(iso2code) do
     Language
-      # |> where([u], u.iso2code == ^iso2code)
       |> Repo.get_by(iso2code: String.downcase(iso2code))
-      # |> Repo.get_by(iso2code: iso2code)
-      # |> Repo.one
-    # Language
-    #   |> where([u], u.iso2code == iso2code)
-    #   |> Repo.one
   end
 
-  @doc """
-  Creates a language.
-
-  ## Examples
-
-      iex> create_language(%{field: value})
-      {:ok, %Language{}}
-
-      iex> create_language(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_language(attrs \\ %{}) do
     %Language{}
-    |> Language.changeset(attrs)
-    |> Repo.insert()
+      |> Language.changeset(attrs)
+      |> Repo.insert()
   end
 
-  @doc """
-  Updates a language.
-
-  ## Examples
-
-      iex> update_language(language, %{field: new_value})
-      {:ok, %Language{}}
-
-      iex> update_language(language, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_language(%Language{} = language, attrs) do
     language
-    |> Language.changeset(attrs)
-    |> Repo.update()
+      |> Language.changeset(attrs)
+      |> Repo.update()
   end
 
-  @doc """
-  Deletes a Language.
-
-  ## Examples
-
-      iex> delete_language(language)
-      {:ok, %Language{}}
-
-      iex> delete_language(language)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_language(%Language{} = language) do
     Repo.delete(language)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking language changes.
-
-  ## Examples
-
-      iex> change_language(language)
-      %Ecto.Changeset{source: %Language{}}
-
-  """
   def change_language(%Language{} = language) do
     Language.changeset(language, %{})
   end

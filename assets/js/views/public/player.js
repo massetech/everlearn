@@ -132,22 +132,22 @@ let update_user_data = (content) => {
 }
 
 let init_action_btns = () => {
-  $("#btn-renew").click(function() {
+  $("#btn-renew").on('touchstart click', function() {
     event.stopPropagation()
     event.preventDefault()
     update_card_status('renew')
   })
-  $("#btn-cancel").click(function() {
+  $("#btn-cancel").on('touchstart click', function() {
     event.stopPropagation()
     event.preventDefault()
     update_card_status('cancel')
   })
-  $("#btn-known").click(function() {
+  $("#btn-known").on('touchstart click', function() {
     event.stopPropagation()
     event.preventDefault()
     update_card_status('up')
   })
-  $("#call-api").click(function() {
+  $("#call-api").on('touchstart click', function() {
     event.stopPropagation()
     event.preventDefault()
     call_api(window.everlearn.token)
@@ -157,12 +157,12 @@ let init_action_btns = () => {
 
 let init_slidebars = () => {
   document.getElementById(`membership_${window.everlearn.membership}`).classList.remove("hide")
-  $("#btn-school").click(function() {
+  $("#btn-school").on('touchstart click', function() {
     event.stopPropagation()
     event.preventDefault()
     slidebars_controller.toggle('slidebar1')
   })
-  $("#btn-settings").click(function() {
+  $("#btn-settings").on('touchstart click', function() {
     event.stopPropagation()
     event.preventDefault()
     slidebars_controller.toggle('slidebar2')
@@ -179,26 +179,26 @@ let init_caroussel = () => {
       update_cards_in_carousel($(element).index())
     }
   })
-  $("#move_previous").click(function() {
+  $("#move_previous").on('touchstart click', function() {
     $('.carousel').carousel('prev')
   })
-  $("#move_next").click(function() {
+  $("#move_next").on('touchstart click', function() {
     $('.carousel').carousel('next')
   })
-  $(".carousel-item").click(function() {
+  $(".carousel-item").on('touchstart click', function() {
     show_slide_answer(this.id)
   })
 }
 
 let init_slidebar_functions = () => {
-  $(".sidebar1_btn").click(function() {
+  $(".sidebar1_btn").on('touchstart click', function() {
     console.log("slidebar1 triggered")
     update_with_slidebar1_change(this.dataset.classroom_id, this.dataset.membership_id)
     event.stopPropagation()
     event.preventDefault()
     slidebars_controller.toggle('slidebar1')
   })
-  $(".sidebar2_btn").click(function() {
+  $(".sidebar2_btn").on('touchstart click', function() {
     console.log("slidebar2 triggered")
     $('.carousel').carousel('next')
     window.everlearn.learning_mode = this.dataset.learning_mode
@@ -209,8 +209,10 @@ let init_slidebar_functions = () => {
 }
 
 let call_api = (token) => {
-  var rok_url = 'http://21102b02.ngrok.io'
-  var api_url = rok_url + '/api/v1'
+  // var rok_url = 'http://21102b02.ngrok.io'
+  // var api_url = rok_url + '/api/v1'
+  var url = 'https://angry-quintessential-needletail.gigalixirapp.com/'
+  var api_url = url + '/api/v1'
   var autorization = 'Bearer ' + token
   // console.log(window.everlearn.content)
   var data = JSON.stringify(window.everlearn.content)

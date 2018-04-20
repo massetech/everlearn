@@ -57,7 +57,10 @@ defmodule EverlearnWeb.Router do
     resources "/languages", LanguageController
     resources "/classrooms", ClassroomController
     resources "/topics", TopicController
-    resources "/packs", PackController
+    resources "/packs", PackController do
+      get "/add_items", PackController, :add_items_showed_from_pack
+      get "/remove_items", PackController, :remove_items_showed_from_pack
+    end
     resources "/items", ItemController do
       resources "/cards", CardController, only: [:new]
     end
@@ -66,7 +69,8 @@ defmodule EverlearnWeb.Router do
       post "/cards", ImportController, :card, as: :import_cards
     end
     scope "/export" do
-      get "/items", ExportController, :item, as: :export_items
+      get "/items", ExportController, :export_items, as: :export_items
+      get "/cards", ExportController, :export_cards, as: :export_cards
     end
 
     # post "/import/cards", CardController, :import, as: :import_cards

@@ -8,7 +8,6 @@ defmodule Everlearn.Contents.PackLanguage do
     belongs_to :language, Language
     belongs_to :pack, Pack
     field :title, :string
-
     timestamps()
   end
 
@@ -20,5 +19,6 @@ defmodule Everlearn.Contents.PackLanguage do
     packlanguage
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
+    |> unique_constraint(:title, message: "Title is already taken")
   end
 end

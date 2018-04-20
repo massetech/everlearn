@@ -11,12 +11,11 @@ defmodule Everlearn.Repo.Migrations.CreateItems do
       add :classroom_id, references(:classrooms, on_delete: :delete_all)
       add :topic_id, references(:topics, on_delete: :delete_all)
       add :kind_id, references(:kinds, on_delete: :delete_all)
-
       timestamps()
     end
     create index(:items, [:classroom_id])
     create index(:items, [:topic_id])
     create index(:items, [:kind_id])
-    # create unique_index(:items, [:title, :level], name: :index_title_level)
+    create unique_index(:items, [:kind_id, :title, :classroom_id], name: :index_kind_title_classroom)
   end
 end
