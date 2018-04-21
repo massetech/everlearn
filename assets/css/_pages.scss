@@ -1,0 +1,96 @@
+/* ------------------------------ Pack show  ------------------------------ */
+.search_results{
+  h5 {color: $info !important;}
+}
+
+/* ------------------------------ Pack show  ------------------------------ */
+.item-card.selected {
+  border: 2px solid $info-light;
+}
+.item-card{
+  width: 100%;
+  height: 200px;
+}
+
+/* ------------------------------ Users Packs  ------------------------------ */
+.pack-card{
+  // min-height: 250px;
+  .card-image{
+      height: 100px; /* Your height here */
+      overflow: hidden;
+  }
+  .card-content{
+    height: 120px; /* Your height here */
+    overflow: hidden;
+    padding: 10px 20px;
+    flex-direction: column;
+    display: flex;
+    span.title {font-weight: 600;}
+    span.info {
+      margin: 10px 0;
+      span {font-size: 12px;margin-right: 10px;}
+    }
+    span.stars > i {font-size: 1.5rem;}
+  }
+  .selected i {
+    font-size: 40px;
+    position: absolute;
+    top: -10px;
+    color: green;
+    background-color: white;
+    border-radius: 50px;
+    left: -10px;
+  }
+}
+/* ------------------------------ Player  ------------------------------ */
+.player-container {
+  height: 100vh; // Align vertically for Ipad
+  width: 100%;  // Avoid container scollbar
+}
+.player {
+  width: 100vw; height: 100vh; max-width: 414px; max-height: 736px;
+  display: flex; flex-direction: column; margin: 0; padding: 1em;
+  .header {height: 60px;}
+  .progress-bar {
+    width: 100%; margin-bottom: 1em;
+    display: flex;
+    $red-common: #D1132A;
+    $green-alt-common: #9EC232;
+    $yellow-common: #FFCD0F;
+    $charcoal-common: #3A3F42;
+    $green-common: #2CAC87;
+    $green-light-common: #C1C625;
+    $gold-common: #EBA75C;
+    $charcoal-alt: #43484D;
+    $orange-common: #E4590F;
+    $yellow-light-common: #EACB16;
+    #level0_share {width: 100%;}
+    #level1_share {width: 0%;}
+    #level2_share {width: 0%;}
+    .progress-item {
+      background-color: lightgray;
+      height: 12px;
+      &.yellow-common {background: $yellow-common !important;}
+      &.green-common {background: $green-alt-common !important;}
+      &:first-child {
+        border-top-left-radius: 3px;
+        border-bottom-left-radius: 3px;
+      }
+      &:last-child {
+        border-top-right-radius: 3px;
+        border-bottom-right-radius: 3px;
+      }
+    }
+  }
+  .buttons {
+    margin: 1em 0;
+    i.option {font-size: 30px;}
+  }
+  .slides {
+    flex: 1 !important;
+    display: flex; flex-direction: column;
+    .slides-item{
+      flex: 1 !important;
+    }
+  }
+}

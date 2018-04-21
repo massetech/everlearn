@@ -1,0 +1,62 @@
+%ul.side-nav{id: "slidebar_player_right"}
+  %li.sidenav-header.white.box-inline
+    = render EverlearnWeb.SharedView, "_logo.html", assigns
+    .divider
+  %li
+    .divider
+  - for classroom <- @slidebars.slidebar do
+    - for membership <- classroom.memberships do
+      - if membership.languages.teacher_lg.language_id != membership.languages.student_lg.language_id do
+        %li.white
+          %a.toogle_interrogation_change{data-learning_mode: "question_or_answer"}
+            .menu-option.box-inline
+              = img_tag static_path(@conn, "/images/flags/4x3/#{membership.languages.teacher_lg.iso2code}.svg"), class: "flag"
+              %i.material-icons.color-icon-edit= "code"
+              = img_tag static_path(@conn, "/images/flags/4x3/#{membership.languages.student_lg.iso2code}.svg"), class: "flag"
+        %li
+          .divider
+        %li.white
+          %a.toogle_interrogation_change{data-learning_mode: "question"}
+            .menu-option.box-inline
+              = img_tag static_path(@conn, "/images/flags/4x3/#{membership.languages.teacher_lg.iso2code}.svg"), class: "flag"
+              %i.material-icons.color-icon-edit= "arrow_forward"
+              = img_tag static_path(@conn, "/images/flags/4x3/#{membership.languages.student_lg.iso2code}.svg"), class: "flag"
+        %li
+          .divider
+        %li.white
+          %a.toogle_interrogation_change{data-learning_mode: "answer"}
+            .menu-option.box-inline
+              = img_tag static_path(@conn, "/images/flags/4x3/#{membership.languages.student_lg.iso2code}.svg"), class: "flag"
+              %i.material-icons.color-icon-edit= "arrow_forward"
+              = img_tag static_path(@conn, "/images/flags/4x3/#{membership.languages.teacher_lg.iso2code}.svg"), class: "flag"
+      - else
+        %li.white
+          %a.toogle_interrogation_change{data-learning_mode: "question_or_answer"}
+            .menu-option.box-inline
+              %span.side-option= "Question"
+              %i.material-icons.color-icon-edit= "code"
+              %span.side-option= "Answer"
+        %li
+          .divider
+        %li.white
+          %a.toogle_interrogation_change{data-learning_mode: "question"}
+            .menu-option.box-inline
+              %span.side-option= "Question"
+              %i.material-icons.color-icon-edit= "arrow_forward"
+              %span.side-option= "Answer"
+        %li
+          .divider
+        %li.white
+          %a.toogle_interrogation_change{data-learning_mode: "answer"}
+            .menu-option.box-inline
+              %span.side-option= "Answer"
+              %i.material-icons.color-icon-edit= "arrow_forward"
+              %span.side-option= "Question"
+      %li
+        .divider
+      %li.white
+        %a.toogle_api
+          %i.material-icons= "cloud_upload"
+          ="Save your datas"
+      %li
+        .divider

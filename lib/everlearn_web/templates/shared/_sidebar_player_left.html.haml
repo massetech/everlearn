@@ -1,0 +1,25 @@
+%ul.side-nav{id: "slidebar_player_left"}
+  %li.sidenav-header.white.box-inline
+    = render EverlearnWeb.SharedView, "_logo.html", assigns
+    .divider
+  %li
+    .divider
+  %li.white
+    %ul.collapsible.collapsible-accordion
+      - for classroom <- @slidebars.slidebar do
+        %li
+          %a.collapsible-header.waves-effect{href: "#"}
+            %i.material-icons= "school"
+            = classroom.title
+            %i.material-icons.right{style: "margin-right:0;"}="arrow_drop_down"
+          .collapsible-body
+            %ul
+              - for membership <- classroom.memberships do
+                %li.white
+                  %a.toogle_mbs_change{data-classroom_id: "#{classroom.id}", data-membership_id: "#{membership.id}"}
+                    %i.box-inline
+                      = img_tag static_path(@conn, "/images/flags/1x1/#{membership.languages.teacher_lg.iso2code}.svg"), class: "flag_small"
+                    = membership.title
+                    %span.new.badge.right.yellow.darken-3{data-badge-caption: "cards"}= membership.nb_cards
+        %li
+          .divider

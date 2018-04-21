@@ -1,0 +1,45 @@
+%ul.side-nav{id: "slidebar_left"}
+  %li.sidenav-header.white.box-inline
+    = render EverlearnWeb.SharedView, "_logo.html", assigns
+    .divider
+  %li
+    .divider
+  %li.white
+    - if @conn.assigns[:current_user] do
+      - link to: auth_path(@conn, :delete), method: :delete do
+        %i.material-icons= "account_circle"
+        = "Log out"
+    - else
+      - link to: auth_path(@conn, :request, "google") do
+        %i.material-icons= "account_circle"
+        = "Log in"
+  %li
+    .divider
+  %li.white
+    %ul.collapsible.collapsible-accordion
+      %li
+        %a.collapsible-header.waves-effect{href: "#"}
+          %i.material-icons= "language"
+          ="Language"
+          %i.material-icons.right{style: "margin-right:0;"}="arrow_drop_down"
+        .collapsible-body
+          %ul
+            - for i <- ["English", "French", "Burmese"] do
+              %li
+                %a.waves-effect{href: "#"}
+                  =i
+  %li
+    .divider
+  - if @conn.assigns[:current_user] do
+    %li.white
+      - link to: user_pack_path(@conn, :public_index, @conn.assigns[:current_user].id), class: "waves-effect" do
+        %i.material-icons= "school"
+        ="Select learning pack"
+    %li
+      .divider
+    %li.white
+      - link to: user_player_path(@conn, :show_player, @conn.assigns[:current_user].id), target: "_blank", class: "waves-effect" do
+        %i.material-icons= "language"
+        ="Learn !"
+    %li
+      .divider
