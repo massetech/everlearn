@@ -21,6 +21,7 @@ defmodule EverlearnWeb.KindController do
 
   def index(conn, _params) do
     kinds = Contents.list_kinds()
+    IO.inspect(conn)
     render(conn, "index.html", kinds: kinds)
   end
 

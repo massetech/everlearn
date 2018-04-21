@@ -70,18 +70,18 @@ let init_dropdown = () => {
 
 let init_flash = () => {
   $('.flash_msg').hide()
-  $('.flash_msg').click(function(){
+  $('.flash_msg').on('touchstart click', function() {
     $(this).fadeOut( "slow", function() {
       // console.log("clicked")
     });
   });
   setTimeout(function(){
     $('.flash_msg').fadeIn(1000)
-    //console.log("Flash fired In");
+    console.log("Flash fired In");
   }, 1000);
   setTimeout(function(){
     $('.flash_msg').fadeOut(800)
     //console.log("Flash fired Out");
-  }, 5000)
+  }, 500000)
   // console.log("Flash fired");
 }

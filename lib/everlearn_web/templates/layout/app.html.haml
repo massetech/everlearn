@@ -16,7 +16,6 @@
       %header
         = render EverlearnWeb.SharedView, "_header.html", conn: @conn
     %main
-      = render EverlearnWeb.SharedView, "_flash.html", conn: @conn
       = render @view_module, @view_template, assigns
     - unless @conn.request_path =~ "/player" do
       %footer.page-footer
@@ -30,5 +29,5 @@
 
     = render_gon_script(@conn)
     = Drab.Client.js(@conn)
-    = raw(@conn.assigns.flash_messages)
     %script(src='#{static_path(@conn, "/js/app.js")}')
+    = raw(@conn.assigns.flash_messages)
