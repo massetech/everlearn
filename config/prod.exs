@@ -6,6 +6,7 @@ config :everlearn, EverlearnWeb.Endpoint,
   secret_key_base: "${SECRET_KEY_BASE}",
   url: [host: "${MY_HOSTNAME}",
         port: "${PORT}"],
+  api_url: "${API_URL}",
   check_origin: ["//*.gigalixirapp.com", "//*.everlearn.com"],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
@@ -26,7 +27,7 @@ config :everlearn, Everlearn.Auth.Guardian,
 # Do not print debug messages in production
 config :logger, level: :info
 
-# ## SSL Support 
+# ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
 # to the previous section and set your `:url` port to 443:

@@ -1,22 +1,15 @@
-.container.player-container.box-inline
-  .moving-btn.hide-on-small-only.hide
-    .btn-left
-      %a.btn-floating.btn-large.waves-effect.waves-light.btn.light{id: "move_previous"}
-        %i.material-icons= "chevron_left"
-    .btn-right
-      %a.btn-floating.btn-large.waves-effect.waves-light.btn.light{id: "move_next"}
-        %i.material-icons= "chevron_right"
-  .card.player
+.box-inline
+  .player.card
     .header.box-inline-between
       .center-align
-        %a.sidebar{id: "btn-school"}
-          %i.option.material-icons= "view_headline"
+        %a.button-collapse{id: "btn_slidebar_left" href: "#" data-activates: "slidebar_player_left"}
+          %i.material-icons= "menu"
       .center-align
         %span.logo
           %i.material-icons= "school"
           ="Everlearn"
       .center-align
-        %a.sidebar{id: "btn-settings"}
+        %a.button-collapse{id: "btn_slidebar_right" href: "#" data-activates: "slidebar_player_right"}
           %i.option.material-icons= "settings"
     .title.center-align
       %h4{id: "classroom_title"}
@@ -27,22 +20,22 @@
       .progress-item.cyan.lighten-3{id: "level1_share"}
       .progress-item.grey.lighten-2{id: "level0_share"}
       .progress-item.grey.darken-2{id: "levelminus1_share"}
-    .carousel.carousel-slider.center-align
+    .slides.center-align
       - for i <- [0, 1, 2] do
-        .carousel-item{id: "slide_#{i}"}.box-inline
+        .slides-item{id: "slide_#{i}"}.box-inline
           .question
             %h3.asked
           .answer.hide
             %h4.card_question
             %h4.card_answer
             %h4.card_phonetic
-    .row.buttons
-      .col.s4.center-align
+    .buttons.box-inline-even
+      .center-align
         %a.btn-large.waves-effect.waves-light.btn{id: "btn-renew"}
           %i.material-icons= "autorenew"
-      .col.s4.center-align
+      .center-align
         %a.btn-large.waves-effect.waves-light.btn{id: "btn-cancel"}
           %i.material-icons= "not_interested"
-      .col.s4.center-align
+      .center-align
         %a.btn-large.waves-effect.waves-light.btn{id: "btn-known"}
           %i.material-icons= "check_circle"

@@ -160,7 +160,7 @@ defmodule Everlearn.Members do
       |> Enum.map(fn(membership) -> filter_user_data_membership(membership) end)
   end
 
-  defp filter_user_data_membership(%{"cards" => cards, "membership_id" => membership_id}) do
+  defp filter_user_data_membership(%{"cards" => cards, "id" => membership_id}) do
     cards
       |> Enum.map(fn(card) -> filter_user_data_card(card, membership_id) end)
   end

@@ -41,7 +41,7 @@ defmodule Everlearn.Imports do
           # Remove the first line with headers
           |> Enum.drop(1)
           # Try to save each line
-          |> Enum.map(fn(line_array) -> insert_imported_line(module, model, line_array, headers, params, excluded_atoms) end)
+          |> Enum.map(fn(line_array) -> insert_or_update_imported_line(module, model, line_array, headers, params, excluded_atoms) end)
           # Filter the report from saving to debug
           |> Enum.reduce(%{success_lines: [], error_lines: [], nb_line: 1}, &report_import/2)
         Xlsxir.close(table_id)
@@ -51,13 +51,30 @@ defmodule Everlearn.Imports do
     end
   end
 
-  defp insert_imported_line(module, model, line_array, headers, params, excluded_atoms) do
+  defp insert_or_update_imported_line(module, model, line_array, headers, params, excluded_atoms) do
     params = headers
       |> Enum.zip(line_array)
       |> Enum.into(params)
       |> Map.drop(excluded_atoms)
-    # Call the create function of the model iex Contents.create_item(params)
-    apply(Module.concat(Everlearn, module), String.to_atom("create_#{model}"), [params])
+      |> IO.inspect()
+    # If Id field is empty, it is a new record if not it is an update
+    model_id_atom = String.to_atom("#{model}_id")
+    case Map.get(params, model_id_atom) do
+      nil ->
+        # Call the create function of the model iex Contents.create_item(params)
+        IO.puts("creating")
+        apply(Module.concat(Everlearn, module), String.to_atom("create_#{model}"), [params])
+      id ->
+        # Call the update function of the model iex Contents.update_item(params)
+        IO.puts("updating")
+        element = apply(Module.concat(Everlearn, module), String.to_atom("get_#{model}"), [id])
+        case element do
+          nil ->
+            {:unfound, "record not found #{id}"}
+          element ->
+            apply(Module.concat(Everlearn, module), String.to_atom("update_#{model}"), [element, params])
+        end
+    end
   end
 
   defp report_import(report_line, %{success_lines: success_list, error_lines: error_list, nb_line: line_nb}) do
@@ -66,6 +83,8 @@ defmodule Everlearn.Imports do
         %{success_lines: success_list ++ [line_nb], error_lines: error_list, nb_line: line_nb + 1}
       {:error, changeset} ->
         %{success_lines: success_list, error_lines: error_list ++ [%{line: line_nb, errors: changeset.errors}], nb_line: line_nb + 1}
+      {:unfound, msg} ->
+        %{success_lines: success_list, error_lines: error_list ++ [%{line: line_nb, errors: msg}], nb_line: line_nb + 1}
     end
   end
 

@@ -27,6 +27,7 @@ defmodule Everlearn.Contents.Item do
     item
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
+    |> validate_inclusion(:level, 1..3)
     |> assoc_constraint(:topic)
     |> assoc_constraint(:kind)
     |> assoc_constraint(:classroom)

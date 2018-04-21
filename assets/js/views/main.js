@@ -1,7 +1,7 @@
 export default class MainView {
   mount() {
     // This will be executed when the document loads...
-    console.log('MainView mounted')
+    // console.log('MainView mounted')
     $(document).ready(function() {
       $('select').material_select()
       $('.empty_fields').click(function(){
@@ -10,7 +10,7 @@ export default class MainView {
       init_flash()
       init_dropdown()
       init_toast()
-      window.slidebars_controller = init_slidebars()
+      init_slidebars()
       // Assign global variable to support functions
       var global = (1,eval)('this')
     });
@@ -18,7 +18,7 @@ export default class MainView {
 
   unmount() {
     // This will be executed when the document unloads...
-    console.log('MainView unmounted')
+    // console.log('MainView unmounted')
   }
 }
 
@@ -37,6 +37,23 @@ jQuery.fn.clear = function(){
 };
 
 // ------------- Initialization  -----------------------------------------------------------------
+let init_slidebars= () => {
+  $('#btn_slidebar_left').sideNav({
+      menuWidth: 300, // Default is 300
+      edge: 'left', // Choose the horizontal origin
+      closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+      draggable: true // Choose whether you can drag to open on touch screens
+    }
+  )
+  $('#btn_slidebar_right').sideNav({
+      menuWidth: 300, // Default is 300
+      edge: 'right', // Choose the horizontal origin
+      closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+      draggable: true // Choose whether you can drag to open on touch screens
+    }
+  )
+}
+
 let init_toast= () => {
   $(document).on('click', '#toast-container .toast', function() {
     $(this).fadeOut(function(){
@@ -55,7 +72,7 @@ let init_flash = () => {
   $('.flash_msg').hide()
   $('.flash_msg').click(function(){
     $(this).fadeOut( "slow", function() {
-      console.log("clicked")
+      // console.log("clicked")
     });
   });
   setTimeout(function(){
@@ -68,79 +85,3 @@ let init_flash = () => {
   }, 5000)
   // console.log("Flash fired");
 }
-
-// // Set up slidebars
-let init_slidebars = () => {
-  var controller = new slidebars;
-  // console.log( controller )
-  controller.init(
-    console.log( 'Slidebars has been initialized.' )
-  )
-  $("#slidebar_container").on( 'click', function () {
-    controller.close( function () {
-      console.log( 'Closed all Slidebars.' )
-    } )
-  } )
-  return controller
-}
-
-
-// let init_empty_fields = () => {
-//   $('.empty_fields').click(function(){
-//     // var form = document.forms;
-//     // form[0].reset();
-//     document.getElementById("search_form").reset();
-//     // form[0].submit();
-//   });
-// }
-
-// // Validate fields are not empty
-//  $("#formValidate").validate({
-//     rules: {
-//         uname: {
-//             required: true,
-//             minlength: 5
-//         },
-//         cemail: {
-//             required: true,
-//             email:true
-//         },
-//         password: {
-// 		required: true,
-// 		minlength: 5
-// 	},
-// 	cpassword: {
-// 		required: true,
-// 		minlength: 5,
-// 		equalTo: "#password"
-// 	},
-// 	curl: {
-//             required: true,
-//             url:true
-//         },
-//         crole:"required",
-//         ccomment: {
-// 		required: true,
-// 		minlength: 15
-//         },
-//         cgender:"required",
-// 	cagree:"required",
-//     },
-//     //For custom messages
-//     messages: {
-//         uname:{
-//             required: "Enter a username",
-//             minlength: "Enter at least 5 characters"
-//         },
-//         curl: "Enter your website",
-//     },
-//     errorElement : 'div',
-//     errorPlacement: function(error, element) {
-//       var placement = $(element).data('error');
-//       if (placement) {
-//         $(placement).append(error)
-//       } else {
-//         error.insertAfter(element);
-//       }
-//     }
-//  });

@@ -225,10 +225,6 @@ end
     end
   end
 
-  # def list_items_to_download(params) do
-  #   {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Item)
-  # end
-
   def create_item(attrs \\ %{}) do
     %Item{}
       |> Item.changeset(attrs)
@@ -425,6 +421,7 @@ end
   end
 
   def get_card!(id), do: Repo.get!(Card, id)
+  def get_card(id), do: Repo.get(Card, id)
 
   def create_card(attrs \\ %{}) do
     %Card{}

@@ -1,16 +1,10 @@
-%nav.navbar-fixed.transparent.z-depth-1.top-nav
+%nav.navbar-fixed.transparent.top-nav
   .nav-wrapper
-    -# %a.button-collapse.right{href: "#", data-activates: "mobile-demo"}
-    -#   %i.material-icons= "menu"
     = render EverlearnWeb.SharedView, "_logo.html", assigns
-    =# img_tag static_path(@conn, "/images/logo-text.png")
-    %ul.right.show-on-medium-and-down{id: "nav-mobile2"}
-      - if @conn.assigns[:current_user] do
-        %li= link "Learn !", to: user_player_path(@conn, :show_player, @conn.assigns[:current_user].id), target: "_blank"
-        %li= link "Log out", to: auth_path(@conn, :delete), method: :delete
-      - else
-        %li= link "Log in (Gmail)", to: auth_path(@conn, :request, "google"), class: "waves-effect waves-light btn"
-    %ul.right.hide-on-med-and-down{id: "nav-mobile"}
+    %a.button-collapse.show-on-med-and-down{id: "btn_slidebar_left" href: "#" data-activates: "slidebar_left"}
+      %i.material-icons= "menu"
+
+    %ul.right.hide-on-med-and-down
       - if @conn.assigns[:current_user] do
         %li= link "Select packs", to: user_pack_path(@conn, :public_index, @conn.assigns[:current_user].id)
         %li= link "Learn !", to: user_player_path(@conn, :show_player, @conn.assigns[:current_user].id), target: "_blank"
@@ -32,4 +26,3 @@
         %li= link "Log out", to: auth_path(@conn, :delete), method: :delete
       - else
         %li= link "Log in (Gmail)", to: auth_path(@conn, :request, "google"), class: "waves-effect waves-light btn"
-      -# %ul.side-nav{id: "mobile-demo"}

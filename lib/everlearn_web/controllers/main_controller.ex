@@ -21,17 +21,17 @@ defmodule EverlearnWeb.MainController do
   end
 
   def show_player(conn, _params) do
-    Logger.info("XXXX User ID XXXXX")
-    Logger.info("Conn: #{inspect(conn.assigns)}")
+    # Logger.info("XXXX User ID XXXXX")
+    # Logger.info("Conn: #{inspect(conn.assigns)}")
     content = Members.get_user_learning_data(conn.assigns.current_user.id)
-    Logger.info("Content: #{inspect(content)}")
+    # Logger.info("Content: #{inspect(content)}")
     token = Guardian.Plug.current_token(conn)
     json_data = %{token: token, content: content}
       |> Poison.encode!()
     slidebars = content
       |> Slidebars.navbar_player()
     conn
-      |> put_gon(json_data: json_data)
+      |> put_gon(json_data: json_data, api_url: Application.get_env(:everlearn, :api_url))
       |> render(EverlearnWeb.PublicView, "player.html", slidebars: slidebars)
   end
 

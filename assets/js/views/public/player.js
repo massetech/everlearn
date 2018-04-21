@@ -3,18 +3,16 @@ import MainView from '../main'
 export default class View extends MainView {
   mount() {
     super.mount()
-    console.log('PublicPlayerView mounted')
-
-    init_user_data()
-    init_slidebars()
+    // console.log('PublicPlayerView mounted')
+    init_player_data()
     init_slidebar_functions()
-    init_caroussel()
+    init_slides()
     init_action_btns()
   }
 
   unmount() {
     super.unmount()
-    console.log('PublicPlayerView unmounted')
+    // console.log('PublicPlayerView unmounted')
   }
 }
 
@@ -27,7 +25,6 @@ let update_card_status = (action) => {
   if (action == "up" && updated_card.nb_practice > 5 && updated_card.status >= 2) {action = "known"}
   else if (action == "up" && updated_card.status == -1) {action = "renew"}
   else if (action == "up") {action = "half-known"}
-  // console.log(action)
   const cases = {
     "renew": 1,
     "cancel": -1,
@@ -38,13 +35,34 @@ let update_card_status = (action) => {
   updated_card.nb_practice = updated_card.nb_practice +1
   window.everlearn.card_list[updated_index] = updated_card
   console.log(`action has been done : ${action} : new card status ${window.everlearn.card_list[updated_index].status}`)
-  $('.carousel').carousel('next')
+  update_slides()
 }
 
-let calculate_slide_number = (id) => {
-  let new_slide_id = id
-  let next_slide_id = (id + 1)%3
-  return [new_slide_id, next_slide_id]
+let show_slides_answer = () => {
+  $(`.slides-item`).find('.question').fadeOut(800).addClass(`hide`)
+  $(`.slides-item`).find('.answer').fadeIn(800).removeClass(`hide`)
+}
+
+let show_slides_question = () => {
+  $(`.slides-item`).find('.answer').fadeOut(800).addClass(`hide`)
+  $(`.slides-item`).find('.question').fadeIn(800).removeClass(`hide`)
+}
+
+let update_slides = () => {
+  var actual_slide_id = $(`.slides`).find('.slides-item .active').attr('id') || 'slide_2'
+  var new_slide_id = calculate_new_slide_item(actual_slide_id)
+  $(`.slides`).find('.slides-item').addClass(`hide`).removeClass(`active`)
+  $(`.slides`).find('.slides-item').addClass(`hide`)
+  update_slide(new_slide_id)
+  show_slides_question()
+  $(`#${new_slide_id}.slides-item`).removeClass(`hide`).addClass(`active`)
+  update_progress_share()
+}
+
+let calculate_new_slide_item = (actual_slide_id) => {
+  var actual_id = parseInt(actual_slide_id[actual_slide_id.length -1])
+  var next_id = (actual_id + 1)%3
+  return `slide_${next_id}`
 }
 
 let update_slide = (id) => {
@@ -61,29 +79,11 @@ let update_slide = (id) => {
     "sound": new_card.sound
   }
   var new_question = cases[learning_mode]
-  // Update slide ID in carousel
-  $(`#slide_${id}`).find('.asked').text(new_question)
-  $(`#slide_${id}`).find('.card_question').text(`${new_card.question}`)
-  $(`#slide_${id}`).find('.card_answer').text(`${new_card.answer}`)
-  $(`#slide_${id}`).find('.card_phonetic').text(`${new_card.phonetic}`)
-  // Reinitialize Hide&Show in slides
-  $(`.carousel-item`).find('.question').removeClass(`hide`)
-  $(`.carousel-item`).find('.answer').addClass(`hide`)
-  console.log(`New card ${new_card.id} with status${new_card.status} updated on slide ${id}`)
-}
-
-let show_slide_answer = (slide_id) => {
-  $(`#${slide_id}.carousel-item`).find('.question').addClass(`hide`)
-  $(`#${slide_id}.carousel-item`).find('.answer').removeClass(`hide`)
-}
-
-let update_cards_in_carousel = (new_slide_id) => {
-  let learning_mode = window.everlearn.learning_mode
-  let card_list = window.everlearn.card_list
-  let ids = calculate_slide_number(new_slide_id)
-  update_slide(ids[0])
-  update_slide(ids[1])
-  update_progress_share()
+  $(`#${id}`).find('.asked').text(new_question)
+  $(`#${id}`).find('.card_question').text(`${new_card.question}`)
+  $(`#${id}`).find('.card_answer').text(`${new_card.answer}`)
+  $(`#${id}`).find('.card_phonetic').text(`${new_card.phonetic}`)
+  console.log(`New card ${new_card.id} with status${new_card.status} updated on ${id}`)
 }
 
 let update_progress_share = () => {
@@ -102,7 +102,7 @@ let update_progress_share = () => {
   $("#levelminus1_share").css('width', levelminus1_share + '%')
 }
 
-let update_with_slidebar1_change = (classroom_id, membership_id) => {
+let list_change = (classroom_id, membership_id) => {
   let classroom = window.everlearn.content.classrooms.find(x => x.id == classroom_id)
   let membership = classroom.memberships.find(x => x.id == membership_id)
   window.everlearn.classroom = classroom.id
@@ -111,24 +111,23 @@ let update_with_slidebar1_change = (classroom_id, membership_id) => {
   window.everlearn.card_list = membership.cards
   $(`#classroom_title`).text(`${classroom.title}`)
   $(`#membership_title`).text(`${membership.title}`)
-  update_cards_in_carousel(0)
-  update_cards_in_carousel(1)
-  update_cards_in_carousel(2)
-  console.log("Classroom or membership updated")
+  update_slides()
 }
 
 // ------------- Initialization  -----------------------------------------------------------------
-let init_user_data = () => {
+let init_player_data = () => {
   var data = JSON.parse(window.Gon.assets().json_data)
   window.everlearn = []
   window.everlearn.token = data.token
+  window.everlearn.api_url = window.Gon.assets().api_url
   update_user_data(data.content)
 }
+
 let update_user_data = (content) => {
   window.everlearn.content = content
   var first_classroom_id = window.everlearn.content.classrooms[0].id || 0
   var first_membership_id = window.everlearn.content.classrooms[0].memberships[0].id || 0
-  update_with_slidebar1_change(first_classroom_id, first_membership_id)
+  list_change(first_classroom_id, first_membership_id)
 }
 
 let init_action_btns = () => {
@@ -147,87 +146,48 @@ let init_action_btns = () => {
     event.preventDefault()
     update_card_status('up')
   })
-  $("#call-api").on('touchstart click', function() {
-    event.stopPropagation()
-    event.preventDefault()
-    call_api(window.everlearn.token)
-    slidebars_controller.toggle('slidebar2')
-  })
 }
 
-let init_slidebars = () => {
-  document.getElementById(`membership_${window.everlearn.membership}`).classList.remove("hide")
-  $("#btn-school").on('touchstart click', function() {
-    event.stopPropagation()
-    event.preventDefault()
-    slidebars_controller.toggle('slidebar1')
-  })
-  $("#btn-settings").on('touchstart click', function() {
-    event.stopPropagation()
-    event.preventDefault()
-    slidebars_controller.toggle('slidebar2')
-  })
-  console.log("slidebar js initialized")
-}
-
-let init_caroussel = () => {
-  update_cards_in_carousel()
-  $('.carousel.carousel-slider').carousel({
-    duration: 100,
-    onCycleTo: function(element, dragged) {
-      // console.log($(element).index())
-      update_cards_in_carousel($(element).index())
-    }
-  })
-  $("#move_previous").on('touchstart click', function() {
-    $('.carousel').carousel('prev')
-  })
-  $("#move_next").on('touchstart click', function() {
-    $('.carousel').carousel('next')
-  })
-  $(".carousel-item").on('touchstart click', function() {
-    show_slide_answer(this.id)
+let init_slides = () => {
+  // console.log("ici c normal")
+  // update_slides()
+  $(".slides-item").on('touchstart click', function() {
+    // show_slides_answer(this.id)
+    show_slides_answer()
   })
 }
 
 let init_slidebar_functions = () => {
-  $(".sidebar1_btn").on('touchstart click', function() {
-    console.log("slidebar1 triggered")
-    update_with_slidebar1_change(this.dataset.classroom_id, this.dataset.membership_id)
-    event.stopPropagation()
-    event.preventDefault()
-    slidebars_controller.toggle('slidebar1')
+  $(".toogle_mbs_change").on('touchstart click', function() {
+    // console.log("slidebar left triggered")
+    list_change(this.dataset.classroom_id, this.dataset.membership_id)
   })
-  $(".sidebar2_btn").on('touchstart click', function() {
-    console.log("slidebar2 triggered")
-    $('.carousel').carousel('next')
+  $(".toogle_interrogation_change").on('touchstart click', function() {
+    // console.log("slidebar right triggered")
     window.everlearn.learning_mode = this.dataset.learning_mode
-    event.stopPropagation()
-    event.preventDefault()
-    slidebars_controller.toggle('slidebar2')
+    update_slides()
+  })
+  $(".toogle_api").on('touchstart click', function() {
+    call_everlearn_api()
   })
 }
 
-let call_api = (token) => {
-  // var rok_url = 'http://21102b02.ngrok.io'
-  // var api_url = rok_url + '/api/v1'
-  var url = 'https://angry-quintessential-needletail.gigalixirapp.com/'
-  var api_url = url + '/api/v1'
-  var autorization = 'Bearer ' + token
+let call_everlearn_api = () => {
+  var autorization = 'Bearer ' + window.everlearn.token
   // console.log(window.everlearn.content)
   var data = JSON.stringify(window.everlearn.content)
-  // console.log(data)
+  console.log(data)
   $.ajax({
-    url: api_url,
+    url: window.everlearn.api_url,
     method: 'POST',
     contentType: 'application/json',
     headers: {"Authorization": autorization},
     data: data,
     success: function(response) {
       //(this.readyState == 4 && this.status == 200)
-      if (response.api_data != undefined){
-        console.log(response)
-        update_user_data(response.api_data)
+      if (response.api_answer_data != undefined){
+        // console.log(response)
+        update_user_data(response.api_answer_data)
       }
     },
     error: function(response) {

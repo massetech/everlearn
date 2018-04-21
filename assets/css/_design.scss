@@ -1,6 +1,8 @@
 /* ------------------------------ Layout  ------------------------------ */
 a, h1, h2, h3, h4, h5, input, span, p, th, td {
   font-family: $main-font !important;
+}
+a, h1, h2, h3, h4, h5, input, p, th, td {
   color: $text-color !important;
 }
 * {
@@ -39,6 +41,19 @@ nav.title-nav {
   background: linear-gradient(-45deg,#ec5252,#6e1a52);
 }
 
+/* -------------  Slidebars ---------------------------------*/
+.sidenav-header{
+  height: 6em;
+}
+.side-nav li>a {
+  padding: 0 16px;
+}
+.side-nav .divider {margin: 8px 0}
+.side-nav .menu-option {
+  height: 100%;
+  * {margin: 0 10px;}
+}
+
 /* -------------  Footer ---------------------------------*/
 footer {
   background-color: $info !important;
@@ -68,7 +83,7 @@ footer {
   .toast.info {background-color: $info;}
 }
 
-/* -------------  Buttons & Icons ---------------------------------*/
+/* -------------  Buttons & Icons & Badges ---------------------------------*/
 .btn {
   background-color: $light-grey;
   color: white !important;
@@ -94,8 +109,10 @@ footer {
 
 i.color-danger {color: $danger !important;}
 i.color-success {color: $success !important;}
-i.color-yellow {color: $yellow !important;}
+// i.color-yellow {color: $yellow !important;}
 i.color-medium {color: $middle-grey !important;}
+
+// .badge.yellow {color: $yellow !important;}
 
 .switch{margin-top: 2rem;}
 // .lever {background-color: $main-color !important;}
@@ -135,7 +152,7 @@ span.logo {
   font-size: 25px !important; font-weight: bold; color: $main-title-color;
 }
 /* ------------------------------ Flags  ------------------------------ */
-.flag_big {
+img.flag_big {
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -147,121 +164,6 @@ img.flag {
 }
 img.flag_small {
  border-radius: 50%;
- width: 20px;
- height: 20px;
-}
-
-/* ------------------------------ Slide bars  ------------------------------ */
-[off-canvas] {
-  background-color: white; color: inherit;
-  min-width: 33%;
-  nav.sidebar-nav {
-    height: 6em;
-  }
-  .box-inline.title{height: 4em;}
-  .collapsible-body {padding: 0 !important;}
-  .collapsible-header, .collection-header, .collection-item li{
-    display: flex;
-    align-items: center;
-  }
-  a.collection-item{padding: 1rem;}
-  ul {margin: 0;}
-  i {font-size: 2rem;margin-right: 1rem;}
-  img {margin-right: 1rem;}
-  span {font-size: 1.3rem;}
-  .badge {background-color: transparent !important;}
-}
-
-/* ------------------------------ Pack show  ------------------------------ */
-.search_results{
-  h5 {color: $info !important;}
-}
-
-/* ------------------------------ Pack show  ------------------------------ */
-.item-card.selected {
-  border: 2px solid $info-light;
-}
-.item-card{
-  width: 100%;
-  height: 200px;
-}
-
-/* ------------------------------ Users Packs  ------------------------------ */
-.pack-card{
-  // min-height: 250px;
-  .card-image{
-      height: 100px; /* Your height here */
-      overflow: hidden;
-  }
-  .card-content{
-    height: 120px; /* Your height here */
-    overflow: hidden;
-    padding: 10px 20px;
-    flex-direction: column;
-    display: flex;
-    span.title {font-weight: 600;}
-    span.info {
-      margin: 10px 0;
-      span {font-size: 12px;margin-right: 10px;}
-    }
-    span.stars > i {font-size: 1.5rem;}
-  }
-  .selected i {
-    font-size: 40px;
-    position: absolute;
-    top: -10px;
-    color: green;
-    background-color: white;
-    border-radius: 50px;
-    left: -10px;
-  }
-}
-/* ------------------------------ Player  ------------------------------ */
-.player-container {
-  height: 100vh; // Align vertically for Ipad
-  width: 100%;  // Avoid container scollbar
-}
-.player {
-  width: 100vw; height: 100vh; max-width: 414px; max-height: 736px;
-  margin: 0; padding: 1em;
-  .header {height: 60px;}
-  .row.buttons {
-    bottom: 0; position: absolute; width: 100%;
-    i.option {font-size: 30px;}
-    .btn{width: 90%;}
-  }
-  .progress-bar {
-    width: 100%; margin-bottom: 1em;
-    display: flex;
-    $red-common: #D1132A;
-    $green-alt-common: #9EC232;
-    $yellow-common: #FFCD0F;
-    $charcoal-common: #3A3F42;
-    $green-common: #2CAC87;
-    $green-light-common: #C1C625;
-    $gold-common: #EBA75C;
-    $charcoal-alt: #43484D;
-    $orange-common: #E4590F;
-    $yellow-light-common: #EACB16;
-    #level0_share {width: 100%;}
-    #level1_share {width: 0%;}
-    #level2_share {width: 0%;}
-    .progress-item {
-      background-color: lightgray;
-      height: 12px;
-      &.yellow-common {background: $yellow-common !important;}
-      &.green-common {background: $green-alt-common !important;}
-      &:first-child {
-        border-top-left-radius: 3px;
-        border-bottom-left-radius: 3px;
-      }
-      &:last-child {
-        border-top-right-radius: 3px;
-        border-bottom-right-radius: 3px;
-      }
-    }
-  }
-  .carousel-item{
-    display: flex !important;
-  }
+ width: 25px;
+ height: 25px;
 }

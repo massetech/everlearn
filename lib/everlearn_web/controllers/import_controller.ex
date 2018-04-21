@@ -4,10 +4,10 @@ defmodule EverlearnWeb.ImportController do
 
   def item(conn, %{"item" => %{"classroom_id" => classroom_id, "file" => file}}) do
     import_result = file.path
-      |> Imports.import("Contents", "item", %{classroom_id: classroom_id, active: true}, [:kind, :topic])
+      |> Imports.import("Contents", "item", %{classroom_id: classroom_id, active: true}, [:kind, :topic, :question, :answer, :sound, :phonetic])
     case import_result do
       {:ok, results} ->
-        IO.inspect(results)
+        # IO.inspect(results)
         conn
           |> Imports.add_flash_answers(results)
           |> redirect(to: item_path(conn, :index))
@@ -23,7 +23,7 @@ defmodule EverlearnWeb.ImportController do
       |> Imports.import("Contents", "card", %{language_id: language_id, active: true}, [:topic_id, :topic, :kind_id, :kind, :item_title, :level, :description])
     case import_result do
       {:ok, results} ->
-        IO.inspect(results)
+        # IO.inspect(results)
         conn
           |> Imports.add_flash_answers(results)
           |> redirect(to: card_path(conn, :index))

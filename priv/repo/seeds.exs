@@ -50,13 +50,13 @@ for i <- ["General", "Cooking", "Sport"] do
   Repo.insert! %Topic{title: i}
 end
 
-items = [
-  %Item{title: "to be", level: 1, description: "any", active: true, topic_id: 1, kind_id: 1, classroom_id: 1},
-  %Item{title: "house", level: 1, description: "any", active: true, topic_id: 1, kind_id: 1, classroom_id: 1},
-  %Item{title: "dog", level: 1, description: "any", active: true, topic_id: 1, kind_id: 1, classroom_id: 1},
-  %Item{title: "cat", level: 1, description: "any", active: true, topic_id: 1, kind_id: 1, classroom_id: 1},
-  %Item{title: "to sleep", level: 1, description: "any", active: true, topic_id: 1, kind_id: 1, classroom_id: 1}
-]
+# items = [
+#   %Item{title: "to be", level: 1, description: "any", active: true, topic_id: 1, kind_id: 1, classroom_id: 1},
+#   %Item{title: "house", level: 1, description: "any", active: true, topic_id: 1, kind_id: 1, classroom_id: 1},
+#   %Item{title: "dog", level: 1, description: "any", active: true, topic_id: 1, kind_id: 1, classroom_id: 1},
+#   %Item{title: "cat", level: 1, description: "any", active: true, topic_id: 1, kind_id: 1, classroom_id: 1},
+#   %Item{title: "to sleep", level: 1, description: "any", active: true, topic_id: 1, kind_id: 1, classroom_id: 1}
+# ]
 
 packs = [
   %Pack{classroom_id: 1, title: "Must know words", level: 1, active: true, description: "any"},
@@ -64,62 +64,62 @@ packs = [
   %Pack{classroom_id: 1, title: "Must know nouns", level: 3, active: true, description: "any"}
 ]
 
-packitems = [
-  %PackItem{pack_id: 1,item_id: 1},
-  %PackItem{pack_id: 1,item_id: 2},
-  %PackItem{pack_id: 1,item_id: 3},
-  %PackItem{pack_id: 1,item_id: 4},
-  %PackItem{pack_id: 1,item_id: 5},
-  %PackItem{pack_id: 2,item_id: 1},
-  %PackItem{pack_id: 2,item_id: 5},
-  %PackItem{pack_id: 3,item_id: 2},
-  %PackItem{pack_id: 3,item_id: 3},
-  %PackItem{pack_id: 3,item_id: 4}
-]
+# packitems = [
+#   %PackItem{pack_id: 1,item_id: 1},
+#   %PackItem{pack_id: 1,item_id: 2},
+#   %PackItem{pack_id: 1,item_id: 3},
+#   %PackItem{pack_id: 1,item_id: 4},
+#   %PackItem{pack_id: 1,item_id: 5},
+#   %PackItem{pack_id: 2,item_id: 1},
+#   %PackItem{pack_id: 2,item_id: 5},
+#   %PackItem{pack_id: 3,item_id: 2},
+#   %PackItem{pack_id: 3,item_id: 3},
+#   %PackItem{pack_id: 3,item_id: 4}
+# ]
 
-packlanguages = [
-  %PackLanguage{pack_id: 1, language_id: 1, title: "Must know words"},
-  %PackLanguage{pack_id: 1, language_id: 2, title: "Mots à connaître"},
-  %PackLanguage{pack_id: 1, language_id: 3, title: "စ်ိုစရ်ပစရဗပ်ိစပ"},
-  %PackLanguage{pack_id: 2, language_id: 1, title: "Must know verbs"},
-  %PackLanguage{pack_id: 2, language_id: 2, title: "Verbes à connaître"},
-  %PackLanguage{pack_id: 2, language_id: 3, title: "စ်ိုစရ်ပစရဗပ်ိစပ"},
-  %PackLanguage{pack_id: 3, language_id: 1, title: "Must know nouns"},
-  %PackLanguage{pack_id: 3, language_id: 2, title: "Noms communs à connaître"},
-  %PackLanguage{pack_id: 3, language_id: 3, title: "စ်ိုစရ်ပစရဗပ်ိစပ"},
-]
+# packlanguages = [
+#   %PackLanguage{pack_id: 1, language_id: 1, title: "Must know words"},
+#   %PackLanguage{pack_id: 1, language_id: 2, title: "Mots à connaître"},
+#   %PackLanguage{pack_id: 1, language_id: 3, title: "စ်ိုစရ်ပစရဗပ်ိစပ"},
+#   %PackLanguage{pack_id: 2, language_id: 1, title: "Must know verbs"},
+#   %PackLanguage{pack_id: 2, language_id: 2, title: "Verbes à connaître"},
+#   %PackLanguage{pack_id: 2, language_id: 3, title: "စ်ိုစရ်ပစရဗပ်ိစပ"},
+#   %PackLanguage{pack_id: 3, language_id: 1, title: "Must know nouns"},
+#   %PackLanguage{pack_id: 3, language_id: 2, title: "Noms communs à connaître"},
+#   %PackLanguage{pack_id: 3, language_id: 3, title: "စ်ိုစရ်ပစရဗပ်ိစပ"},
+# ]
+#
+# cards_english = [
+#   %Card{item_id: 1, question: "to be", answer: "", active: true, language_id: 1},
+#   %Card{item_id: 2, question: "house", answer: "", active: true, language_id: 1},
+#   %Card{item_id: 3, question: "dog", answer: "", active: true, language_id: 1},
+#   %Card{item_id: 4, question: "cat", answer: "", active: true, language_id: 1},
+#   %Card{item_id: 5, question: "to sleep", answer: "", active: true, language_id: 1}
+# ]
+#
+# cards_french = [
+#   %Card{item_id: 1, question: "être", answer: "", active: true, language_id: 2},
+#   %Card{item_id: 2, question: "la maison", answer: "", active: true, language_id: 2},
+#   %Card{item_id: 3, question: "le chien", answer: "", active: true, language_id: 2},
+#   %Card{item_id: 4, question: "le chat", answer: "", active: true, language_id: 2},
+#   %Card{item_id: 5, question: "dormir", answer: "", active: true, language_id: 2}
+# ]
+#
+# cards_burmese = [
+#   %Card{item_id: 1, question: "ပြက်", answer: "", active: true, language_id: 3},
+#   %Card{item_id: 2, question: "အိုင်", answer: "", active: true, language_id: 3},
+#   %Card{item_id: 3, question: "ခွေး", answer: "", active: true, language_id: 3},
+#   %Card{item_id: 4, question: "မြော်", answer: "", active: true, language_id: 3},
+#   %Card{item_id: 5, question: "အိ္", answer: "", active: true, language_id: 3}
+# ]
 
-cards_english = [
-  %Card{item_id: 1, question: "to be", answer: "", active: true, language_id: 1},
-  %Card{item_id: 2, question: "house", answer: "", active: true, language_id: 1},
-  %Card{item_id: 3, question: "dog", answer: "", active: true, language_id: 1},
-  %Card{item_id: 4, question: "cat", answer: "", active: true, language_id: 1},
-  %Card{item_id: 5, question: "to sleep", answer: "", active: true, language_id: 1}
-]
-
-cards_french = [
-  %Card{item_id: 1, question: "être", answer: "", active: true, language_id: 2},
-  %Card{item_id: 2, question: "la maison", answer: "", active: true, language_id: 2},
-  %Card{item_id: 3, question: "le chien", answer: "", active: true, language_id: 2},
-  %Card{item_id: 4, question: "le chat", answer: "", active: true, language_id: 2},
-  %Card{item_id: 5, question: "dormir", answer: "", active: true, language_id: 2}
-]
-
-cards_burmese = [
-  %Card{item_id: 1, question: "ပြက်", answer: "", active: true, language_id: 3},
-  %Card{item_id: 2, question: "အိုင်", answer: "", active: true, language_id: 3},
-  %Card{item_id: 3, question: "ခွေး", answer: "", active: true, language_id: 3},
-  %Card{item_id: 4, question: "မြော်", answer: "", active: true, language_id: 3},
-  %Card{item_id: 5, question: "အိ္", answer: "", active: true, language_id: 3}
-]
-
-for i <- items do Repo.insert!(i) end
+# for i <- items do Repo.insert!(i) end
 for p <- packs do Repo.insert!(p) end
-for pi <- packitems do Repo.insert!(pi) end
-for pl <- packlanguages do Repo.insert!(pl) end
-for c <- cards_english do Repo.insert!(c) end
-for c <- cards_french do Repo.insert!(c) end
-for c <- cards_burmese do Repo.insert!(c) end
+# for pi <- packitems do Repo.insert!(pi) end
+# for pl <- packlanguages do Repo.insert!(pl) end
+# for c <- cards_english do Repo.insert!(c) end
+# for c <- cards_french do Repo.insert!(c) end
+# for c <- cards_burmese do Repo.insert!(c) end
 
 # Generate Items
 # Contents.import_items(topic.id, Path.expand("priv/repo/seeds-items.csv"))

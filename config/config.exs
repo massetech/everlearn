@@ -1,7 +1,8 @@
 use Mix.Config
 
 config :everlearn,
-  ecto_repos: [Everlearn.Repo]
+  ecto_repos: [Everlearn.Repo],
+  api_url: System.get_env("API_URL")
 
 config :phoenix, :template_engines,
   haml: PhoenixHaml.Engine,

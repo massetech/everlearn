@@ -15,19 +15,20 @@
     - unless @conn.request_path =~ "/player" do
       %header
         = render EverlearnWeb.SharedView, "_header.html", conn: @conn
-    %main{id: "slidebar_container", canvas: "container"}
-      =# render EverlearnWeb.SharedView, "_flash.html", conn: @conn
+    %main
+      = render EverlearnWeb.SharedView, "_flash.html", conn: @conn
       = render @view_module, @view_template, assigns
     - unless @conn.request_path =~ "/player" do
       %footer.page-footer
         = render EverlearnWeb.SharedView, "_footer.html", conn: @conn
-    - if assigns[:slidebars] do
-      .sidebar.sidebar1.z-depth-3{off-canvas: "slidebar1 left overlay"}
-        = render EverlearnWeb.SharedView, "_sidebar1.html", assigns
-      .sidebar.sidebar2.z-depth-3{off-canvas: "slidebar2 right overlay"}
-        = render EverlearnWeb.SharedView, "_sidebar2.html", assigns
+
+    - if @conn.request_path =~ "/player" do
+      = render EverlearnWeb.SharedView, "_sidebar_player_left.html", assigns
+      = render EverlearnWeb.SharedView, "_sidebar_player_right.html", assigns
+    - else
+      = render EverlearnWeb.SharedView, "_sidebar_left.html", assigns
 
     = render_gon_script(@conn)
-    %script(src='#{static_path(@conn, "/js/app.js")}')
     = Drab.Client.js(@conn)
     = raw(@conn.assigns.flash_messages)
+    %script(src='#{static_path(@conn, "/js/app.js")}')
