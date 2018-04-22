@@ -1,8 +1,9 @@
 export default class MainView {
   mount() {
     // This will be executed when the document loads...
-    // console.log('MainView mounted')
+    console.log('MainView mounted')
     $(document).ready(function() {
+      destroy_slidebars()
       $('select').material_select()
       $('.empty_fields').click(function(){
         $('#search_form').clear().submit()
@@ -18,7 +19,7 @@ export default class MainView {
 
   unmount() {
     // This will be executed when the document unloads...
-    // console.log('MainView unmounted')
+    console.log('MainView unmounted')
   }
 }
 
@@ -52,12 +53,19 @@ let init_slidebars= () => {
       draggable: true // Choose whether you can drag to open on touch screens
     }
   )
+  console.log("Sidebars mounted")
+}
+let destroy_slidebars= () => {
+  $('#btn_slidebar_left').sideNav('destroy')
+  $('#btn_slidebar_right').sideNav('destroy')
+  console.log("Sidebars destroyed")
 }
 
 let init_toast= () => {
   $(document).on('click', '#toast-container .toast', function() {
     $(this).fadeOut(function(){
-        $(this).remove()
+      // hide the toast bu dont remove it since Materialize will do it later
+      // See in fhash function
     })
   })
 }
@@ -82,6 +90,6 @@ let init_flash = () => {
   setTimeout(function(){
     $('.flash_msg').fadeOut(800)
     //console.log("Flash fired Out");
-  }, 500000)
+  }, 5000)
   // console.log("Flash fired");
 }
