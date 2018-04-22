@@ -39,7 +39,7 @@ Repo.insert! %Classroom{title: "Grammar"}
 Repo.insert! %Classroom{title: "History"}
 
 # Generate kinds
-for kind <- ["Verb", "Adjective", "Adverb", "Expression", "Pronoun", "Noun", "Preposition"] do
+for kind <- ["Verb", "Adjective", "Adverb", "Expression", "Pronoun", "Noun", "Preposition", "PhrasalVerb"] do
   Repo.insert! %Kind{title: kind}
 end
 

@@ -3,33 +3,50 @@ defmodule Everlearn.Imports do
   alias Everlearn.Contents
   alias Everlearn.Contents.Item
 
-  def add_flash_answers(conn, %{success_lines: success_lines, error_lines: error_lines, nb_line: nb_line} = results) do
-    cond do
-      length(error_lines) == 0 ->
-        conn
-          |> put_flash(:success, "All #{nb_line} lines were imported")
-      length(success_lines) == 0 ->
-        conn
-          |> put_flash(:error, "No line were imported (#{nb_line} lines)")
-      true ->
-        conn
-          |> put_flash(:info, "#{length(success_lines)} lines were imported")
-          |> put_flash(:error, "#{length(error_lines)} lines were not imported")
-    end
+  def add_flash_answers(conn, results_array) do
+    # status = results_array
+    #   |> IO.inspect()
+    #   |> Enum.flat_map_reduce(0, fn(result, acc) -> control_ws_result(result, acc) end)
+    #   # {info: "Worksheet 1  was imported with n success and n problems",
+    #   #   success: "Worksheet 2  was imported with n success",
+    #   #   alert: "Worksheet 3 was imported with 0 success"
+    #   #   }
+    # conn
+      # |> Enum.flat_map_reduce(0, fn(result, acc) -> control_result(result.ok, acc) end)
+    # %{success_lines: success_lines, error_lines: error_lines, nb_line: nb_line} =
+    # conn = results_arrays
+    #   |> Enum.map(fn(result) -> add_flash_answer(result) end)
+    # cond do
+    #   length(error_lines) == 0 ->
+    #     conn
+    #       |> put_flash(:success, "All #{nb_line} lines were imported")
+    #   length(success_lines) == 0 ->
+    #     conn
+    #       |> put_flash(:error, "No line were imported (#{nb_line} lines)")
+    #   true ->
+    #     conn
+    #       |> put_flash(:info, "#{length(success_lines)} lines were imported")
+    #       |> put_flash(:error, "#{length(error_lines)} lines were not imported")
+    # end
   end
 
   defp insert_line(line_array, headers, params) do
     params = headers
       |> Enum.zip(line_array)
       |> Enum.into(params)
-      |> IO.inspect()
+      # |> IO.inspect()
   end
 
   def import(file, module, model, params, excluded_atoms \\ []) do
-    tid = Xlsxir.multi_extract(file, 0, true) # Returns {:ok, table_id, time_array}
+    tid_array = Xlsxir.multi_extract(file, nil, true) # Returns [{:ok, table_1_id}, ...]
+      |> Enum.map(fn(tid) -> import_worksheet(tid, module, model, params, excluded_atoms) end) # Returns [ok: %{results}, errors: %{results}]
+      # |> IO.inspect()
+  end
+
+  defp import_worksheet({:ok, table_id, time_array} = tid, module, model, params, excluded_atoms) do
     case tid do
       {:ok, table_id, time_array} ->
-        IO.puts("Imported in #{convert_xls_time(time_array)}")
+        # IO.puts("Imported in #{convert_xls_time(time_array)}")
         # To get from the 1st row
         headers = table_id
           # Convert first row into list of header atoms
@@ -42,7 +59,7 @@ defmodule Everlearn.Imports do
           |> Enum.drop(1)
           # Try to save each line
           |> Enum.map(fn(line_array) -> insert_or_update_imported_line(module, model, line_array, headers, params, excluded_atoms) end)
-          # Filter the report from saving to debug
+          # Filter the report from saving to debug in console
           |> Enum.reduce(%{success_lines: [], error_lines: [], nb_line: 1}, &report_import/2)
         Xlsxir.close(table_id)
         {:ok, import_result}

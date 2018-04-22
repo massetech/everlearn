@@ -10,7 +10,7 @@ config :phoenix, :template_engines,
 
 config :rummage_ecto, Rummage.Ecto,
   default_repo: Everlearn.Repo,
-  default_per_page: 500
+  default_per_page: 10000
 
 config :everlearn, EverlearnWeb.Endpoint,
   render_errors: [view: EverlearnWeb.ErrorView, accepts: ~w(html json)],
