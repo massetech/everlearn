@@ -31,7 +31,7 @@ defmodule Everlearn.Contents.Card do
   end
 
   def import_fields do
-    [:item_title, :item_level, :language, :question, :answer]
+    [:item_id, :question, :answer, :sound, :phonetic]
   end
 
   def filters do

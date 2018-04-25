@@ -280,6 +280,21 @@ end
       |> Repo.preload(cards: [:language])
   end
 
+  def import_item(params) do
+    case params.id do
+      nil -> create_item(params)
+      _ ->
+        case get_item(params.id) do
+          nil -> create_item(params)
+          item ->
+            case params.level do
+              99 -> delete_item(item)
+              _ -> update_item(item, params)
+            end
+        end
+    end
+  end
+
   def get_item(id), do: Repo.get(Item, id)
 
   def get_item_by_title_and_level(title, level) do
@@ -418,6 +433,21 @@ end
       |> filter_cards_by_item(item.id)
       |> Repo.all()
       |> Repo.preload([:language])
+  end
+
+  def import_card(params) do
+    case params.id do
+      nil -> create_card(params)
+      _ ->
+        case get_card(params.id) do
+          nil -> create_card(params)
+          card ->
+            case params.phonetic do
+              99 -> delete_card(card)
+              _ -> update_card(card, params)
+            end
+        end
+    end
   end
 
   def get_card!(id), do: Repo.get!(Card, id)

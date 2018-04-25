@@ -39,7 +39,7 @@ defmodule Everlearn.Contents.Item do
   end
 
   def import_fields do
-    [:topic_id, :kind_id, :title, :level, :picture, :description]
+    [:topic_id, :kind_id, :item_id, :title, :level, :description, :picture_link]
   end
 
 end
