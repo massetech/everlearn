@@ -27,7 +27,8 @@
     - else
       = render EverlearnWeb.SharedView, "_sidebar_left.html", assigns
 
+    -# Carefull the order of files !
     = render_gon_script(@conn)
-    = Drab.Client.js(@conn)
     %script(src='#{static_path(@conn, "/js/app.js")}')
+    = Drab.Client.js(@conn)
     = raw(@conn.assigns.flash_messages)

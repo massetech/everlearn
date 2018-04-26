@@ -11,11 +11,11 @@
   .section
     .row
       - for item <- @items do
-        .col.s6.m4.l3.xl2
+        .col.s12.m4.l3
           %a{drab-click: "toogle_item_pack", data-item-id: "#{item.id}", data-pack-id: "#{@pack.id}"}
             - if length(item.packitems) > 0 do
               .card.item-card.selected{id: "#{item.id}"}
-                = render "_item_card.html", item: item
+                = render "_item_card.html", item: item, conn: @conn
             - else
               .card.item-card{id: "#{item.id}"}
-                = render "_item_card.html", item: item
+                = render "_item_card.html", item: item, conn: @conn

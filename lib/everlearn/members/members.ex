@@ -479,6 +479,12 @@ defmodule Everlearn.Members do
         select: {l.title, l.id}
     end
 
+    # def filter_language_packlanguages_by_pack_id(query \\ Language, pack_id) do
+    #   from l in query,
+    #     join: pl in assoc(l, :packlanguages),
+    #     where: pl.pack_id == ^pack_id
+    # end
+
   # METHODS ------------------------------------------------------------------
   def languages_select_btn do
     select_languages_for_dropdown
@@ -496,17 +502,8 @@ defmodule Everlearn.Members do
   end
 
   def list_pack_languages(pack_id) do
-    query1 = Contents.filter_packlanguages_by_pack_id(pack_id)
-    # from pl in PackLanguage,
-    #   join: p in assoc(pl, :pack),
-    #   where: pl.pack_id == ^pack_id
-    query2 = Contents.select_cards_from_pack(pack_id)
-      # from c in Card,
-      # join: i in assoc(c, :item),
-      # join: p in assoc(i, :packs),
-      # where: p.id == ^pack_id,
-      # where: c.active == true
-    # All language are proposed to Pack
+    query1 = Contents.preload_language_packlanguages_filtered_by_pack_id(pack_id)
+    query2 = Contents.preload_language_cards_filtered_by_pack_id(pack_id)
     Language
       |> Repo.all()
       |> Repo.preload([packlanguages: query1, cards: query2])

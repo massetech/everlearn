@@ -8,7 +8,7 @@ defmodule Everlearn.Contents do
 
 # ---------------------------- PACKS -------------------------------------------
 # QUERIES ------------------------------------------------------------------
-  defp select_pack_by_id(pack_id) do
+  def select_pack_by_id(pack_id) do
     from p in Pack, where: p.id == ^pack_id
   end
 
@@ -250,17 +250,17 @@ end
     end
     pack = get_pack!(pack_id)
       |> Repo.preload(:classroom)
-    IO.inspect(params)
     {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Item)
     # Load items list to show
     packitem_filter = params["search"]["packitemlink"]
     pi_query = filter_packitems_by_pack_id(pack.id)
+    card_query = filter_cards_active_with_language()
     items = rummage_query
       |> filter_items_active()
       |> filter_packitemlink(pack, packitem_filter)
       |> filter_items_eligible_for_pack(pack)
       |> Repo.all()
-      |> Repo.preload([:topic, :kind, packitems: pi_query])
+      |> Repo.preload([:topic, :kind, packitems: pi_query, cards: card_query])
     {pack, items, rummage}
   end
 
@@ -364,6 +364,20 @@ end
   # CARDS QUERIES ------------------------------------------------------------------
   defp filter_cards_active(query \\ Card) do
     from c in Card,
+      where: c.active == true
+  end
+
+  defp filter_cards_active_with_language(query \\ Card) do
+    from c in Card,
+      where: c.active == true,
+      preload: :language
+  end
+
+  def preload_language_cards_filtered_by_pack_id(query \\ Card, pack_id) do
+    from c in query,
+      join: i in assoc(c, :item),
+      join: p in assoc(i, :packs),
+      where: p.id == ^pack_id,
       where: c.active == true
   end
 
@@ -616,6 +630,12 @@ end
     defp select_kinds_for_dropdown do
       from k in Kind,
         select: {k.title, k.id}
+    end
+
+    def preload_language_packlanguages_filtered_by_pack_id(query \\ PackLanguage, pack_id) do
+      from pl in query,
+        join: p in assoc(pl, :pack),
+        where: pl.pack_id == ^pack_id
     end
 
     def filter_packlanguages_by_pack_id(query \\ PackLanguage, pack_id) do

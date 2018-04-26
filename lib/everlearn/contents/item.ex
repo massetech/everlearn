@@ -25,13 +25,13 @@ defmodule Everlearn.Contents.Item do
   @doc false
   def changeset(%Item{} = item, attrs) do
     item
-    |> cast(attrs, @required_fields ++ @optional_fields)
-    |> validate_required(@required_fields)
-    |> validate_inclusion(:level, 1..3)
-    |> assoc_constraint(:topic)
-    |> assoc_constraint(:kind)
-    |> assoc_constraint(:classroom)
-    |> unique_constraint(:unic_kind_title_classroom, name: :index_kind_title_classroom, message: "kind title classroom is already taken")
+      |> cast(attrs, @required_fields ++ @optional_fields)
+      |> validate_required(@required_fields)
+      |> validate_inclusion(:level, 1..3)
+      |> assoc_constraint(:topic)
+      |> assoc_constraint(:kind)
+      |> assoc_constraint(:classroom)
+      |> unique_constraint(:unic_kind_title_classroom, name: :index_kind_title_classroom, message: "kind title classroom is already taken")
   end
 
   def filters do

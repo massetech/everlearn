@@ -5,6 +5,7 @@ a, h1, h2, h3, h4, h5, input, span, p, th, td {
 a, h1, h2, h3, h4, h5, input, p, th, td {
   color: $text-color !important;
 }
+.big-bold{font-weight: 500 !important;}
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
