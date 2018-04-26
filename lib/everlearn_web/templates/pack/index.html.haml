@@ -31,6 +31,8 @@
           %td.box-inline-even
             - link to: pack_path(@conn, :show, pack) do
               %i.material-icons= "remove_red_eye"
+            - link to: pack_copy_path(@conn, :copy_pack, pack) do
+              %i.material-icons= "content_copy"
             - link to: pack_path(@conn, :edit, pack) do
               %i.material-icons= "edit"
             - link to: pack_path(@conn, :delete, pack), method: :delete, data: [confirm: "Are you sure?"] do

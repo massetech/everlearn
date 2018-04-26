@@ -20,19 +20,13 @@ defmodule EverlearnWeb.ImportController do
       |> redirect(to: card_path(conn, :index))
   end
 
-  # def card(conn, %{"card" => %{"language_id" => language_id, "file" => file}}) do
-  #   results = file.path
-  #     |> Imports.import("Contents", "card", %{language_id: language_id, active: true}, [:topic_id, :topic, :kind_id, :kind, :item_title, :level, :description])
-  #   case results do
-  #     {:ok, results} ->
-  #       conn
-  #         |> Imports.add_flash_answers(results)
-  #         |> redirect(to: card_path(conn, :index))
-  #     {:error, msg} ->
-  #       conn
-  #         |> put_flash(:error, msg)
-  #         |> redirect(to: card_path(conn, :index))
-  #   end
-  # end
+  def packitem(conn, %{"pack_item" => %{"pack_id" => pack_id, "file" => file}}) do
+    import_result = file.path
+      |> Imports.import_packitems(%{pack_id: pack_id})
+      |> Imports.analyse_and_log_results()
+    conn
+      |> put_flash(:success, "Your file was treated, please control your datas")
+      |> redirect(to: pack_path(conn, :show, pack_id))
+  end
 
 end

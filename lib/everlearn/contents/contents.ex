@@ -75,6 +75,21 @@ defmodule Everlearn.Contents do
     {packs, rummage}
   end
 
+  def copy_pack(pack_id) do
+    pack = get_pack!(pack_id)
+    packitems = list_packitems(pack_id)
+    new_pack = create_pack(%{title: "pack_#{pack.id}_copy", description: "copy of pack #{pack.id}", level: pack.level, classroom_id: pack.classroom_id})
+    case new_pack do
+      {:ok, pack} ->
+        packitems
+          |> Enum.map(fn(packitem) -> toogle_packitem(packitem.item_id, pack.id) end)
+        {:ok, pack}
+      {:error, msg} ->
+        IO.inspect(msg)
+        {:error, msg}
+    end
+  end
+
   def get_pack!(id) do
     query = filter_items_active()
     Pack
@@ -545,6 +560,11 @@ end
     end
   end
 
+  def import_packitem(params) do
+    params
+      |> create_packitem()
+  end
+
   def get_packitem(item_id, pack_id) do
     PackItem
       |> filter_packitems_by_item_id(item_id)
@@ -562,6 +582,10 @@ end
     %PackItem{}
       |> PackItem.changeset(attrs)
       |> Repo.insert()
+  end
+
+  def change_packitem(%PackItem{} = packitem) do
+    PackItem.changeset(packitem, %{})
   end
 
   def delete_packitem(%PackItem{} = packitem) do

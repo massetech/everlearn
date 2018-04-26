@@ -18,4 +18,9 @@ defmodule Everlearn.Contents.PackItem do
     |> assoc_constraint(:item)
     |> unique_constraint(:unic_pack_item, name: :index_pack_item, message: "pack item is already taken")
   end
+
+  def import_fields do
+    [:item_id]
+  end
+
 end

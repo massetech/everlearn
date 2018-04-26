@@ -16,7 +16,14 @@ defmodule Everlearn.Imports do
     model = "card"
     import_fields = Everlearn.Contents.Card.import_fields()
     tid_array = Xlsxir.multi_extract(file, nil, true) # Returns [{:ok, table_1_id}, ...]
-      |> IO.inspect()
+      |> Enum.map(fn(tid) -> import_worksheet(tid, params, import_fields, module, model) end) # Returns [ok: %{results}, errors: %{results}]
+  end
+
+  def import_packitems(file, params) do
+    module = Everlearn.Contents
+    model = "packitem"
+    import_fields = Everlearn.Contents.PackItem.import_fields()
+    tid_array = Xlsxir.multi_extract(file, nil, true) # Returns {:ok, table_1_id}
       |> Enum.map(fn(tid) -> import_worksheet(tid, params, import_fields, module, model) end) # Returns [ok: %{results}, errors: %{results}]
   end
 
@@ -32,10 +39,8 @@ defmodule Everlearn.Imports do
           # Convert the first row into a list of header atoms
           |> Xlsxir.get_row(1)
           |> Enum.filter(fn(k) -> k != nil end) # Filter the headers = nil (modified cell)
-          |> IO.inspect()
           |> Enum.map(fn(header_atom) -> String.downcase(header_atom) end)
           |> Enum.map(fn(header_atom) -> String.to_atom(header_atom) end)
-          # |> IO.inspect()
         import_result = table_id
           # Import the lines
           |> Xlsxir.get_list()

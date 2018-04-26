@@ -3,7 +3,7 @@ defmodule EverlearnWeb.PackController do
   use Rummage.Phoenix.Controller
   use Drab.Controller
   alias Everlearn.{Contents, Members, CustomSelects}
-  alias Everlearn.Contents.{Pack}
+  alias Everlearn.Contents.{Pack, PackItem}
   alias Everlearn.QueryFilter
 
   plug Everlearn.Plug.DisplayFlashes
@@ -59,14 +59,28 @@ defmodule EverlearnWeb.PackController do
 
   def show(conn, params) do
     {pack, items, rummage} = Contents.list_items_eligible_to_pack(params)
-    IO.inspect(List.first(items))
+    changeset = Contents.change_packitem(%PackItem{})
     conn
-      |> render("show.html", pack: pack, items: items, rummage: rummage)
+      |> assign(:import_action, import_packitems_path(conn, :packitem))
+      |> render("show.html", pack: pack, items: items, changeset: changeset, rummage: rummage)
   end
 
   def new(conn, _params) do
     changeset = Contents.change_pack(%Pack{})
     render(conn, "new.html", changeset: changeset)
+  end
+
+  def copy_pack(conn, %{"pack_id" => pack_id}) do
+    case Contents.copy_pack(pack_id) do
+      {:ok, _} ->
+        conn
+          |> put_flash(:info, "Pack copied successfully.")
+          |> redirect(to: pack_path(conn, :index))
+      {:error, _} ->
+        conn
+          |> put_flash(:error, "Pack not copied.")
+          |> redirect(to: pack_path(conn, :index))
+    end
   end
 
   def create(conn, %{"pack" => pack_params}) do
