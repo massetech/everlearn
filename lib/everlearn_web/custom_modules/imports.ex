@@ -16,6 +16,7 @@ defmodule Everlearn.Imports do
     model = "card"
     import_fields = Everlearn.Contents.Card.import_fields()
     tid_array = Xlsxir.multi_extract(file, nil, true) # Returns [{:ok, table_1_id}, ...]
+      |> IO.inspect()
       |> Enum.map(fn(tid) -> import_worksheet(tid, params, import_fields, module, model) end) # Returns [ok: %{results}, errors: %{results}]
   end
 
@@ -30,6 +31,8 @@ defmodule Everlearn.Imports do
         headers = table_id
           # Convert the first row into a list of header atoms
           |> Xlsxir.get_row(1)
+          |> Enum.filter(fn(k) -> k != nil end) # Filter the headers = nil (modified cell)
+          |> IO.inspect()
           |> Enum.map(fn(header_atom) -> String.downcase(header_atom) end)
           |> Enum.map(fn(header_atom) -> String.to_atom(header_atom) end)
           # |> IO.inspect()
@@ -51,7 +54,7 @@ defmodule Everlearn.Imports do
     action = String.to_atom("import_#{model}")
     given_params = headers
       |> Enum.zip(line_array)
-      |> Enum.filter(fn({k, v}) -> Enum.member?(import_fields, k) end) # Filter the iport fields
+      |> Enum.filter(fn({k, v}) -> Enum.member?(import_fields, k) end) # Filter the import fields
       |> Enum.into(params) # Params is a map
       |> IO.inspect()
     id = Map.get(given_params, model_id)
