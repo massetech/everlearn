@@ -184,7 +184,7 @@ let call_everlearn_api = () => {
       "Cache-Control": "no-cache",
     },
     "processData": false,
-    "data": window.everlearn.content
+    "data": JSON.stringify(window.everlearn.content)
   }
 
   $.ajax(settings).done(function (response) {
@@ -192,7 +192,7 @@ let call_everlearn_api = () => {
       update_user_data(response.api_answer_data)
     }
     console.log(response);
-  })
+  });
 
   // var autorization = 'Bearer ' + window.everlearn.token
   // // console.log(window.everlearn.content)
