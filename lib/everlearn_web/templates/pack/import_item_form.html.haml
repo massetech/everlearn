@@ -1,0 +1,13 @@
+- form_for @changeset, @import_action, [multipart: true], fn f ->
+  = hidden_input f, :pack_id, value: @pack.id
+  .row
+    .col.s6
+      .input-field.file-field
+        .btn.import-file
+          = file_input f, :file, class: "validate", required: ""
+        .file-path-wrapper
+          = text_input f, :file_title, class: "file-path validate", placeholder: "item_ids.xlsx"
+    .col.s6
+      - submit class: "btn-large waves-effect waves-light btn-action" do
+        %i.material-icons.right="cloud_upload"
+        = "Upload"
