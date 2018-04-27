@@ -132,19 +132,19 @@ let update_user_data = (content) => {
 
 let init_action_btns = () => {
   $("#btn-renew").on('touchstart click', function() {
+    update_card_status('renew')
     event.stopPropagation()
     event.preventDefault()
-    update_card_status('renew')
   })
   $("#btn-cancel").on('touchstart click', function() {
+    update_card_status('cancel')
     event.stopPropagation()
     event.preventDefault()
-    update_card_status('cancel')
   })
   $("#btn-known").on('touchstart click', function() {
+    update_card_status('up')
     event.stopPropagation()
     event.preventDefault()
-    update_card_status('up')
   })
 }
 
@@ -193,26 +193,4 @@ let call_everlearn_api = () => {
     }
     console.log(response);
   });
-
-  // var autorization = 'Bearer ' + window.everlearn.token
-  // // console.log(window.everlearn.content)
-  // var data = JSON.stringify(window.everlearn.content)
-  // console.log(data)
-  // $.ajax({
-  //   url: window.everlearn.api_url,
-  //   method: 'POST',
-  //   contentType: 'application/json',
-  //   headers: {"Authorization": autorization},
-  //   data: data,
-  //   success: function(response) {
-  //     //(this.readyState == 4 && this.status == 200)
-  //     if (response.api_answer_data != undefined){
-  //       // console.log(response)
-  //       update_user_data(response.api_answer_data)
-  //     }
-  //   },
-  //   error: function(response) {
-  //     console.log('error : ' + response)
-  //   }
-  // })
 }
