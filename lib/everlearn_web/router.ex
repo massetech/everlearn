@@ -16,8 +16,9 @@ defmodule EverlearnWeb.Router do
   pipeline :api do
     plug :accepts, ["json"]
     plug Everlearn.Auth.Pipeline
-    plug Guardian.Plug.EnsureAuthenticated, claims: %{"typ" => "user-access"}
+    # plug Guardian.Plug.EnsureAuthenticated, claims: %{"typ" => "user-access"}
     plug Everlearn.Auth.CurrentUser
+    plug Guardian.Plug.EnsureAuthenticated, claims: %{"typ" => "user-access"}
   end
 
   pipeline :auth do

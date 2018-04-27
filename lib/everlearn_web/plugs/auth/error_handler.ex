@@ -7,12 +7,12 @@ defmodule Everlearn.Auth.ErrorHandler do
     case conn.private.phoenix_format do
       "json" ->
         conn
-        |> put_status(401)
-        |> render(EverlearnWeb.ErrorView, "401.json")
+          |> put_status(401)
+          |> render(EverlearnWeb.ErrorView, "401.json")
       "html" ->
         conn
-        |> put_flash(:error, "You must be logged in to access that part.")
-        |> redirect(to: "/")
+          |> put_flash(:error, "You must be logged in to access that part.")
+          |> redirect(to: "/")
     end
   end
 

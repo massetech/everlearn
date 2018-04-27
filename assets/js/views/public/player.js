@@ -173,25 +173,46 @@ let init_slidebar_functions = () => {
 }
 
 let call_everlearn_api = () => {
-  var autorization = 'Bearer ' + window.everlearn.token
-  // console.log(window.everlearn.content)
-  var data = JSON.stringify(window.everlearn.content)
-  console.log(data)
-  $.ajax({
-    url: window.everlearn.api_url,
-    method: 'POST',
-    contentType: 'application/json',
-    headers: {"Authorization": autorization},
-    data: data,
-    success: function(response) {
-      //(this.readyState == 4 && this.status == 200)
-      if (response.api_answer_data != undefined){
-        // console.log(response)
-        update_user_data(response.api_answer_data)
-      }
+  var settings = {
+    "async": true,
+    "crossDomain": true,
+    "url": window.everlearn.api_url,
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + window.everlearn.token,
+      "Cache-Control": "no-cache",
     },
-    error: function(response) {
-      console.log('error : ' + response)
+    "processData": false,
+    "data": JSON.stringify(window.everlearn.content)
+  }
+
+  $.ajax(settings).done(function (response) {
+    if (response.api_answer_data != undefined){
+      update_user_data(response.api_answer_data)
     }
-  })
+    console.log(response);
+  });
+
+  // var autorization = 'Bearer ' + window.everlearn.token
+  // // console.log(window.everlearn.content)
+  // var data = JSON.stringify(window.everlearn.content)
+  // console.log(data)
+  // $.ajax({
+  //   url: window.everlearn.api_url,
+  //   method: 'POST',
+  //   contentType: 'application/json',
+  //   headers: {"Authorization": autorization},
+  //   data: data,
+  //   success: function(response) {
+  //     //(this.readyState == 4 && this.status == 200)
+  //     if (response.api_answer_data != undefined){
+  //       // console.log(response)
+  //       update_user_data(response.api_answer_data)
+  //     }
+  //   },
+  //   error: function(response) {
+  //     console.log('error : ' + response)
+  //   }
+  // })
 }

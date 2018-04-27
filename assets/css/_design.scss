@@ -127,6 +127,8 @@ a.empty_fields {
 .row {position: relative;}
 .box-inline{
   display: flex;
+  display: -webkit-flex;
+  display: -ms-flexbox;
   align-items: center;
   justify-content: center;
 }
@@ -138,10 +140,7 @@ a.empty_fields {
   @extend .box-inline;
   justify-content: space-between;
 }
-// .box-inline-left{
-//   display: flex;
-//   align-items: center;
-// }
+
 .active_box > i { width: 20px; height: 20px;}
 .margin {margin: 1em;}
 
