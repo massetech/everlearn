@@ -18,9 +18,12 @@
       .input-field.col.s12.m1
         = select f, :kind_id, @kinds, prompt: ""
         = label f, :kind
-      .input-field.col.s12.m2
+      .input-field.col.s12.m1
         = select f, :level, @levels, prompt: ""
         = label f, :level
+      .input-field.col.s12.m1
+        = select f, :missing_lg, @languages, prompt: ""
+        = label f, :missing_lg
       .input-field.col.s12.m3
         = text_input f, :title
         = label f, :title

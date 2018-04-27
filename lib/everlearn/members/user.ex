@@ -10,7 +10,7 @@ defmodule Everlearn.Members.User do
     field :nickname, :string
     field :avatar, :string
     field :provider, :string
-    field :role, :string, default: "GUEST"
+    field :role, :string, default: "MEMBER"
     field :token, :string
     field :token_expiration, :utc_datetime
     belongs_to :language, Language
@@ -29,11 +29,11 @@ defmodule Everlearn.Members.User do
     |> unique_constraint(:email, message: "Email is already taken")
     |> validate_format(:email, ~r/@/)
     |> validate_inclusion(:provider, ["google", "facebook"])
-    |> validate_inclusion(:role, ["GUEST", "ADMIN", "SUPER"])
+    |> validate_inclusion(:role, ["MEMBER", "ADMIN", "SUPER"])
     |> assoc_constraint(:language)
   end
 
   def role_select_btn() do
-    [guest: "GUEST", admin: "ADMIN", super: "SUPER"]
+    [guest: "MEMBER", admin: "ADMIN", super: "SUPER"]
   end
 end

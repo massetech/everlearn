@@ -479,12 +479,6 @@ defmodule Everlearn.Members do
         select: {l.title, l.id}
     end
 
-    # def filter_language_packlanguages_by_pack_id(query \\ Language, pack_id) do
-    #   from l in query,
-    #     join: pl in assoc(l, :packlanguages),
-    #     where: pl.pack_id == ^pack_id
-    # end
-
   # METHODS ------------------------------------------------------------------
   def languages_select_btn do
     select_languages_for_dropdown

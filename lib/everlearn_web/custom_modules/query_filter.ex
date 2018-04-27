@@ -15,7 +15,7 @@ defmodule Everlearn.QueryFilter do
 
   # Build Rummage query
   def build_rummage_query(params, model) do
-    # Returns {rummage_query, rummage} for this model
+    # Returns {rummage_query, rummage} for the model
     filtered_params = filter_rummage_params(params, model)
     model
       |> Rummage.Ecto.rummage(filtered_params)

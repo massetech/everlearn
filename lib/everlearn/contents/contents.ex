@@ -172,6 +172,20 @@ defp filter_items_by_level(query \\ Item, level) do
     |> where([i], i.level == ^level)
 end
 
+defp filter_items_by_having_no_card_with_language(query \\ Item, language_id) do
+  case language_id do
+    nil -> from i in query, select: i # Parameter not set up in first loading
+    "" -> from i in query, select: i # No language filtered : do nothing about it
+    id ->
+      language_id = String.to_integer(id)
+      # Searching Items having no card with the selected language
+      from i in query,
+        left_join: c in assoc(i, :cards),
+        on: (c.item_id == i.id) and c.language_id == ^language_id,
+        where: is_nil(c.id)
+  end
+end
+
 defp filter_items_active(query \\ Item) do
   from i in query,
     where: i.active == true,
@@ -197,28 +211,7 @@ defp filter_items_eligible_for_pack(query, pack) do
   from i in query,
     join: c in assoc(i, :classroom),
     where: c.id == ^classroom_id
-  # query
-  #   |> join(:inner, [item, ...], _ in assoc(item, :classroom))
-  #   |> where([item, ...], item.active == true)
-  #   |> where([..., classroom], classroom.id == ^classroom_id)
-    # |> order_by([item, ...], item.title)
 end
-
-# defp preload_items_linked_to_each_pack(query) do
-#   query
-#     |> join(:left, [pack], _ in assoc(pack, :packitems))
-#     |> join(:inner, [pi], _ in assoc(pi, :items))
-#     # |> where([_, _, items], items.active == true)
-#     |> preload([_, _, items], [items: items])
-# end
-
-# defp preload_items_not_linked_to_pack(query \\ Item) do
-#   query
-#     |> join(:left, [pack], _ in assoc(pack, :packitems))
-#     |> join(:inner, [pi], _ in assoc(pi, :items))
-#     |> where([_, _, items], items.active == true)
-#     |> select([p, c], {p, c})
-# end
 
 # METHODS ------------------------------------------------------------------
   def control_item_fields(item_level) do
@@ -247,11 +240,18 @@ end
   end
 
   def list_items(params) do
+    # case params["search"]["missing_lg"] do
+    #   nil -> missing_lg_id = nil
+    #   language_id -> missing_lg_id = language_id
+    # end
+    missing_lg_id = params["search"]["missing_lg"]
     {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Item)
     pack_query = filter_packs_active()
     card_query = filter_cards_active()
     items = rummage_query
+      |> filter_items_by_having_no_card_with_language(missing_lg_id)
       |> order_by([item, ...], [desc: item.updated_at])
+      |> IO.inspect()
       |> Repo.all()
       |> Repo.preload([:kind, :topic, :classroom, [cards: card_query], [packs: pack_query]])
     {items, rummage}
