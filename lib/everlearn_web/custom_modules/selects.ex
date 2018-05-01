@@ -12,4 +12,8 @@ defmodule Everlearn.CustomSelects do
     [linked: true, "not linked": false]
   end
 
+  def alert_select_btn do
+    [alert: true]
+  end
+
 end

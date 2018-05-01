@@ -16,6 +16,7 @@ defmodule Everlearn.Contents.Item do
     has_many :cards, Card
     has_many :packitems, PackItem
     has_many :packs, through: [:packitems, :pack]
+    # has_many :memorys, through: [:cards, :memorys]
     timestamps()
   end
 
@@ -35,7 +36,7 @@ defmodule Everlearn.Contents.Item do
   end
 
   def filters do
-    %{id: "eq", title: "ilike", topic_id: "eq", kind_id: "eq", level: "eq", classroom_id: "eq"}
+    %{id: "eq", active: "eq", title: "ilike", topic_id: "eq", kind_id: "eq", level: "eq", classroom_id: "eq"}
   end
 
   def import_fields do

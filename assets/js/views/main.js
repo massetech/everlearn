@@ -3,7 +3,7 @@ export default class MainView {
     // This will be executed when the document loads...
     console.log('MainView mounted')
     $(document).ready(function() {
-      destroy_slidebars()
+      // destroy_slidebars()
       $('select').material_select()
       $('.empty_fields').click(function(){
         $('#search_form').clear().submit()

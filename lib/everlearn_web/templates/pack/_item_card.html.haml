@@ -1,17 +1,8 @@
 .card-content
   %span.card-title.center-align.big-bold.truncate= @item.title
-
-  -# %ul
-  -#   %li.center-align
-  -#     =# render EverlearnWeb.SharedView, "_level.html", level: @item.level
-  -#   %li.center-align
-  -#     %span=# "Item #{@item.id}"
-  -#   %li.center-align
-  -#     %span= @item.kind.title
-    -# %li.center-align
-    -#   %span= "#{List.count(@item.cards)} cards"
-  -# .box-inline-between
   %span= @item.kind.title
   .flags
     - for card <- @item.cards do
       = img_tag static_path(@conn, "/images/flags/1x1/#{card.language.iso2code}.svg"), class: "flag_small"
+- link to: item_path(@conn, :show, @item), class: "btn-round item-link",target: "_blank" do
+  %i.material-icons= "remove_red_eye"

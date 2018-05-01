@@ -7,7 +7,7 @@
     %span= "© Everlearn #{DateTime.utc_now.year}"
   %span.box-inline
     %i.material-icons= "account_circle"
-    = "bitocreator@gmail.com"
+    = "bitocreator@gmail.com - #{Application.spec(:everlearn, :vsn)}"
 .footer-copyright.box-inline.hide-on-med-and-up
   %span
     = render EverlearnWeb.SharedView, "_logo.html", assigns

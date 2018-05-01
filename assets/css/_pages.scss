@@ -15,6 +15,12 @@
     // margin: 0 5px;
     opacity: 0.5;filter: alpha(opacity=50);
   }
+  .item-link {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 10px;
+  }
 }
 
 /* ------------------------------ Users Packs  ------------------------------ */
@@ -94,7 +100,7 @@
   .slides {
     flex: 1 !important;
     display: flex; flex-direction: column;
-    .slides-item{
+    .slide-item{
       flex: 1 !important;
     }
   }

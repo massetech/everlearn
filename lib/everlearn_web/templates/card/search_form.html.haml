@@ -4,9 +4,12 @@
       .input-field.col.s12.m1
         = text_input f, :id
         = label f, :id
-      .input-field.col.s12.m2
+      .input-field.col.s12.m1
         = select f, :active, @active, prompt: ""
         = label f, :active
+      .input-field.col.s12.m1
+        = select f, :alert, @question, prompt: ""
+        = label f, :alert
       .input-field.col.s12.m2
         = select f, :language_id, @languages, prompt: ""
         = label f, :language_id

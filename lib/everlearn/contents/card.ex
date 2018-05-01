@@ -35,7 +35,7 @@ defmodule Everlearn.Contents.Card do
   end
 
   def filters do
-    %{id: "eq", language_id: "eq", item_id: "eq", question: "ilike"}
+    %{id: "eq", active: "eq", language_id: "eq", item_id: "eq", question: "ilike"}
   end
 
 end

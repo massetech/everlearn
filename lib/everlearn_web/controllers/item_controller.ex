@@ -1,8 +1,9 @@
 defmodule EverlearnWeb.ItemController do
   use EverlearnWeb, :controller
   use Rummage.Phoenix.Controller
+  use Drab.Controller
   alias Everlearn.{Contents, CustomSelects, Imports}
-  alias Everlearn.Contents.{Item}
+  alias Everlearn.Contents.{Item, Card}
 
   plug Everlearn.Plug.DisplayFlashes
   plug :load_select when action in [:index, :show, :new, :create, :edit, :update]
@@ -59,8 +60,11 @@ defmodule EverlearnWeb.ItemController do
   def show(conn, %{"id" => id}) do
     item = Contents.get_item!(id)
     # cards = Contents.get_cards_from_item(item)
-    changeset = Contents.change_item(item)
-    render conn, "show.html", item: item, changeset: changeset
+    changeset = Card.changeset(%Card{}, %{item_id: item.id})
+    #changeset = Contents.change_item(item)
+    conn
+      |> assign(:filtered_languages, Everlearn.Members.possible_languages_select_btn(item.id))
+      |> render("show.html", item: item, changeset: changeset)
   end
 
   def edit(conn, %{"id" => id}) do

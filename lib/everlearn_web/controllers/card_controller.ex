@@ -24,6 +24,7 @@ defmodule EverlearnWeb.CardController do
     conn
     |> assign(:languages, Everlearn.Members.languages_select_btn())
     |> assign(:active, CustomSelects.status_select_btn())
+    |> assign(:question, CustomSelects.alert_select_btn())
     |> assign(:languages, Everlearn.Members.languages_select_btn())
   end
 
@@ -35,16 +36,6 @@ defmodule EverlearnWeb.CardController do
       |> render("index.html", cards: cards, changeset: changeset, rummage: rummage)
   end
 
-  # # Module to import Cards and items from CSV
-  # def import(conn, %{"card" => card_params}) do
-  #   msg = card_params["file"].path
-  #     |> Imports.import("Contents", "card", Card.import_fields, nil)
-  #     |> Imports.flash_answers()
-  #   conn
-  #     |> put_flash(elem(msg, 0), elem(msg, 1))
-  #     |> redirect(to: card_path(conn, :index))
-  # end
-
   def new(conn, %{"item_id" => item_id}) do
     changeset = Contents.change_card(%Card{item_id: item_id})
     render(conn, "new.html", changeset: changeset)
@@ -54,9 +45,12 @@ defmodule EverlearnWeb.CardController do
     case Contents.create_card(card_params) do
       {:ok, card} ->
         conn
-        |> put_flash(:info, "Card created successfully.")
-        |> redirect(to: item_path(conn, :show, card.item_id))
+          |> put_flash(:info, "Card created successfully.")
+          |> redirect(to: item_path(conn, :show, card.item_id))
       {:error, %Ecto.Changeset{} = changeset} ->
+        # conn
+        #   |> put_flash(:error, "Impossible to create this card.")
+        #   |> redirect(to: item_path(conn, :show, card.item_id))
         render(conn, "new.html", changeset: changeset)
     end
   end

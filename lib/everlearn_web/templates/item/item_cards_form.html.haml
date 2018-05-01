@@ -1,17 +1,17 @@
-- form_for @conn, @action, [as: :search, method: "put", id: "search_form"], fn f ->
-  - inputs_for f, :cards, [default: @card], fn p ->
-    .input-field.col.s12.m4
-      = text_input p, :language_id
-    .input-field.col.s12.m10.offset-m1
-      = text_input p, :question, class: "validate", type: "text"
-      -# = error_tag p, :question
-    .input-field.col.s12.m10.offset-m1
-      -# = text_input p, :answer, class: "validate", type: "text"
-      -# = error_tag p, :answer
-    -# .switch.col.s12.center-align
-    -#   %label
-    -#     = "Off"
-    -#     = checkbox p, :active
-    -#     %span.lever
-    -#     = "On"
-  = submit "Submit", class: "btn-large waves-effect waves-light teal accent-4"
+-# - form_for @conn, @action, [as: :search, method: "put", id: "search_form"], fn f ->
+-#   - inputs_for f, :cards, [default: @card], fn p ->
+-#     .input-field.col.s12.m4
+-#       = text_input p, :language_id
+-#     .input-field.col.s12.m10.offset-m1
+-#       = text_input p, :question, class: "validate", type: "text"
+-#       -# = error_tag p, :question
+-#     .input-field.col.s12.m10.offset-m1
+-#       -# = text_input p, :answer, class: "validate", type: "text"
+-#       -# = error_tag p, :answer
+-#     -# .switch.col.s12.center-align
+-#     -#   %label
+-#     -#     = "Off"
+-#     -#     = checkbox p, :active
+-#     -#     %span.lever
+-#     -#     = "On"
+-#   = submit "Submit", class: "btn-large waves-effect waves-light teal accent-4"

@@ -17,6 +17,7 @@
         %th= "Item ID"
         %th= "Question"
         %th= "Active"
+        %th= "Alert"
         %th= "Actions"
       - for card <- @cards do
         %tr
@@ -26,6 +27,7 @@
           %td= card.item.id
           %td.truncate= card.question
           %td= render EverlearnWeb.SharedView, "_active.html", active: card.active
+          %td= render EverlearnWeb.SharedView, "_alert.html", nb_alerts: Enum.count(card.memorys)
           %td.box-inline-even
             - link to: item_path(@conn, :show, card.item_id) do
               %i.material-icons= "remove_red_eye"

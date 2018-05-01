@@ -21,21 +21,20 @@
       .progress-item.grey.lighten-2{id: "level0_share"}
       .progress-item.grey.darken-2{id: "levelminus1_share"}
     .slides.center-align
-      - for i <- [0, 1, 2] do
-        .slides-item{id: "slide_#{i}"}.box-inline
-          .question
-            %h3.asked
-          .answer.hide
-            %h4.card_question
-            %h4.card_answer
-            -# %h4.card_phonetic
+      .slide-item.box-inline
+        .question
+          %h3.asked
+        .answer.hide
+          %h4.card_question
+          %h4.card_answer
+          -# %h4.card_phonetic
     .buttons.box-inline-even
       .center-align
         %a.btn-large.waves-effect.waves-light.btn{id: "btn-renew"}
           %i.material-icons= "autorenew"
       .center-align
-        %a.btn-large.waves-effect.waves-light.btn{id: "btn-cancel"}
-          %i.material-icons= "not_interested"
+        %a.btn-large.waves-effect.waves-light.btn{id: "btn-warning"}
+          %i.material-icons= "announcement" 
       .center-align
         %a.btn-large.waves-effect.waves-light.btn{id: "btn-known"}
           %i.material-icons= "check_circle"

@@ -11,10 +11,7 @@ defmodule Everlearn.Members.Membership do
     belongs_to :student_lg, Language
     belongs_to :teacher_lg, Language
     has_many :items, through: [:pack, :items]
-    # belongs_to :student_lg, Language, foreign_key: :student_lg_id
-    # belongs_to :teacher_lg, Language, foreign_key: :student_lg_id
-    # field :student_lg_id, :integer
-    # field :teacher_lg_id, :integer
+    field :mono_lg, :boolean, default: false
     has_many :memorys, Memory
     timestamps()
   end
@@ -24,11 +21,26 @@ defmodule Everlearn.Members.Membership do
 
   @doc false
   def changeset(%Membership{} = membership, attrs) do
+    if attrs != %{} do
+      params = attrs
+        |> Map.put(:mono_lg, mono_lg?(attrs))
+        # |> IO.inspect()
+    else
+      params = attrs
+    end
     membership
-      |> cast(attrs, @required_fields ++ @optional_fields)
+      |> cast(params, @required_fields ++ @optional_fields)
       |> validate_required(@required_fields)
       |> assoc_constraint(:user)
       |> assoc_constraint(:pack)
+  end
+
+  defp mono_lg?(attrs) do
+    if attrs.student_lg_id == attrs.teacher_lg_id do
+      true
+    else
+      false
+    end
   end
 
   def filters do

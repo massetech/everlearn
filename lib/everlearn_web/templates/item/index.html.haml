@@ -20,6 +20,7 @@
         %th= "Nb active packs"
         %th= "Nb active cards"
         %th= "Active"
+        %th= "Alert"
         %th= "Actions"
       - for item <- @items do
         %tr
@@ -29,9 +30,10 @@
           %td= item.classroom.title
           %td= item.topic.title
           %td= render EverlearnWeb.SharedView, "_level.html", level: item.level
-          %td= Enum.count(item.packs)
-          %td= Enum.count(item.cards)
+          %td= length(item.packs)
+          %td= length(item.cards)
           %td= render EverlearnWeb.SharedView, "_active.html", active: item.active
+          %td= render EverlearnWeb.SharedView, "_alert.html", nb_alerts: Enum.count(item.cards, &(&1.nb_alert > 0))
           %td.box-inline-even
             - link to: item_card_path(@conn, :new, item) do
               %i.material-icons= "add_circle"

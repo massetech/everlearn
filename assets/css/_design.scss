@@ -85,6 +85,7 @@ footer {
 }
 
 /* -------------  Buttons & Icons & Badges ---------------------------------*/
+a.no-margin {margin: 0 !important;}
 .btn {
   background-color: $light-grey;
   color: white !important;
@@ -108,15 +109,25 @@ footer {
   width: 0;height: 0;
 }
 
+a.btn-round {
+  background-color: white;
+  border: 1px solid $info-light;
+  width: 35px;
+  height: 35px;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 i.color-danger {color: $danger !important;}
 i.color-success {color: $success !important;}
 // i.color-yellow {color: $yellow !important;}
 i.color-medium {color: $middle-grey !important;}
-
-// .badge.yellow {color: $yellow !important;}
+i.big{color: $info-light;font-size: 100px;}
 
 .switch{margin-top: 2rem;}
-// .lever {background-color: $main-color !important;}
+
 
 /* ------------------------------ Custom rules  ------------------------------ */
 a.empty_fields {
@@ -132,6 +143,10 @@ a.empty_fields {
   align-items: center;
   justify-content: center;
 }
+.box-column{
+  @extend .box-inline;
+  flex-direction: column;
+}
 .box-inline-even{
   @extend .box-inline;
   justify-content: space-evenly;
@@ -143,6 +158,13 @@ a.empty_fields {
 
 .active_box > i { width: 20px; height: 20px;}
 .margin {margin: 1em;}
+
+/* ------------------------------ Custom Materialize  ------------------------------ */
+.card-content{
+  height: 100%;
+}
+
+.activator:hover {cursor: pointer;}
 
 /* ------------------------------ Logo  ------------------------------ */
 span.logo {

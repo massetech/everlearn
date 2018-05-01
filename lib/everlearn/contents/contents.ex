@@ -174,8 +174,8 @@ end
 
 defp filter_items_by_having_no_card_with_language(query \\ Item, language_id) do
   case language_id do
-    nil -> from i in query, select: i # Parameter not set up in first loading
-    "" -> from i in query, select: i # No language filtered : do nothing about it
+    nil -> query #from i in query, select: i # Parameter not set up in first loading
+    "" -> query #from i in query, select: i # No language filtered : do nothing about it
     id ->
       language_id = String.to_integer(id)
       # Searching Items having no card with the selected language
@@ -188,8 +188,7 @@ end
 
 defp filter_items_active(query \\ Item) do
   from i in query,
-    where: i.active == true,
-    order_by: i.title
+    where: i.active == true
 end
 
 defp filter_packitemlink(query, pack, filter) do
@@ -211,6 +210,21 @@ defp filter_items_eligible_for_pack(query, pack) do
   from i in query,
     join: c in assoc(i, :classroom),
     where: c.id == ^classroom_id
+end
+
+defp order_items_by_having_packitems(query \\ Item) do
+  from i in query,
+    left_join: pi in assoc(i, :packitems),
+    group_by: i.id,
+    order_by: [desc: count(pi.id), asc: i.title]
+end
+
+defp count_alerts_for_card(query \\ Card) do
+  from c in query,
+    where: c.active == true,
+    left_join: mem in assoc(c, :memorys), on: mem.card_id == c.id and mem.user_alert == true,
+    group_by: c.id,
+    select: %{id: c.id, nb_alert: count(mem.id)}
 end
 
 # METHODS ------------------------------------------------------------------
@@ -240,20 +254,16 @@ end
   end
 
   def list_items(params) do
-    # case params["search"]["missing_lg"] do
-    #   nil -> missing_lg_id = nil
-    #   language_id -> missing_lg_id = language_id
-    # end
     missing_lg_id = params["search"]["missing_lg"]
     {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Item)
     pack_query = filter_packs_active()
-    card_query = filter_cards_active()
+    card_query = count_alerts_for_card()
     items = rummage_query
       |> filter_items_by_having_no_card_with_language(missing_lg_id)
       |> order_by([item, ...], [desc: item.updated_at])
-      |> IO.inspect()
       |> Repo.all()
       |> Repo.preload([:kind, :topic, :classroom, [cards: card_query], [packs: pack_query]])
+      |> IO.inspect()
     {items, rummage}
   end
 
@@ -266,7 +276,6 @@ end
     pack = get_pack!(pack_id)
       |> Repo.preload(:classroom)
     {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Item)
-    # Load items list to show
     packitem_filter = params["search"]["packitemlink"]
     pi_query = filter_packitems_by_pack_id(pack.id)
     card_query = filter_cards_active_with_language()
@@ -274,6 +283,7 @@ end
       |> filter_items_active()
       |> filter_packitemlink(pack, packitem_filter)
       |> filter_items_eligible_for_pack(pack)
+      |> order_items_by_having_packitems()
       |> Repo.all()
       |> Repo.preload([:topic, :kind, packitems: pi_query, cards: card_query])
     {pack, items, rummage}
@@ -292,7 +302,7 @@ end
 
   def get_item!(id) do
     Repo.get!(Item, id)
-      |> Repo.preload(cards: [:language])
+      |> Repo.preload([:kind, cards: [:language, :memorys]])
   end
 
   def import_item(params) do
@@ -407,16 +417,22 @@ end
       join: i in assoc(pi, :item),
       join: c in assoc(i, :cards),
       select: c
-    # query
-    #   |> join(:inner, [p, ...], _ in assoc(p, :packitems))
-    #   |> join(:inner, [..., pi], _ in assoc(pi, :item))
-    #   |> join(:inner, [..., i], _ in assoc(i, :cards))
-    #   |> select([..., card], card)
   end
 
   defp filter_cards_by_language(query \\ Card, language_id) do
     from [..., c] in query,
       where: c.language_id == ^language_id
+  end
+
+  defp filter_cards_by_alert(query \\ Card, filter_alert) do
+    # We only want to filter Cards having at least one alert
+    case filter_alert do
+      "true" ->
+        from c in query,
+          join: mem in assoc(c, :memorys),
+          on: (mem.card_id == c.id) and mem.user_alert == true
+      _ -> query
+    end
   end
 
   # CARDS METHODS ------------------------------------------------------------------
@@ -450,10 +466,14 @@ end
   end
 
   def list_cards(params) do
+    filter_alert = params["search"]["alert"]
     {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Card)
+    memory_query = Members.filter_memorys_with_alert()
     cards = rummage_query
+      |> filter_cards_by_alert(filter_alert)
+      |> IO.inspect()
       |> Repo.all()
-      |> Repo.preload([:language, [item: [:packitems, :topic, :kind]]])
+      |> Repo.preload([:language, [memorys: memory_query], [item: [:packitems, :topic, :kind]]])
     {cards, rummage}
   end
 

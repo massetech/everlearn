@@ -1,34 +1,62 @@
 - form_for @changeset, @action, fn f ->
   = hidden_input f, :item_id
-  .section
-    .container
-      .row
-        .input-field.col.s12.m4.offset-m4
-          = select f, :language_id, @languages
-          = label f, :language_id
-        .input-field.col.s12.m10.offset-m1
-          = text_input f, :question, class: "validate", type: "text"
-          = label f, :question
-          = error_tag f, :question
-        .input-field.col.s12.m10.offset-m1
-          = text_input f, :answer, class: "validate", type: "text"
-          = label f, :answer
-          = error_tag f, :answer
-        .input-field.col.s12.m10.offset-m1
-          = text_input f, :sound, class: "validate", type: "text"
-          = label f, :sound, "Sound Url"
-          = error_tag f, :sound
-        .input-field.col.s12.m10.offset-m1
-          = text_input f, :phonetic, class: "validate", type: "text"
-          = label f, :phonetic
-          = error_tag f, :phonetic
-        .switch.col.s12.center-align
-          %label
-            = "Off"
-            = checkbox f, :active
-            %span.lever
-            = "On"
+  .row
+    .input-field.col.s12
+      = select f, :language_id, @filtered_languages
+      = label f, :language_id
+    .input-field.col.s12
+      = label f, :question, "Question"
+      = text_input f, :question, class: "validate", type: "text"
+    .input-field.col.s12
+      = label f, :answer, "Answer"
+      = text_input f, :answer, class: "validate", type: "text"
+    .input-field.col.s12
+      = label f, :sound, "Sound url"
+      = text_input f, :sound, class: "validate", type: "text"
+    .input-field.col.s12
+      = label f, :phonetic, "Phonetic"
+      = text_input f, :phonetic, class: "validate", type: "text"
+    .switch.col.s12
+      %label
+        = "Off"
+        = checkbox f, :active
+        %span.lever
+        = "On"
+  .row
+    = submit "Save", class: "btn-large waves-effect waves-light btn-action"
 
-  .section
-    .form-group.center-align
-      = submit "Submit", class: "btn-large waves-effect waves-light teal accent-4"
+-#
+-# - form_for @changeset, @action, fn f ->
+-#   = hidden_input f, :item_id
+-#   .section
+-#     .container
+-#       .row
+-#         .input-field.col.s12.m4.offset-m4
+-#           = select f, :language_id, @languages
+-#           = label f, :language_id
+-#         .input-field.col.s12.m10.offset-m1
+-#           = text_input f, :question, class: "validate", type: "text"
+-#           = label f, :question
+-#           = error_tag f, :question
+-#         .input-field.col.s12.m10.offset-m1
+-#           = text_input f, :answer, class: "validate", type: "text"
+-#           = label f, :answer
+-#           = error_tag f, :answer
+-#         .input-field.col.s12.m10.offset-m1
+-#           = text_input f, :sound, class: "validate", type: "text"
+-#           = label f, :sound, "Sound Url"
+-#           = error_tag f, :sound
+-#         .input-field.col.s12.m10.offset-m1
+-#           = text_input f, :phonetic, class: "validate", type: "text"
+-#           = label f, :phonetic
+-#           = error_tag f, :phonetic
+-#         .switch.col.s12.center-align
+-#           %label
+-#             = "Off"
+-#             = checkbox f, :active
+-#             %span.lever
+-#             = "On"
+-#
+-#   .section
+-#     .form-group.center-align
+-#       = submit "Submit", class: "btn-large waves-effect waves-light teal accent-4"

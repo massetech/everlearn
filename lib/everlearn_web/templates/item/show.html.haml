@@ -2,14 +2,21 @@
 .container
   .section
     .row
-      %p= "Item ID : #{@item.id}"
-      %p= "Item title : #{@item.title}"
+      .col.s1.m2.box-inline
+        - link to: item_path(@conn, :edit, @item), class: "btn-round" do
+          %i.material-icons= "edit"
+      .col.s11.m10
+        %h6= "ID : #{@item.id}"
+        %h6= "Title : #{@item.title}"
+        %h6= "Kind : #{@item.kind.title}"
+        %h6= "Description : #{@item.description}"
+
   .section
     .row
       - for card <- @item.cards do
         .col.s12.m4
-          .card.medium
-            .card-content
+          .card.small
+            .card-content.activator
               %span.card-title.center-align.activator= card.question
               %p.center-align.activator= card.answer
               %p.center-align.activator= "Card ID : #{card.id}"
@@ -18,10 +25,24 @@
                 = img_tag static_path(@conn, "/images/flags/1x1/#{card.language.iso2code}.svg"), class: "flag"
               .right.center-align
                 = render EverlearnWeb.SharedView, "_active.html", active: card.active
-                - link to: card_path(@conn, :delete, card), method: :delete do
+                - link to: card_path(@conn, :delete, card), method: :delete, class: "no-margin" do
                   %i.material-icons.color-danger= "delete_forever"
+                - if Enum.count(card.memorys, &(&1.user_alert == true)) > 0 do
+                  %a{id: "card_alert_#{card.id}", drab-click: "delete_card_alert", data-card-id: "#{card.id}"}
+                    -# - link to: item_card_delete_alerts_path(@conn, :delete_alerts, @item, card), class: "no-margin" do
+                    %i.material-icons.color-danger= "report"
             .card-reveal
               %span.card-title.center-align.truncate
                 %i.material-icons.right= "close"
               .center-align
                 = render CardView, "card_form.html", conn: @conn, action: card_path(@conn, :update, card), card: card, languages: @languages
+      .col.s12.m4
+        .card.small
+          .card-content.box-column.activator
+            %span.card-title.center-align.activator= "Create new card"
+            %i.material-icons.center-align.big.activator= "add_circle_outline"
+          .card-reveal
+            %span.card-title.center-align.truncate
+              %i.material-icons.right= "close"
+            .center-align
+              = render CardView, "form.html", changeset: @changeset, action: card_path(@conn, :create), filtered_languages: @filtered_languages
