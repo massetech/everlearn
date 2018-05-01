@@ -80,7 +80,7 @@ defmodule EverlearnWeb.ItemController do
         Contents.clean_existing_packitems(item)
         conn
         |> put_flash(:info, "Item updated successfully.")
-        |> redirect(to: item_path(conn, :index))
+        |> redirect(to: item_path(conn, :show, item))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", item: item, changeset: changeset)
     end

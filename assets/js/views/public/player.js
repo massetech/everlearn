@@ -216,6 +216,7 @@ let update_player = (new_card) => {
   $(`.slide-item`).find('.card_phonetic').text(`${new_card.phonetic}`)
   $(`.slide-item`).find('.question').removeClass(`hide`)
   $(`.slide-item`).find('.answer').addClass(`hide`)
+  hide_answers()
   $(`.slide-item`).fadeIn(500)
   if (new_card.user_alert == true) {
     $("#btn-warning").addClass("disabled")
@@ -226,8 +227,13 @@ let update_player = (new_card) => {
 }
 
 let show_answers = () => {
-  $(`.slide-item`).find('.question').fadeOut(500).addClass(`hide`)
-  $(`.slide-item`).find('.answer').fadeIn(500).removeClass(`hide`)
+  $(`.slide-item`).find('.question').addClass(`hide`)
+  $(`.slide-item`).find('.answer').removeClass(`hide`)
+}
+
+let hide_answers = () => {
+  $(`.slide-item`).find('.answer').addClass(`hide`)
+  $(`.slide-item`).find('.question').removeClass(`hide`)
 }
 
 let update_progress_bar = () => {
