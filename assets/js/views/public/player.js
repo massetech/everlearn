@@ -178,7 +178,7 @@ let play_new_card = () => {
     // console.log("m = " + m)
     // console.log("q = " + q)
     // console.log("r = " + r)
-    if (p > 0 && m < 15) {var status = 0} // We maintain m new cards in the deck
+    if (p > 0 && m < 20) {var status = 0} // We maintain m new cards in the deck
     else if (m > 0 && n < 0.75) {var status = 1}
     else if (q > 0 && n < 0.90) {var status = 2}
     else if (r > 0) {var status = -1} // Fallback to any card in the list

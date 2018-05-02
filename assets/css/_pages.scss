@@ -54,10 +54,10 @@
   }
 }
 /* ------------------------------ Player  ------------------------------ */
-.player-container {
-  height: 100vh; // Align vertically for Ipad
-  width: 100%;  // Avoid container scollbar
-}
+// .player-container {
+//   height: 100vh; // Align vertically for Ipad
+//   width: 100%;  // Avoid container scollbar
+// }
 .player {
   width: 100vw; height: 100vh; max-width: 414px; max-height: 736px;
   display: flex; flex-direction: column; margin: 0; padding: 1em;

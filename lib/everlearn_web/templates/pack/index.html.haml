@@ -3,7 +3,7 @@
   .section
     = render "search_form.html", assigns
     .search_results.box-inline
-      %h5= "#{Enum.count(@packs)}items found"
+      %h5= "#{Enum.count(@packs)}packs found"
   .section
     %table.bordered.responsive-table
       %tr
@@ -13,7 +13,8 @@
         %th= "Description"
         %th= "Level"
         %th= "Languages"
-        %th= "Nb active items"
+        %th= "Nb items"
+        %th= "Nb users"
         %th= "Active"
         %th= "Actions"
       - for pack <- @packs do
@@ -27,6 +28,7 @@
             - for packlanguage <- pack.packlanguages do
               = img_tag static_path(@conn, "/images/flags/1x1/#{packlanguage.language.iso2code}.svg"), class: "flag_small"
           %td= Enum.count(pack.packitems)
+          %td= "to do"
           %td= render EverlearnWeb.SharedView, "_active.html", active: pack.active
           %td.box-inline-even
             - link to: pack_path(@conn, :show, pack) do
