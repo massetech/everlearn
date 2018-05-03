@@ -35,9 +35,10 @@ defmodule EverlearnWeb.ItemController do
   def index(conn, params) do
     {items, rummage} = Contents.list_items(params)
     changeset = Contents.change_item(%Item{})
+    packs = Contents.packs_select_btn()
     conn
       |> assign(:import_action, import_items_path(conn, :item))
-      |> render("index.html", items: items, changeset: changeset, rummage: rummage)
+      |> render("index.html", items: items, changeset: changeset, rummage: rummage, packs: packs)
   end
 
   def new(conn, _params) do

@@ -73,8 +73,9 @@ defmodule EverlearnWeb.Router do
       post "/cards", ImportController, :card, as: :import_cards
     end
     scope "/export" do
-      get "/items", ExportController, :export_items, as: :export_items
-      get "/cards", ExportController, :export_cards, as: :export_cards
+      get "/items", ExportController, :export_filtered_items, as: :export_filtered_items
+      get "/all_items", ExportController, :export_all_items, as: :export_all_items
+      get "/cards", ExportController, :export_filtered_cards, as: :export_filtered_cards
     end
 
     # post "/import/cards", CardController, :import, as: :import_cards

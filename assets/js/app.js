@@ -11,6 +11,7 @@ import "phoenix_html";
 import "hammerjs";
 import "materialize-css";
 import loadView from './views/loader';
+// import VHChromeFix from './addons/mobile-chrome-vh-fix';
 // import "swiper";
 // import "unpoly";
 

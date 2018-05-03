@@ -1,16 +1,20 @@
 - form_for @changeset, @import_action, [multipart: true], fn f ->
   .row
-    .col.s12.m3
+    .col.s12.m2
       .input-field
         = select f, :classroom_id, @classrooms
         = label f, :classroom_id
-    .col.s12.m5
+    .col.s12.m3
+      .input-field
+        = select f, :pack_id, @packs, prompt: ""
+        = label f, :pack_id, "Last modified packs"
+    .col.s12.m4
       .input-field.file-field
         .btn.import-file
           = file_input f, :file, class: "validate", required: ""
         .file-path-wrapper
           = text_input f, :title, class: "file-path validate", placeholder: "File.csv"
-    .col.s12.m4
+    .col.s12.m3
       -# %a.btn-large.waves-effect.waves-light.btn-action{type: "submit", name:"action"}
       - submit class: "btn-large waves-effect waves-light btn-action" do
         %i.material-icons.right="cloud_upload"

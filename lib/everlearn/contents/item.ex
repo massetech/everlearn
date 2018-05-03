@@ -39,6 +39,10 @@ defmodule Everlearn.Contents.Item do
     %{id: "eq", active: "eq", title: "ilike", topic_id: "eq", kind_id: "eq", level: "eq", classroom_id: "eq"}
   end
 
+  def default_filters do
+    %{active: true, classroom_id: 1}
+  end
+
   def import_fields do
     [:topic_id, :kind_id, :item_id, :title, :level, :description, :picture_link]
   end

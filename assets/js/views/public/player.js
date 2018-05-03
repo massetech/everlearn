@@ -22,6 +22,7 @@ let init_player_data = () => {
   window.everlearn = []
   window.everlearn.token = data.token
   window.everlearn.api_url = window.Gon.assets().api_url
+  window.everlearn.nb_change = 0
   window.everlearn.content = data.content
   window.everlearn.learning_mode = "question_or_answer"
   window.everlearn.classroom_index = 0
@@ -32,8 +33,11 @@ let init_player_data = () => {
 }
 
 let update_user_data = (new_data) => {
-  window.everlearn.content = "test"
+  window.everlearn.nb_change = 0
   window.everlearn.content = new_data
+  $("i.ok").removeClass("hide")
+  $("i.nok, i.pb").addClass("hide")
+
   // var old_content = window.everlearn.content
   // // Check if a page refresh is needed
   // for (let i = 0; i < old_content.classrooms.length; i++) {
@@ -120,9 +124,22 @@ let update_card = (card_index, new_card) => {
   card.nb_practice = new_card.nb_practice
   card.nb_view = new_card.nb_view
   card.user_alert = new_card.user_alert
+  check_need_for_update()
   // Replace the object in window main object
   window.everlearn.content.classrooms[classroom_index].memberships[membership_index].cards[card_index] = card
   console.log(`Card updated ${card.id}`)
+}
+
+let check_need_for_update = () => {
+  var nb_change = window.everlearn.nb_change
+  if (navigator.onLine == true && nb_change > 10) {
+    call_everlearn_api()
+  }
+  else if (navigator.onLine == false && nb_change > 10) {
+    $("i.nok").removeClass("hide")
+    $("i.ok, i.pb").addClass("hide")
+  }
+  else {window.everlearn.nb_change = nb_change + 1}
 }
 
 let action_on_card = (action) => {
@@ -167,6 +184,7 @@ let get_actual_cards_list = () => {
 let play_new_card = () => {
   $(`.slide-item`).fadeOut(500, function() {
     // Algorythm to choose new card
+    var learning_mode = window.everlearn.learning_mode
     var cards_list = get_actual_cards_list()
     var n = Math.random()
     var p = cards_list.filter(card => card.status == 0).length
@@ -184,10 +202,10 @@ let play_new_card = () => {
     else if (r > 0) {var status = -1} // Fallback to any card in the list
     // console.log("status = "+ status)
     // console.log(cards_list)
-    if (status >= 0) {
+    if (status >= 0 && learning_mode != "fast-track") {
       var filtered_list = cards_list.filter(card => card.status == status)
       var new_card = filtered_list[Math.floor(Math.random() * filtered_list.length)]
-    } else {
+    } else { // There was a problem or fast-track : choose randomly in the list
       var new_card = cards_list[Math.floor(Math.random() * cards_list.length)]
     }
     // Update datas with new card
@@ -204,6 +222,7 @@ let update_player = (new_card) => {
   var learning_mode = window.everlearn.learning_mode
   const cases = {
     "question_or_answer": new_card[choose_random([`question`, `answer`])],
+    "fast-track": new_card[choose_random([`question`, `answer`])],
     "question": new_card.question,
     "answer": new_card.answer,
     "sound": new_card.sound
@@ -261,7 +280,7 @@ let update_membership_and_classroom = (classroom_id, membership_id) => {
   var membership = classroom.memberships.find(x => x.id == membership_id)
   window.everlearn.classroom_index = classroom_index
   window.everlearn.classroom_id = classroom.id
-  window.everlearn_membership_index = membership_index
+  window.everlearn.membership_index = membership_index
   window.everlearn.membership_id = membership.id
   window.everlearn.learning_mode = "question_or_answer"
   $(`#classroom_title`).text(`${classroom.title}`)
@@ -289,6 +308,10 @@ let call_everlearn_api = () => {
     if (response.api_answer_data != undefined){
       update_user_data(response.api_answer_data)
     }
-    // console.log(response);
+    console.log("API called");
+  }).fail(function(data){
+    $("i.pb").removeClass("hide")
+    $("i.ok, i.nok").addClass("hide")
+    console.log(data)
   });
 }

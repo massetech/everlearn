@@ -7,10 +7,10 @@
         = text_input f, :id
         = label f, :id
       .input-field.col.s12.m1
-        = select f, :active, @active, prompt: ""
+        = select f, :active, @active, default: true
         = label f, :active
       .input-field.col.s12.m2
-        = select f, :classroom_id, @classrooms, prompt: ""
+        = select f, :classroom_id, @classrooms
         = label f, :classroom_id
       .input-field.col.s12.m2
         = select f, :topic_id, @topics, prompt: ""

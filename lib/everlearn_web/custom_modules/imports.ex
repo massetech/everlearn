@@ -7,24 +7,32 @@ defmodule Everlearn.Imports do
     module = Everlearn.Contents
     model = "item"
     import_fields = Everlearn.Contents.Item.import_fields()
-    tid_array = Xlsxir.multi_extract(file, nil, true) # Returns [{:ok, table_1_id}, ...]
+    results = file # Returns [%{success_ids: [%{line: 1, id: 2}], error_lines: [errors: []}], line: 1}, %{success_ids: [], error_lines: [%{errors: []}], line: 2}]
+      |> Xlsxir.multi_extract(nil, true) # Returns [{:ok, table_1_id}, ...]
       |> Enum.map(fn(tid) -> import_worksheet(tid, params, import_fields, module, model) end) # Returns [ok: %{results}, errors: %{results}]
+      |> analyse_and_log_results()
+      |> List.first()
+    results.success_ids # Create packitems for succes ids (if on params then nothing happens)
+      |> Enum.map(fn success -> Contents.create_packitem(%{item_id: success.id, pack_id: params.pack_id}) end)
   end
 
   def import_cards(file, params) do
     module = Everlearn.Contents
     model = "card"
     import_fields = Everlearn.Contents.Card.import_fields()
-    tid_array = Xlsxir.multi_extract(file, nil, true) # Returns [{:ok, table_1_id}, ...]
+    tid_array = file
+      |> Xlsxir.multi_extract(nil, true)
       |> Enum.map(fn(tid) -> import_worksheet(tid, params, import_fields, module, model) end) # Returns [ok: %{results}, errors: %{results}]
+      |> analyse_and_log_results()
   end
 
   def import_packitems(file, params) do
     module = Everlearn.Contents
     model = "packitem"
     import_fields = Everlearn.Contents.PackItem.import_fields()
-    tid_array = Xlsxir.multi_extract(file, nil, true) # Returns {:ok, table_1_id}
+    {_, results} = Xlsxir.multi_extract(file, nil, true) # Returns {:ok, table_1_id}
       |> Enum.map(fn(tid) -> import_worksheet(tid, params, import_fields, module, model) end) # Returns [ok: %{results}, errors: %{results}]
+      |> analyse_and_log_results()
   end
 
   defp convert_xls_time(time_array) do
@@ -46,7 +54,7 @@ defmodule Everlearn.Imports do
           |> Xlsxir.get_list()
           |> Enum.drop(1)
           |> Enum.map(fn(line_array) -> import_line(line_array, headers, params, import_fields, module, model) end)
-          |> Enum.reduce(%{success_lines: [], error_lines: [], nb_line: 1}, &report_import/2)
+          |> Enum.reduce(%{success_ids: [], error_lines: [], nb_line: 1}, &report_import/2)
         Xlsxir.close(table_id)
         {:ok, import_result, time_spent}
       {:error, msg} -> # This worksheet was not parsed : report an error
@@ -61,14 +69,24 @@ defmodule Everlearn.Imports do
       |> Enum.zip(line_array)
       |> Enum.filter(fn({k, v}) -> Enum.member?(import_fields, k) end) # Filter the import fields
       |> Enum.into(params) # Params is a map
-      |> IO.inspect()
     id = Map.get(given_params, model_id)
     sorted_params = given_params
       |> Map.drop([model_id])
       |> Map.put(:id, id)
     case apply(module, action, [sorted_params]) do
-      {:ok, element} -> {:ok, "#{model} with id = #{element.id} was treated"}
+      {:ok, element} -> {:ok, element} # {:ok, "#{model} with id = #{element.id} was treated"}
       {:error, changeset} -> {:error, changeset}
+    end
+  end
+
+  defp report_import(report_line, %{success_ids: success_list, error_lines: error_list, nb_line: line_nb}) do
+    case report_line do
+      {:ok, element} ->
+        %{success_ids: success_list ++ [%{line: line_nb, id: element.id}], error_lines: error_list, nb_line: line_nb + 1}
+      {:error, changeset} ->
+        %{success_ids: success_list, error_lines: error_list ++ [%{line: line_nb, errors: changeset.errors}], nb_line: line_nb + 1}
+      # {:unfound, msg} ->
+      #   %{success_lines: success_list, error_lines: error_list ++ [%{line: line_nb, errors: msg}], nb_line: line_nb + 1}
     end
   end
 
@@ -81,22 +99,11 @@ defmodule Everlearn.Imports do
     case ws_result do
       {:ok, result_map, duration} ->
         nb_errors = Enum.count(result_map.error_lines)
-        nb_success = Enum.count(result_map.success_lines)
+        nb_success = Enum.count(result_map.success_ids)
         IO.puts("Worksheet imported in #{duration} for #{result_map.nb_line} lines.")
         IO.puts("Nb success : #{nb_success}, nb errors : #{nb_errors}.")
         IO.inspect(result_map)
       {:error, msg} -> IO.puts(msg)
-    end
-  end
-
-  defp report_import(report_line, %{success_lines: success_list, error_lines: error_list, nb_line: line_nb}) do
-    case report_line do
-      {:ok, _model} ->
-        %{success_lines: success_list ++ [line_nb], error_lines: error_list, nb_line: line_nb + 1}
-      {:error, changeset} ->
-        %{success_lines: success_list, error_lines: error_list ++ [%{line: line_nb, errors: changeset.errors}], nb_line: line_nb + 1}
-      {:unfound, msg} ->
-        %{success_lines: success_list, error_lines: error_list ++ [%{line: line_nb, errors: msg}], nb_line: line_nb + 1}
     end
   end
 

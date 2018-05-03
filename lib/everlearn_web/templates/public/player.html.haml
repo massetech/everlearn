@@ -8,9 +8,14 @@
         %span.logo
           %i.material-icons= "school"
           ="Everlearn"
-      .center-align
+      .center-align.box-inline-even
+        .sync
+          %i.option.material-icons.ok= "sync"
+          %i.option.material-icons.nok.hide= "sync_disabled"
+          %i.option.material-icons.pb.hide= "sync_problem"
         %a.button-collapse{id: "btn_slidebar_right" href: "#" data-activates: "slidebar_player_right"}
           %i.option.material-icons= "settings"
+
     .title.center-align
       %h4{id: "classroom_title"}
       %h5{id: "membership_title"}
@@ -34,7 +39,7 @@
           %i.material-icons= "autorenew"
       .center-align
         %a.btn-large.waves-effect.waves-light.btn{id: "btn-warning"}
-          %i.material-icons= "announcement" 
+          %i.material-icons= "announcement"
       .center-align
         %a.btn-large.waves-effect.waves-light.btn{id: "btn-known"}
           %i.material-icons= "check_circle"

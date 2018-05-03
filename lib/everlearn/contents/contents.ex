@@ -12,6 +12,14 @@ defmodule Everlearn.Contents do
     from p in Pack, where: p.id == ^pack_id
   end
 
+  defp select_packs_for_dropdown do
+    from p in Pack,
+      where: p.active == true,
+      order_by: [desc: p.updated_at],
+      limit: 5,
+      select: {p.title, p.id}
+  end
+
   defp filter_packs_active(query \\ Pack) do
     from p in Pack,
       where: p.active == true
@@ -41,6 +49,12 @@ defmodule Everlearn.Contents do
 # METHODS ------------------------------------------------------------------
   def pack_level_select_btn do
     [beginner: 1, advanced: 2, expert: 3]
+  end
+
+  def packs_select_btn do
+    select_packs_for_dropdown()
+      |> Repo.all()
+      |> Enum.map(fn{v,id} -> {"#{v} (id: #{id})", id} end)
   end
 
   def list_packs(params) do
@@ -254,8 +268,9 @@ end
   end
 
   def list_items(params) do
-    missing_lg_id = params["search"]["missing_lg"]
-    {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Item)
+    missing_lg_id = params["search"]["missing_lg"] # If not found : nothing happens
+    {rummage_query, rummage} = params
+      |> QueryFilter.build_rummage_query(Item)
     pack_query = filter_packs_active()
     card_query = count_alerts_for_card()
     items = rummage_query
@@ -263,8 +278,13 @@ end
       |> order_by([item, ...], [desc: item.updated_at])
       |> Repo.all()
       |> Repo.preload([:kind, :topic, :classroom, [cards: card_query], [packs: pack_query]])
-      |> IO.inspect()
     {items, rummage}
+  end
+
+  def export_all_items() do
+    items = Item
+      |> Repo.all()
+      |> Repo.preload([:classroom, :topic, :kind, [cards: :language]])
   end
 
   def list_items_eligible_to_pack(params \\ %{}) do

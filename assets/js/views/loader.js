@@ -1,6 +1,7 @@
 import MainView    from './main';
 import PublicPlayerView from './public/player';
 
+
 const views = {
   PublicPlayerView
 };

@@ -61,7 +61,12 @@
 .player {
   width: 100vw; height: 100vh; max-width: 414px; max-height: 736px;
   display: flex; flex-direction: column; margin: 0; padding: 1em;
-  .header {height: 60px;}
+  .header {
+    height: 60px;
+    i.ok {color: $success}
+    i.nok {color: $info}
+    i.pb {color: $danger}
+  }
   .progress-bar {
     width: 100%; margin-bottom: 1em;
     display: flex;
