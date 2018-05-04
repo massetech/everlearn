@@ -444,6 +444,11 @@ end
       where: c.language_id == ^language_id
   end
 
+  defp select_cards_for_item(query \\ Card, item_id) do
+    from c in Card,
+      where: c.item_id == ^item_id
+  end
+
   defp filter_cards_by_alert(query \\ Card, filter_alert) do
     # We only want to filter Cards having at least one alert
     case filter_alert do
@@ -456,13 +461,13 @@ end
   end
 
   # CARDS METHODS ------------------------------------------------------------------
-  def get_cards_for_memory(pack_id, language_id) do
-    pack_id
-      |> select_pack_by_id()
-      |> select_cards_from_pack()
-      |> filter_cards_by_language(language_id)
-      |> Repo.all()
-  end
+  # def get_cards_for_memory(pack_id, language_id) do
+  #   pack_id
+  #     |> select_pack_by_id()
+  #     |> select_cards_from_pack()
+  #     |> filter_cards_by_language(language_id)
+  #     |> Repo.all()
+  # end
 
   def save_card_line(fields) do
     case get_item_by_title_and_level(fields.item_title, fields.item_level) do
@@ -506,7 +511,15 @@ end
 
   def import_card(params) do
     case params.id do
-      nil -> create_card(params)
+      nil ->
+        case get_card_by_item_language(params.item_id, params.language_id) do
+          nil -> create_card(params)
+          card ->
+            case params.phonetic do
+              99 -> delete_card(card)
+              _ -> update_card(card, params)
+            end
+        end
       _ ->
         case get_card(params.id) do
           nil -> create_card(params)
@@ -521,6 +534,14 @@ end
 
   def get_card!(id), do: Repo.get!(Card, id)
   def get_card(id), do: Repo.get(Card, id)
+
+  def get_card_by_item_language(item_id, language_id) do
+    Card
+      |> select_cards_for_item(item_id)
+      |> filter_cards_by_language(language_id)
+      |> Repo.all()
+      |> List.first # Normally one record
+  end
 
   def create_card(attrs \\ %{}) do
     %Card{}
