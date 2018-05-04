@@ -19,8 +19,13 @@ defmodule EverlearnWeb.ImportController do
   end
 
   defp control_import_item_params(pack_id, classroom_id, filename) do
-    pack = Contents.get_pack!(pack_id)
-    if to_string(pack.classroom_id) == classroom_id && filename =~ "item", do: true, else: false
+    case pack_id do
+      "" -> # No pack was given in import fields
+        if filename =~ "item", do: true, else: false
+      pack_id -> # There is a pack
+        pack = Contents.get_pack!(pack_id)
+        if to_string(pack.classroom_id) == classroom_id && filename =~ "item", do: true, else: false
+    end
   end
 
   def card(conn, %{"card" => %{"language_id" => language_id, "file" => file}}) do

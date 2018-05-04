@@ -12,8 +12,10 @@ defmodule Everlearn.Imports do
       |> Enum.map(fn(tid) -> import_worksheet(tid, params, import_fields, module, model) end) # Returns [ok: %{results}, errors: %{results}]
       |> analyse_and_log_results()
       |> List.first()
-    results.success_ids # Create packitems for succes ids (if on params then nothing happens)
-      |> Enum.map(fn success -> Contents.create_packitem(%{item_id: success.id, pack_id: params.pack_id}) end)
+    if params.pack_id != "" do
+      results.success_ids # Create packitems for succes ids (if on params then nothing happens)
+        |> Enum.map(fn success -> Contents.create_packitem(%{item_id: success.id, pack_id: params.pack_id}) end)
+    end
   end
 
   def import_cards(file, params) do

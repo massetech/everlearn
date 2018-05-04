@@ -35,6 +35,7 @@ let init_player_data = () => {
 let update_user_data = (new_data) => {
   window.everlearn.nb_change = 0
   window.everlearn.content = new_data
+  console.log("data updated")
   $("i.ok").removeClass("hide")
   $("i.nok, i.pb").addClass("hide")
 
