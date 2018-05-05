@@ -40,7 +40,7 @@ defmodule Everlearn.Contents.Item do
   end
 
   def default_filters do
-    %{active: true, classroom_id: 1}
+    %{classroom_id: 1}
   end
 
   def import_fields do

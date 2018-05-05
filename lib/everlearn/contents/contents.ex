@@ -281,8 +281,13 @@ end
     {items, rummage}
   end
 
-  def export_all_items() do
-    items = Item
+  def export_all_items(params) do
+    # Export all items depending on the params without limit
+    {rummage_query, rummage} = params
+      |> pop_in(["rummage", "paginate"]) # Remove rummage map with limit on nb records
+      |> elem(1)
+      |> QueryFilter.build_rummage_query(Item)
+    items = rummage_query
       |> Repo.all()
       |> Repo.preload([:classroom, :topic, :kind, [cards: :language]])
   end

@@ -14,8 +14,8 @@ defmodule EverlearnWeb.ExportController do
       |> render(EverlearnWeb.Reports.ItemView, "report.xlsx", %{items: items})
   end
 
-  def export_all_items(conn, _) do
-    items = Contents.export_all_items()
+  def export_all_items(conn, params) do
+    items = Contents.export_all_items(params)
     now = DateTime.utc_now()
     classroom = List.first(items).classroom.title
     file_name = "Everlearn_all_items_#{classroom}_export#{now.year}-#{now.month}-#{now.day}-#{now.hour}#{now.minute}#{now.second}.xlsx"
