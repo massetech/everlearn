@@ -30,12 +30,16 @@ defmodule Everlearn.Contents.Card do
     |> unique_constraint(:unic_language_item, name: :index_language_item, message: "language item is already taken")
   end
 
-  def import_fields do
-    [:item_id, :question, :answer, :sound, :phonetic]
-  end
-
   def filters do
     %{id: "eq", active: "eq", language_id: "eq", item_id: "eq", question: "ilike"}
+  end
+
+  def default_filters do
+    %{}
+  end
+
+  def import_fields do
+    [:item_id, :question, :answer, :sound, :phonetic]
   end
 
 end

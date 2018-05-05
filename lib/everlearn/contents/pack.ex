@@ -32,4 +32,9 @@ defmodule Everlearn.Contents.Pack do
   def filters do
     %{id: "eq", title: "ilike", classroom_id: "eq", level: "eq", active: "eq"}
   end
+
+  def default_filters do
+    %{classroom_id: 1}
+  end
+
 end

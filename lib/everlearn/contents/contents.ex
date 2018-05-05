@@ -519,20 +519,12 @@ end
       nil ->
         case get_card_by_item_language(params.item_id, params.language_id) do
           nil -> create_card(params)
-          card ->
-            case params.phonetic do
-              99 -> delete_card(card)
-              _ -> update_card(card, params)
-            end
+          card -> update_card(card, params)
         end
-      _ ->
-        case get_card(params.id) do
+      id ->
+        case get_card(id) do
           nil -> create_card(params)
-          card ->
-            case params.phonetic do
-              99 -> delete_card(card)
-              _ -> update_card(card, params)
-            end
+          card -> update_card(card, params)
         end
     end
   end
