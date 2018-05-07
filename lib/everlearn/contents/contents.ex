@@ -207,30 +207,34 @@ end
 
 defp filter_packitemlink(query, pack, filter) do
   case filter do
-    "true" ->
+    "true" -> # items having packitem
       filtered_query = from i in query,
         join: pi in assoc(i, :packitems),
         where: pi.pack_id == ^pack.id
-    "false" ->
+    "false" -> # items having no packitem
       filtered_query = from i in query,
         left_join: pi in assoc(i, :packitems),
         where: is_nil(pi.id)
-    _ -> query
+    _ -> query # do nothing
   end
 end
 
-defp filter_items_eligible_for_pack(query, pack) do
-  classroom_id = get_pack!(pack.id).classroom.id
+defp filter_items_eligible_for_pack_classroom(query, pack_id) do
+  classroom_id = get_pack!(pack_id).classroom.id
   from i in query,
     join: c in assoc(i, :classroom),
     where: c.id == ^classroom_id
 end
 
-defp order_items_by_having_packitems(query \\ Item) do
-  from i in query,
+defp sort_items_by_packitems(query \\ Item, pack_id) do
+  from i in Item,
+    join: ei in subquery(query), # Use subquery to allow Group_by
+    on: i.id == ei.id,
     left_join: pi in assoc(i, :packitems),
+    on: pi.pack_id == ^pack_id and pi.item_id == i.id,
     group_by: i.id,
-    order_by: [desc: count(pi.id), asc: i.title]
+    order_by: [desc: count(pi.id), asc: i.title],
+    select: i
 end
 
 defp count_alerts_for_card(query \\ Card) do
@@ -300,19 +304,26 @@ end
     end
     pack = get_pack!(pack_id)
       |> Repo.preload(:classroom)
-    {rummage_query, rummage} = QueryFilter.build_rummage_query(params, Item)
+    {rummage_query, rummage} = params
+      |> Map.put("rummage", %{"search" => %{}, "sort" => %{}}) # add rummage to params (not done for show action)
+      # we remove "paginate" => %{} to avoid the filtering on 300 items / pag
+      # one pack it allready filtered by its own classroom...
+      |> QueryFilter.build_rummage_query(Item)
     packitem_filter = params["search"]["packitemlink"]
     pi_query = filter_packitems_by_pack_id(pack.id)
     card_query = filter_cards_active_with_language()
     items = rummage_query
       |> filter_items_active()
+      |> filter_items_eligible_for_pack_classroom(pack.id)
       |> filter_packitemlink(pack, packitem_filter)
-      |> filter_items_eligible_for_pack(pack)
-      |> order_items_by_having_packitems()
+      |> sort_items_by_packitems(pack.id)
       |> Repo.all()
       |> Repo.preload([:topic, :kind, packitems: pi_query, cards: card_query])
     {pack, items, rummage}
   end
+
+  # |> pop_in(["rummage", "paginate"]) # Remove rummage map with limit on nb records
+  # |> elem(1)
 
   def get_items_possible_for_pack(pack_id) do
     pack_id

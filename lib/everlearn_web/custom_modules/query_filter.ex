@@ -2,11 +2,13 @@ defmodule Everlearn.QueryFilter do
   def build_rummage_query(params, model) do
     # Returns {rummage_query, rummage} for the model
     filtered_params = params
+      |> IO.inspect()
       |> check_rummage_key(model) # Check that rummage key exists or create it with default params
       |> add_filters_to_rummage(model) # Add filters to rummage if search key found in params
       # |> IO.inspect()
     model
       |> Rummage.Ecto.rummage(filtered_params)
+      |> IO.inspect()
   end
   #
   # def add_default_search_params(params, model) do

@@ -15,11 +15,26 @@
           .collapsible-body
             %ul
               - for membership <- classroom.memberships do
+                -# %li
+                -#   .divider
                 %li.white
                   %a.toogle_mbs_change{data-classroom_id: "#{classroom.id}", data-membership_id: "#{membership.id}"}
                     %i.box-inline
                       = img_tag static_path(@conn, "/images/flags/1x1/#{membership.languages.teacher_lg.iso2code}.svg"), class: "flag_small"
                     = membership.title
                     %span.new.badge.right.yellow.darken-3{data-badge-caption: ""}= membership.nb_cards
+                %li.pg_bar
+                  = render EverlearnWeb.SharedView, "_progress_bar.html", bar_name: "menu_bar_#{membership.id}"
         %li
           .divider
+  %li.white
+    - if @conn.assigns[:current_user] do
+      - link to: auth_path(@conn, :delete), method: :delete do
+        %i.material-icons= "account_circle"
+        = "Log out"
+    - else
+      - link to: auth_path(@conn, :request, "google") do
+        %i.material-icons= "account_circle"
+        = "Log in"
+  %li
+    .divider

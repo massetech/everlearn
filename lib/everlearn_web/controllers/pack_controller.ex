@@ -58,7 +58,8 @@ defmodule EverlearnWeb.PackController do
   end
 
   def show(conn, params) do
-    {pack, items, rummage} = Contents.list_items_eligible_to_pack(params)
+    {pack, items, rummage} = params
+      |> Contents.list_items_eligible_to_pack()
     changeset = Contents.change_packitem(%PackItem{})
     conn
       |> assign(:import_action, import_packitems_path(conn, :packitem))

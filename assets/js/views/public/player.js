@@ -7,6 +7,7 @@ export default class View extends MainView {
     init_player_data()
     init_slidebar_functions()
     init_action_btns()
+    init_progress_bar()
     play_new_card()
   }
 
@@ -106,6 +107,15 @@ let init_slidebar_functions = () => {
   })
 }
 
+let init_progress_bar = () => {
+  let array = window.everlearn.content.classrooms.map((c) => c.memberships.map((mb) => mb))
+  let memberships = [].concat(...array)
+  console.log(memberships)
+  memberships.forEach(function(membership){
+    update_progress_bar(`menu_bar_${membership.id}`, membership.cards)
+  })
+}
+
 // ------------- Methods  -----------------------------------------------------------------
 let add_warning_to_card = () => {
   var new_card = window.everlearn.playing_card
@@ -187,6 +197,7 @@ let play_new_card = () => {
     // Algorythm to choose new card
     var learning_mode = window.everlearn.learning_mode
     var cards_list = get_actual_cards_list()
+    var previous_cards = window.everlearn.previous_cards || [0, 0] // Keep modulo 2
     var n = Math.random()
     var p = cards_list.filter(card => card.status == 0).length
     var m = cards_list.filter(card => card.status == 1).length
@@ -209,13 +220,25 @@ let play_new_card = () => {
     } else { // There was a problem or fast-track : choose randomly in the list
       var new_card = cards_list[Math.floor(Math.random() * cards_list.length)]
     }
+    if (previous_cards.includes(new_card.id)) { // Control on previous cards to avoid the same twice
+      new_card = cards_list[Math.floor(Math.random() * cards_list.length)]
+    }
+
     // Update datas with new card
     var classroom_index = window.everlearn.classroom_index
     var membership_index = window.everlearn.membership_index
+    var membership_id = window.everlearn.content.classrooms[classroom_index].memberships[membership_index].id
     window.everlearn.playing_card = new_card
     window.everlearn.playing_card_index = window.everlearn.content.classrooms[classroom_index].memberships[membership_index].cards.findIndex(x => x.id == new_card.id)
+    previous_cards.push(new_card.id)
+    const [head, ...tail] = previous_cards
+    window.everlearn.previous_cards = tail
     console.log(`new card played : card_id = ${new_card.id}`)
     update_player(new_card)
+    update_progress_bar("player_bar", cards_list)
+    // update also for membership menu in nav bar
+    update_progress_bar(`menu_bar_${membership_id}` , cards_list)
+    // `menu_bar_${membership_id}`
   })
 }
 
@@ -243,7 +266,6 @@ let update_player = (new_card) => {
   } else {
     $("#btn-warning").removeClass("disabled")
   }
-  update_progress_bar()
 }
 
 let show_answers = () => {
@@ -256,21 +278,34 @@ let hide_answers = () => {
   $(`.slide-item`).find('.question').removeClass(`hide`)
 }
 
-let update_progress_bar = () => {
-  var cards_list = get_actual_cards_list()
-  // console.log(cards_list)
-  var total = cards_list.length
-  var level1_share = cards_list.filter(card => card.status == 1).length / total * 100
-  var level2_share = cards_list.filter(card => card.status == 2).length / total * 100
-  var level3_share = cards_list.filter(card => card.status == 3).length / total * 100
-  var level0_share = 100 - level1_share - level2_share - level3_share
-  // console.log([level0_share, level1_share, level2_share, level3_share])
-  // console.log("level0_share : " + level0_share + ", level1_share : " + level1_share + ", level2_share : " + level2_share)
-  $("#level0_share").css('width', level0_share + '%')
-  $("#level1_share").css('width', level1_share + '%')
-  $("#level2_share").css('width', level2_share + '%')
-  $("#level3_share").css('width', level3_share + '%')
-}
+// let update_progress_bar = (bar_id, cards_list) => {
+//   var total = cards_list.length
+//   var level1_share = cards_list.filter(card => card.status == 1).length / total * 100
+//   var level2_share = cards_list.filter(card => card.status == 2).length / total * 100
+//   var level3_share = cards_list.filter(card => card.status == 3).length / total * 100
+//   var level0_share = 100 - level1_share - level2_share - level3_share
+//   // console.log(total)
+//   console.log([level0_share, level1_share, level2_share, level3_share])
+//   // console.log("level0_share : " + level0_share + ", level1_share : " + level1_share + ", level2_share : " + level2_share)
+//   console.log(bar_id)
+//   $(`#${bar_id}`).find('.level0').css('width', level0_share + '%')
+//   $(`#${bar_id}`).find('.level1').css('width', level1_share + '%')
+//   $(`#${bar_id}`).find('.level2').css('width', level2_share + '%')
+//   $(`#${bar_id}`).find('.level3').css('width', level3_share + '%')
+//   // The bar is ordered : next div is the previous level...
+//   $("#player_bar > .progress-item").each(function(){
+//     if ($(this).next(".progress-item").width() > 0) {
+//       $(this).removeClass("right_corner")
+//     } else {
+//       $(this).addClass("right_corner")
+//     }
+//     if ($(this).prev(".progress-item").width() > 0) {
+//       $(this).removeClass("left_corner")
+//     } else {
+//       $(this).addClass("left_corner")
+//     }
+//   });
+// }
 
 let update_membership_and_classroom = (classroom_id, membership_id) => {
   var classroom_index = window.everlearn.content.classrooms.findIndex(x => x.id == classroom_id)

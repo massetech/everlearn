@@ -4,11 +4,12 @@
     = render "item_search_form.html", conn: @conn, pack: @pack, levels: @levels, active: @active, topics: @topics, kinds: @kinds, packitemlinks: @packitemlinks
     .row
       .col.s12.m6.search_results.box-inline
-        %h5= "#{Enum.count(@items)}items found"
         - link to: pack_pack_path(@conn, :add_items_showed_from_pack, @pack, rummage: @rummage), class: "btn margin waves-effect waves-light" do
           %i.material-icons= "add"
+          = "#{Enum.count(@items)}"
         - link to: pack_pack_path(@conn, :remove_items_showed_from_pack, @pack, rummage: @rummage), class: "btn margin waves-effect waves-light" do
           %i.material-icons= "remove"
+          = "#{Enum.count(@items)}"
       .col.s12.m6
         = render "import_item_form.html", assigns
   .section

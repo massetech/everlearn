@@ -16,11 +16,14 @@ export default class MainView {
     });
   }
 
+
+
   unmount() {
     // This will be executed when the document unloads...
     console.log('MainView unmounted')
   }
 }
+
 
 // ------------- Methods  -----------------------------------------------------------------
 global.choose_random = (list) => {
@@ -35,6 +38,35 @@ jQuery.fn.clear = function(){
     $form.find('input:checkbox, input:radio').removeAttr('checked')
     return this
 };
+
+global.update_progress_bar = (bar_id, cards_list) => {
+  var total = cards_list.length
+  var level1_share = cards_list.filter(card => card.status == 1).length / total * 100
+  var level2_share = cards_list.filter(card => card.status == 2).length / total * 100
+  var level3_share = cards_list.filter(card => card.status == 3).length / total * 100
+  var level0_share = 100 - level1_share - level2_share - level3_share
+  // console.log(total)
+  // console.log([level0_share, level1_share, level2_share, level3_share])
+  // console.log("level0_share : " + level0_share + ", level1_share : " + level1_share + ", level2_share : " + level2_share)
+  // console.log(bar_id)
+  $(`#${bar_id}`).find('.level0').css('width', level0_share + '%')
+  $(`#${bar_id}`).find('.level1').css('width', level1_share + '%')
+  $(`#${bar_id}`).find('.level2').css('width', level2_share + '%')
+  $(`#${bar_id}`).find('.level3').css('width', level3_share + '%')
+  // The bar is ordered : next div is the previous level...
+  $("#player_bar > .progress-item").each(function(){
+    if ($(this).next(".progress-item").width() > 0) {
+      $(this).removeClass("right_corner")
+    } else {
+      $(this).addClass("right_corner")
+    }
+    if ($(this).prev(".progress-item").width() > 0) {
+      $(this).removeClass("left_corner")
+    } else {
+      $(this).addClass("left_corner")
+    }
+  });
+}
 
 // ------------- Initialization  -----------------------------------------------------------------
 let init_navigation = () => {

@@ -19,12 +19,7 @@
     .title.center-align
       %h4{id: "classroom_title"}
       %h5{id: "membership_title"}
-    .progress-bar
-      .progress-item.green.accent-3{id: "level3_share"}
-      .progress-item.green.lighten-3{id: "level2_share"}
-      .progress-item.cyan.lighten-3{id: "level1_share"}
-      .progress-item.grey.lighten-2{id: "level0_share"}
-      .progress-item.grey.darken-2{id: "levelminus1_share"}
+    = render EverlearnWeb.SharedView, "_progress_bar.html", bar_name: "player_bar"
     .slides.center-align
       .slide-item.box-inline
         .question

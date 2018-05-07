@@ -55,6 +55,18 @@ nav.title-nav {
   * {margin: 0 10px;}
 }
 
+/* -------------  Progressbar ---------------------------------*/
+.progress-bar {
+  width: 100%; margin-bottom: 1em;
+  display: flex;
+  .level0 {width: 100%; background-color: $light-grey !important}
+  .level1 {width: 0%; background-color: $middle-grey !important}
+  .level2 {width: 0%; background-color: $info !important}
+  .level3 {width: 0%; background-color: $success !important}
+  .left_corner {border-top-left-radius: 5px;border-bottom-left-radius: 5px;}
+  .right_corner {border-top-right-radius: 5px;border-bottom-right-radius: 5px;}
+}
+
 /* -------------  Footer ---------------------------------*/
 footer {
   background-color: $info !important;
