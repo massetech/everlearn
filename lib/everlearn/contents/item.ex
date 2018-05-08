@@ -16,7 +16,6 @@ defmodule Everlearn.Contents.Item do
     has_many :cards, Card
     has_many :packitems, PackItem
     has_many :packs, through: [:packitems, :pack]
-    # has_many :memorys, through: [:cards, :memorys]
     timestamps()
   end
 

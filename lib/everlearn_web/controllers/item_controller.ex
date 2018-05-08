@@ -47,13 +47,13 @@ defmodule EverlearnWeb.ItemController do
   end
 
   def create(conn, %{"item" => item_params}) do
-    IO.puts "test OK"
     case Contents.create_item(item_params) do
-      {:ok, _item} ->
+      {:ok, item} ->
         conn
-        |> put_flash(:info, "Item created successfully.")
+        |> put_flash(:info, "Item created successfully with id = #{item.id}.")
         |> redirect(to: item_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
+        IO.inspect(changeset)
         render(conn, "new.html", changeset: changeset)
     end
   end

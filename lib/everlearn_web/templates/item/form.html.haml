@@ -1,15 +1,19 @@
 - form_for @changeset, @action, fn f ->
   .row
     .input-field.col.s12.m3
-      = select f, :level, @levels, prompt: ""
+      = select f, :classroom_id, @classrooms
+      = label f, :classroom_id
+      = error_tag f, :classroom_id
+    .input-field.col.s12.m2
+      = select f, :level, @levels
       = label f, :level
       = error_tag f, :level
-    .input-field.col.s12.m3
-      = select f, :topic_id, @topics, prompt: ""
+    .input-field.col.s12.m2
+      = select f, :topic_id, @topics
       = label f, :topic_id
       = error_tag f, :topic_id
-    .input-field.col.s12.m3
-      = select f, :kind_id, @kinds, prompt: ""
+    .input-field.col.s12.m2
+      = select f, :kind_id, @kinds
       = label f, :kind_id
       = error_tag f, :kind_id
     .switch.col.s12.m3
