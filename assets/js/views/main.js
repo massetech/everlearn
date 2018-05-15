@@ -54,7 +54,8 @@ global.update_progress_bar = (bar_id, cards_list) => {
   $(`#${bar_id}`).find('.level2').css('width', level2_share + '%')
   $(`#${bar_id}`).find('.level3').css('width', level3_share + '%')
   // The bar is ordered : next div is the previous level...
-  $("#player_bar > .progress-item").each(function(){
+  // `#${bar_id} > .progress-item`
+  $(`#${bar_id} > .progress-item`).each(function(){
     if ($(this).next(".progress-item").width() > 0) {
       $(this).removeClass("right_corner")
     } else {

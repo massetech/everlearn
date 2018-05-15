@@ -193,13 +193,13 @@ defmodule Everlearn.Members do
 
   defp control_alert_date_newer(memory_params, old_memory) do
     {:ok, user_date} = memory_params.last_update
-      |> IO.inspect()
+      # |> IO.inspect()
       |> Timex.Parse.DateTime.Parser.parse("{ISO:Extended:Z}")
-      |> IO.inspect()
+      # |> IO.inspect()
     case DateTime.compare(user_date, old_memory.alert_date) do
       :gt -> # user alert > card correction on server side
         memory_params
-          |> IO.inspect()
+          # |> IO.inspect()
       _ -> # user alert < card correction on server side
         Map.delete(memory_params, :user_alert)
     end

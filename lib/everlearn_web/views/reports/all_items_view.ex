@@ -17,7 +17,7 @@ defmodule EverlearnWeb.Reports.AllItemsView do
     rows_item = items |> Enum.map(&(row_item(&1)))
     rows_cards_fr = load_card_datas_for_language(items, "fr")
     rows_cards_en = load_card_datas_for_language(items, "en")
-    rows_cards_bi = load_card_datas_for_language(items, "bi")
+    rows_cards_bi = load_card_datas_for_language(items, "mm")
     rows_cards_cn = load_card_datas_for_language(items, "cn")
     %Workbook{
       sheets: [
